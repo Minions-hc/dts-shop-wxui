@@ -1,0 +1,175 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "潮赏士多"
+			}
+		},
+		{
+			"path": "pages/activity/index",
+			"style": {
+				"navigationBarTitleText": "活动中心",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#FF4081",
+				"backgroundColor": "#FFF5F3",
+				"app-plus": {
+					"titleNView": false
+				},
+				"h5": {
+					"titleNView": false
+				}
+			}
+		},
+		{
+			"path": "pages/box/index",
+			"style": {
+				"navigationBarTitleText": "盒柜仓库",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/safe/index",
+			"style": {
+				"navigationBarTitleText": "保险箱"
+			}
+		},
+		{
+			"path": "pages/market/index",
+			"style": {
+				"navigationBarTitleText": "集市换娃"
+			}
+		},
+		{
+			"path": "pages/user/index",
+			"style": {
+				"navigationBarTitleText": "我的",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/profile/index",
+			"style": {
+				"navigationBarTitleText": "编辑个人资料"
+			}
+		},
+		{
+			"path": "pages/profile/edit",
+			"style": {
+				"navigationBarTitleText": "更新个人信息"
+			}
+		},
+		{
+			"path": "pages/points/index",
+			"style": {
+				"navigationBarTitleText": "我的积分"
+			}
+		},
+		{
+			"path": "pages/redpacket/index",
+			"style": {
+				"navigationBarTitleText": "我的红包"
+			}
+		},
+		{
+			"path": "pages/order/list",
+			"style": {
+				"navigationBarTitleText": "订单列表"
+			}
+		},
+		{
+			"path": "pages/coupon/index",
+			"style": {
+				"navigationBarTitleText": "优惠券"
+			}
+		},
+		{
+			"path": "pages/card/index",
+			"style": {
+				"navigationBarTitleText": "道具卡"
+			}
+		},
+		{
+			"path": "pages/code/index",
+			"style": {
+				"navigationBarTitleText": "兑换码"
+			}
+		},
+		{
+			"path": "pages/category/index",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/cart/index",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/address/index",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/agreement/index",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/blindBox/yifanshang",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/blindBox/caileishang",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		}
+
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "潮赏士多",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"uniIdRouter": {},
+	"tabBar": {
+		"color": "#999",
+		"selectedColor": "#FF4081",
+		"borderStyle": "white",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"text": "首页"
+				//"iconPath": "static/home.png",
+				//"selectedIconPath": "static/home-active.png"
+			},
+			{
+				"pagePath": "pages/activity/index",
+				"text": "活动"
+				//"iconPath": "static/event.png",
+				//"selectedIconPath": "static/event-active.png"
+			},
+			{
+				"pagePath": "pages/box/index",
+				"text": "盒柜"
+				//"iconPath": "static/event.png",
+				//"selectedIconPath": "static/event-active.png"
+			},
+			{
+				"pagePath": "pages/user/index",
+				"text": "我的"
+				//"iconPath": "static/event.png",
+				//"selectedIconPath": "static/event-active.png"
+			}
+		]
+	}
+
+}

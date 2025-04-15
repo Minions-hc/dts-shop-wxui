@@ -1,0 +1,57 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/activity/index",
+    "pages/box/index",
+    "pages/safe/index",
+    "pages/market/index",
+    "pages/user/index",
+    "pages/profile/index",
+    "pages/profile/edit",
+    "pages/points/index",
+    "pages/redpacket/index",
+    "pages/order/list",
+    "pages/coupon/index",
+    "pages/card/index",
+    "pages/code/index",
+    "pages/category/index",
+    "pages/cart/index",
+    "pages/address/index",
+    "pages/agreement/index",
+    "pages/blindBox/yifanshang",
+    "pages/blindBox/caileishang"
+  ],
+  "subPackages": [],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "潮赏士多",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#FF4081",
+    "borderStyle": "white",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/activity/index",
+        "text": "活动"
+      },
+      {
+        "pagePath": "pages/box/index",
+        "text": "盒柜"
+      },
+      {
+        "pagePath": "pages/user/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "permission": {},
+  "usingComponents": {}
+}
