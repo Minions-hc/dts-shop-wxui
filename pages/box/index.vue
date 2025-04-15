@@ -1,256 +1,351 @@
 <template>
   <view class="container">
-    <!-- 顶部Tab -->
-    <view class="main-tab">
+    <!-- 顶部菜单 -->
+    <view class="top-menu">
       <view 
-        v-for="(item, index) in mainTabs" 
+        v-for="(item, index) in menus"
         :key="index"
-        :class="['tab-item', currentMainTab === index ? 'active' : '']"
-        @click="switchMainTab(index)"
+        :class="['menu-item', activeMenu === index ? 'active' : '']"
+        @click="changeMenu(index)"
       >
-        {{item}}
+        {{ item }}
       </view>
     </view>
 
-    <!-- 子Tab -->
-    <view class="sub-tab">
+    <!-- 筛选按钮 -->
+    <view class="filter-btns">
       <view 
-        v-for="(item, index) in subTabs" 
+        v-for="(btn, index) in filters"
         :key="index"
-        :class="['sub-item', currentSubTab === index ? 'active' : '']"
-        @click="switchSubTab(index)"
+        :class="['filter-btn', activeFilter === index ? 'active' : '']"
+        @click="changeFilter(index)"
       >
-        {{item}}
+        {{ btn }}
       </view>
-      <image 
-        class="lock-icon" 
-        src="/static/lock.png"
-        @click="navigateTo('/pages/safe/index')"
-      />
     </view>
-	<view class="tips-bar">
-		<text class="tips">i盒框提货运费12元满三件包邮，不支持7天无理由退换货</text>	
-	</view>
 
-    <!-- 商品展示 -->
-    <view class="product-grid">
+    <!-- 保险箱入口 -->
+    <view class="safe-box-btn" @click="navigateToSafeBox">
+      <image class="lock-icon" src="/static/lock.png"/>
+      <text class="count">{{ safeBoxCount }}</text>
+    </view>
+
+    <!-- 发货提示 -->
+    <view class="shipping-tips">
+      <image class="tip-icon" src="/static/tip.png"/>
+      <text>盒柜提货运费12元满三件包邮，不支持7天无理由退换货</text>
+    </view>
+
+    <!-- 产品列表 -->
+    <scroll-view class="product-list" scroll-y>
       <view 
-        v-for="(item, index) in productList" 
+        v-for="(item, index) in filteredProducts"
         :key="index"
         class="product-item"
-        @click="toggleSelect(item.id)"
+        @click="navigateToDetail(item.id)"
       >
-        <image 
-          v-if="selectedIds.includes(item.id)"
-          class="check-icon" 
-          src="/static/checked.png"
-        />
         <image class="product-img" :src="item.image"/>
-        <text class="product-name">{{item.name}}</text>
-        <text class="product-price">¥{{item.price}}</text>
-      </view>
-    </view>
+        
+        <view class="product-info">
+          <view class="top-section">
+            <text class="name">{{ item.name }}</text>
+            <text class="quantity">x{{ item.quantity }}</text>
+          </view>
+          
+          <view class="meta-info">
+            <text class="source">{{ item.source }}</text>
+            <text class="grade">{{ item.grade }}</text>
+          </view>
 
-    <!-- 底部操作栏 -->
-    <view class="operation-bar">
-      <view class="btn-group">
-        <view 
-          class="btn ship-btn"
-          :class="{active: selectedIds.length}"
-          :style="{backgroundColor: selectedIds.length ? '#FFD700' : '#CCCCCC'}"
-          @click="handleShip"
-        >
-          选择发货
-        </view>
-        <view 
-          class="btn market-btn"
-          @click="navigateTo('/pages/market/index')"
-        >
-          集市换娃
+          <view class="medal-info">
+            <text>可抵扣{{ item.medal }}勋章</text>
+            <view class="status-btn">{{ item.status }}</view>
+          </view>
+
+          <view class="bottom-section">
+            <text class="time">{{ item.time }}</text>
+            <view class="actions">
+              <image class="action-icon" src="/static/lock_gray.png"/>
+              <view class="donate-btn">赠送</view>
+            </view>
+          </view>
         </view>
       </view>
+    </scroll-view>
+
+    <!-- 底部操作 -->
+    <view class="bottom-action">
+      <view 
+        class="ship-btn"
+        :class="{disabled: selectedCount === 0}"
+        @click="handleShip"
+      >
+        选择发货
+      </view>
+		<view class="btn market-btn"
+		@click="navigateTo('/pages/market/index')"
+		>
+		集市换娃
+		</view>
+
     </view>
   </view>
 </template>
 
 <script>
-
 export default {
   data() {
     return {
-      mainTabs: ['待处理', '已提货', '全部'],
-      currentMainTab: 0,
-      subTabs: ['全部', 'A赏', 'B赏', '终赏', '其它'],
-      currentSubTab: 0,
-      selectedIds: [],
-      productList: [
-        // 示例数据
-        {id: 1, image: '/static/product1.jpg', name: '森林精灵', price: 89},
-        {id: 2, image: '/static/product2.jpg', name: '太空旅人', price: 129},
-        // ...更多商品数据
+      menus: ['待处理', '已提货', '全部'],
+      filters: ['全部', 'A赏', 'B赏', '终赏', '其他'],
+      activeMenu: 0,
+      activeFilter: 0,
+      safeBoxCount: 4,
+      products: [
+        {
+          id: 1,
+          image: '/static/product1.jpg',
+          name: '【自制款】拉布布帆布袋',
+          quantity: 1,
+          source: '一番赏',
+          grade: 'D赏',
+          medal: 4,
+          status: '待处理',
+          time: '01-16 02:47'
+        }
+        // 更多产品数据...
       ]
     }
   },
-  methods: {
-    switchMainTab(index) {
-      this.currentMainTab = index
-      // 这里应请求对应数据
-    },
-    switchSubTab(index) {
-      this.currentSubTab = index
-      // 这里应请求对应数据
-    },
-    toggleSelect(id) {
-      if (this.selectedIds.includes(id)) {
-        this.selectedIds = this.selectedIds.filter(item => item !== id)
-      } else {
-        this.selectedIds = [...this.selectedIds, id]
-      }
-    },
-    handleShip() {
-      if (!this.selectedIds.length) return
-      uni.showModal({
-        title: '确认发货',
-        content: `已选择${this.selectedIds.length}件商品`
+  computed: {
+    filteredProducts() {
+      return this.products.filter(item => {
+        const menuMatch = this.activeMenu === 0 ? item.status === '待处理' :
+          this.activeMenu === 1 ? item.status === '已提货' : true
+        
+        const filterMatch = this.activeFilter === 0 ? true :
+          item.grade === this.filters[this.activeFilter]
+        
+        return menuMatch && filterMatch
       })
     },
-    navigateTo(url) {
-      uni.navigateTo({ url })
+    selectedCount() {
+      return this.products.filter(item => item.selected).length
+    }
+  },
+  methods: {
+    changeMenu(index) {
+      this.activeMenu = index
+    },
+    changeFilter(index) {
+      this.activeFilter = index
+    },
+    navigateToSafeBox() {
+      uni.navigateTo({ url: '/pages/safe/index' })
+    },
+    handleShip() {
+      if (this.selectedCount === 0) return
+      // 处理发货逻辑
     }
   }
 }
 </script>
 
-<style lang="scss">
-.main-tab {
+<style lang="scss" scoped>
+.container {
+  padding-bottom: 120rpx;
+}
+
+.top-menu {
   display: flex;
-  padding: 30rpx 0;
+  padding: 30rpx;
   border-bottom: 2rpx solid #eee;
-  
-  .tab-item {
+
+  .menu-item {
     flex: 1;
     text-align: center;
     font-size: 32rpx;
-    color: #666;
+    padding: 20rpx 0;
     
     &.active {
+      color: #D4B483;
       font-weight: bold;
-      color: #000;
+      border-bottom: 4rpx solid #D4B483;
     }
   }
 }
 
-.sub-tab {
+.filter-btns {
   display: flex;
+  flex-wrap: wrap;
+  padding: 20rpx;
+  gap: 20rpx;
+
+  .filter-btn {
+    padding: 12rpx 30rpx;
+    border-radius: 40rpx;
+    background: #f5f5f5;
+    color: #666;
+
+    &.active {
+      background: #D4B483;
+      color: #333;
+    }
+  }
+}
+
+.safe-box-btn {
+  position: fixed;
+  right: 30rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 120rpx;
+  height: 160rpx;
+  background: #D4B483;
+  border-radius: 60rpx 60rpx 0 0;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   padding: 20rpx;
-  position: relative;
-  
-  .sub-item {
-    padding: 10rpx 20rpx;
-    margin-right: 30rpx;
-    font-size: 28rpx;
-    position: relative;
-    
-    &.active {
-      font-weight: bold;
-      
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 60rpx;
-        height: 10rpx;
-        background: #D4B483;
-        border-radius: 10rpx;
-      }
-    }
-	.tips {
-	  display: block;
-	  color: #999;
-	  font-size: 24rpx;
-	  margin-bottom: 30rpx;
-	}
-  }
-  
+  z-index: 100;
+
   .lock-icon {
-    position: absolute;
-    right: 30rpx;
+    width: 60rpx;
+    height: 60rpx;
+    margin-bottom: 10rpx;
+  }
+
+  .count {
+    color: #fff;
+    font-size: 28rpx;
+  }
+}
+
+.shipping-tips {
+  background: #D4B483;
+  padding: 20rpx;
+  margin: 20rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+
+  .tip-icon {
     width: 40rpx;
     height: 40rpx;
+    margin-right: 15rpx;
   }
 }
 
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20rpx;
-  padding: 30rpx;
-  
+.product-list {
+  padding: 20rpx;
+
   .product-item {
-    position: relative;
-    text-align: center;
-    
-    .check-icon {
-      position: absolute;
-      top: 10rpx;
-      right: 10rpx;
-      width: 40rpx;
-      height: 40rpx;
-      z-index: 2;
-    }
-    
-    .product-img {
-      width: 160rpx;
-      height: 160rpx;
-      border-radius: 16rpx;
-    }
-    
-    .product-name {
-      display: block;
-      font-size: 24rpx;
-      margin: 10rpx 0;
-    }
-    
-    .product-price {
-      color: #FF4444;
-      font-size: 26rpx;
-    }
-  }
-}
-
-.operation-bar {
-  padding: 30rpx;
-  
-  .btn-group {
     display: flex;
-    gap: 30rpx;
-    
-    .btn {
+    background: #fff;
+    border-radius: 16rpx;
+    margin-bottom: 20rpx;
+    padding: 20rpx;
+
+    .product-img {
+      width: 200rpx;
+      height: 200rpx;
+      border-radius: 12rpx;
+      margin-right: 20rpx;
+    }
+
+    .product-info {
       flex: 1;
-      height: 80rpx;
-      border-radius: 40rpx;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 30rpx;
-      
-      &.ship-btn {
-        color: #666;
-        
-        &.active {
-          color: #333;
+
+      .top-section {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15rpx;
+
+        .name {
+          font-size: 32rpx;
+          font-weight: bold;
+        }
+
+        .quantity {
+          color: #666;
         }
       }
-      
-      &.market-btn {
-        background: #FFF;
-        border: 2rpx solid #D4B483;
-        color: #D4B483;
+
+      .meta-info {
+        display: flex;
+        gap: 20rpx;
+        margin-bottom: 15rpx;
+        color: #666;
+      }
+
+      .medal-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15rpx;
+
+        .status-btn {
+          padding: 8rpx 20rpx;
+          border: 1rpx solid #D4B483;
+          border-radius: 30rpx;
+          color: #D4B483;
+        }
+      }
+
+      .bottom-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #999;
+
+        .actions {
+          display: flex;
+          align-items: center;
+          gap: 20rpx;
+
+          .action-icon {
+            width: 40rpx;
+            height: 40rpx;
+          }
+
+          .donate-btn {
+            padding: 8rpx 20rpx;
+            background: #eee;
+            border-radius: 30rpx;
+          }
+        }
       }
     }
   }
+}
+
+.bottom-action {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 20rpx;
+  background: #fff;
+  border-top: 1rpx solid #eee;
+
+  .ship-btn {
+    background: #D4B483;
+    height: 90rpx;
+    line-height: 90rpx;
+    text-align: center;
+    border-radius: 45rpx;
+    font-size: 32rpx;
+
+    &.disabled {
+      background: #ccc;
+      color: #666;
+    }
+  }
+  
+   &.market-btn {
+          background: #FFF;
+          border: 2rpx solid #D4B483;
+          color: #D4B483;
+        }
+
 }
 </style>

@@ -29,6 +29,12 @@
 			}
 		},
 		{
+			"path": "pages/box/detail",
+			"style": {
+				"navigationBarTitleText": "物品详情"
+			}
+		},
+		{
 			"path": "pages/safe/index",
 			"style": {
 				"navigationBarTitleText": "保险箱"
