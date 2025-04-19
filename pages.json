@@ -1,5 +1,5 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	"pages": [
 		{
 			"path": "pages/index/index",
 			"style": {
@@ -137,7 +137,6 @@
 				"navigationBarTitleText": ""
 			}
 		}
-
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
@@ -153,27 +152,27 @@
 		"backgroundColor": "#ffffff",
 		"list": [{
 				"pagePath": "pages/index/index",
-				"text": "首页"
-				//"iconPath": "static/home.png",
-				//"selectedIconPath": "static/home-active.png"
+				"text": "首页",
+				"iconPath": "static/tabbar1.png",
+				"selectedIconPath": "static/tabbar1-1.png"
 			},
 			{
 				"pagePath": "pages/activity/index",
-				"text": "活动"
-				//"iconPath": "static/event.png",
-				//"selectedIconPath": "static/event-active.png"
+				"text": "活动",
+				"iconPath": "static/tabbar2.png",
+				"selectedIconPath": "static/tabbar2-1.png"
 			},
 			{
 				"pagePath": "pages/box/index",
-				"text": "盒柜"
-				//"iconPath": "static/event.png",
-				//"selectedIconPath": "static/event-active.png"
+				"text": "盒柜",
+				"iconPath": "static/tabbar3.png",
+				"selectedIconPath": "static/tabbar3-1.png"
 			},
 			{
 				"pagePath": "pages/user/index",
-				"text": "我的"
-				//"iconPath": "static/event.png",
-				//"selectedIconPath": "static/event-active.png"
+				"text": "我的",
+				"iconPath": "static/tabbar5.png",
+				"selectedIconPath": "static/tabbar5-1.png"
 			}
 		]
 	}
