@@ -1,30 +1,63 @@
 <template>
   <view class="container">
-    <!-- 左侧系列列表 -->
-    <scroll-view class="series-list" scroll-y>
-      <view 
-        v-for="(item, index) in seriesData" 
-        :key="index"
-        :class="['series-item', activeIndex === index ? 'active' : '']"
-        @click="selectSeries(index)"
-      >
-        <text class="series-title">{{item.title}}</text>
-        <text v-if="item.isNew" class="new-tag">NEW</text>
-      </view>
-    </scroll-view>
+    <!-- 顶部图片区 -->
+    <image 
+      src="/static/category-back.png" 
+      mode="widthFix"
+      class="top-banner"
+      lazy-load
+    />
 
-    <!-- 右侧产品展示 -->
-    <scroll-view class="product-grid" scroll-y>
-      <view 
-        v-for="(product, pIndex) in currentProducts" 
-        :key="pIndex"
-        class="product-item"
-        @click="navigateToBox(product.id)"
+    <!-- 内容区 -->
+    <view class="content-wrapper">
+      <!-- 左侧分类 -->
+      <scroll-view 
+        class="category-list"
+        scroll-y
+        enhanced
+        :show-scrollbar="false"
       >
-        <image class="product-img" :src="product.image" mode="aspectFill"/>
-        <text class="product-name">{{product.name}}</text>
-      </view>
-    </scroll-view>
+        <view 
+          v-for="(item, index) in categories"
+          :key="index"
+          class="category-item"
+          :class="{ active: activeCategory === index }"
+          @click="switchCategory(index)"
+        >
+          {{ item.name }}
+		  <image v-if="item.isHot" class="hot-serice" src="/static/hot.gif"></image>
+		  <image v-if="item.isNew" class="new-serice" src="/static/new-product.gif"></image>
+        </view>
+      </scroll-view>
+
+      <!-- 右侧产品 -->
+      <scroll-view
+        class="product-list"
+        scroll-y
+        enhanced
+        :show-scrollbar="false"
+      >
+        <view class="product-grid">
+          <view 
+            v-for="(product, pIndex) in currentProducts"
+            :key="pIndex"
+            class="product-card"
+			@tap="toBindBoxPage(product)"
+          >
+            <image
+              :src="product.image"
+              mode="aspectFill"
+              class="product-image"
+              lazy-load
+            />
+            <view class="product-info">
+              <text class="product-title">{{ product.title }}</text>
+              <text class="product-price">¥{{ product.price }}</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
   </view>
 </template>
 
@@ -32,128 +65,157 @@
 export default {
   data() {
     return {
-      activeIndex: 0,
-      seriesData: [
-        { title: '人气新品', isNew: true },
-        { title: '爆款推荐' },
-        // 以下为模拟数据，实际应从接口获取
-        { title: 'LABUBU新品' },
-        { title: 'Skullpanda' },
-        { title: 'Molly' },
-        { title: 'Dimoo' },
-        { title: 'Hirono小野' }
+      activeCategory: 0,
+      categories: [
+		  {name: '人气新品', type: 4,isNew: true},
+		  {name: '爆款推荐', type: 5,isHot: true},
+        { name: 'LABUBU系列', type: 1 },
+        { name: 'Molly系列', type: 2 },
+        { name: 'Skullpanda', type: 3 }
       ],
-      currentProducts: [
-        // 模拟产品数据
-        { 
-          id: 1,
-          name: 'MOKOKO·携股公仔', 
-          image: '/static/products/mokoko.jpg'
-        },
-        { 
-          id: 2,
-          name: 'LABUBU·情人节', 
-          image: '/static/products/labubu.jpg'
-        },
-        // 更多产品数据...
-      ]
+      products: {
+        1: [
+          { title: 'LABUBU①', price: 299, image: '/static/serice2.jpg' },
+          { title: 'LABUBU②', price: 329, image: '/static/serice3.jpg' },
+          // 更多产品...
+        ],
+        2: [
+          { title: '美林甲辰', price: 399, image: '/static/serice1.jpg' },
+          { title: '莫奈-睡莲', price: 459, image: '/static/serice2.jpg' },
+          // 更多产品...
+        ]
+      }
+    }
+  },
+  computed: {
+    currentProducts() {
+      const type = this.categories[this.activeCategory].type
+      return this.products[type] || []
     }
   },
   methods: {
-    selectSeries(index) {
-      this.activeIndex = index
-      // 这里应请求对应系列的产品数据
-      // this.loadProducts(this.seriesData[index].id)
+    switchCategory(index) {
+      this.activeCategory = index
     },
-    navigateToBox(productId) {
-      uni.navigateTo({
-        url: `/pages/blindbox/index?id=${productId}`
-      })
-    },
-    async loadProducts(seriesId) {
-      // 接口请求示例
-      const res = await uni.request({
-        url: '/api/products',
-        data: { seriesId }
-      })
-      this.currentProducts = res.data
-    }
+	toBindBoxPage(item){
+		uni.navigateTo({
+			url:'/pages/blindBox/yifanshang'
+		})
+	}
   }
 }
 </script>
 
 <style lang="scss" scoped>
+/* 基础布局 */
 .container {
-  display: flex;
   height: 100vh;
-  background: #f5f5f5;
+  display: flex;
+  flex-direction: column;
 }
 
-.series-list {
-  width: 240rpx;
+.top-banner {
+  width: 100%;
+  height: 250rpx;
+  flex-shrink: 0;
+}
+
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  background: #f8f8f8;
+}
+
+/* 左侧分类样式 */
+.category-list {
+  width: 30%;
+  height: 100%;
   background: #fff;
-  padding: 20rpx 0;
-
-  .series-item {
-    position: relative;
-    padding: 30rpx 20rpx;
-    border-left: 6rpx solid transparent;
-
-    &.active {
-      border-left-color: #FF4444;
-      background: #fff8f6;
-      
-      .series-title {
-        font-size: 32rpx;
-        font-weight: bold;
-        color: #333;
-      }
-    }
-  }
-
-  .series-title {
+  
+  .category-item {
+    padding: 32rpx;
+	padding-right: 20rpx;
+	padding-left: 20rpx;
     font-size: 28rpx;
     color: #666;
-    line-height: 1.4;
-  }
-
-  .new-tag {
-    position: absolute;
-    top: 20rpx;
-    right: 10rpx;
-    font-size: 20rpx;
-    color: #FF4444;
-    transform: scale(0.8);
+    border-bottom: 1rpx solid #eee;
+    transition: all 0.2s;
+	display: flex;
+    
+    &.active {
+      color: #ff3b30;
+      background: #fff5f5;
+      font-weight: 500;
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 6rpx;
+        height: 40rpx;
+        background: #ff3b30;
+      }
+    }
+	.hot-serice,.new-serice{
+		width: 60rpx;
+		height: 40rpx;
+		max-width: 60rpx;
+		max-height: 40rpx;
+		margin-left: 8rpx;
+	}
   }
 }
 
-.product-grid {
-  flex: 1;
+/* 右侧产品列表 */
+.product-list {
+  width: 70%;
   padding: 20rpx;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20rpx;
-
-  .product-item {
+  
+  .product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .product-card {
+    width: 48%;
+    margin-bottom: 20rpx;
     background: #fff;
     border-radius: 16rpx;
     overflow: hidden;
+    box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.05);
   }
-
-  .product-img {
+  
+  .product-image {
     width: 100%;
     height: 320rpx;
   }
-
-  .product-name {
-    display: block;
+  
+  .product-info {
     padding: 20rpx;
-    font-size: 26rpx;
-    color: #333;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    
+    .product-title {
+      display: block;
+      font-size: 26rpx;
+      color: #333;
+      margin-bottom: 8rpx;
+    }
+    
+    .product-price {
+      font-size: 28rpx;
+      color: #ff3b30;
+      font-weight: 600;
+    }
   }
+}
+
+/* 性能优化相关 */
+image {
+  will-change: transform;
+  backface-visibility: hidden;
 }
 </style>
