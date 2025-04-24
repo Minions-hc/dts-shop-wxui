@@ -116,7 +116,7 @@
 		{
 			"path": "pages/address/index",
 			"style": {
-				"navigationBarTitleText": ""
+				"navigationBarTitleText": "我的收货地址"
 			}
 		},
 		{
@@ -141,6 +141,12 @@
 			"path": "pages/soulPower/index",
 			"style": {
 				"navigationBarTitleText": "魂力一番赏"
+			}
+		},
+		{
+			"path": "pages/address/detail",
+			"style": {
+				"navigationBarTitleText": "收货地址"
 			}
 		}
 	],
