@@ -373,6 +373,7 @@
 
 					text {
 						color: #ff91da;
+						font-size: 14px;
 					}
 
 					.status-btn {
@@ -402,6 +403,7 @@
 			padding: 0 20rpx;
 			margin-bottom: 20rpx;
 			padding-bottom: 20rpx;
+			padding-top: 10rpx;
 			border-bottom-left-radius: 16rpx;
 			border-bottom-right-radius: 16rpx;
 

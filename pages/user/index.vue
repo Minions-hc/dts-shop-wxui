@@ -6,6 +6,14 @@
 				<image src="/static/avatar.png" class="avatar" mode="aspectFit" />
 				<text class="username">我的名字</text>
 			</view>
+			<!-- 新增资产信息区域 -->
+			<view class="assets-section">
+				<view class="asset-item" v-for="(item, index) in userAssets" :key="index"
+					@click="handleAssetClick(item.type)">
+					<text class="value">{{ item.value }} </text>
+					<text class="label">{{ item.label }}</text>
+				</view>
+			</view>
 		</view>
 
 		<!-- 订单状态 -->
@@ -45,7 +53,8 @@
 			<view class="func-list">
 				<view class="func-item" v-for="(item, index) in functions" :key="index" @click="navigateTo(item.path)">
 					<view class="left">
-						<image class="icon-image" :src="item.image" mode="aspectFit" :class="item.icon === 'location' ? 'address-icon' :''"></image>
+						<image class="icon-image" :src="item.image" mode="aspectFit"
+							:class="item.icon === 'location' ? 'address-icon' :''"></image>
 						<text class="label">{{ item.label }}</text>
 					</view>
 					<uni-icons type="arrowright" size="16" color="#999"></uni-icons>
@@ -124,7 +133,26 @@
 						path: '/pages/agreement/index',
 						image: '/static/icon11.png'
 					}
-				]
+				],
+				userAssets: [{
+						type: 'points',
+						value: 10,
+						unit: '积分',
+						label: '积分'
+					},
+					{
+						type: 'balance',
+						value: 0,
+						unit: '红包余额',
+						label: '红包余额'
+					},
+					{
+						type: 'invites',
+						value: 2,
+						unit: '邀请记录',
+						label: '邀请记录'
+					}
+				],
 			}
 		},
 		methods: {
@@ -140,7 +168,17 @@
 			},
 			handleService(item) {
 				this.navigateTo(item.path)
-			}
+			},
+			handleAssetClick(type) {
+				const routeMap = {
+					points: '/pages/assets/points',
+					balance: '/pages/wallet/index',
+					invites: '/pages/invite/list'
+				}
+				uni.navigateTo({
+					url: routeMap[type]
+				})
+			},
 		}
 	}
 </script>
@@ -179,6 +217,45 @@
 				color: #000;
 				font-weight: bold;
 				text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+			}
+		}
+
+		.assets-section {
+			display: flex;
+			justify-content: space-between;
+			border-radius: 16rpx;
+			padding: 30rpx 0;
+			margin: 20rpx 0;
+
+			.asset-item {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				position: relative;
+
+				&:not(:last-child)::after {
+					content: '';
+					position: absolute;
+					right: 0;
+					top: 50%;
+					transform: translateY(-50%);
+					width: 1rpx;
+					height: 40rpx;
+					background: #eee;
+				}
+
+				.value {
+					font-size: 34rpx;
+					color: #333;
+					font-weight: bold;
+					margin-bottom: 10rpx;
+				}
+
+				.label {
+					font-size: 26rpx;
+					color: #666;
+				}
 			}
 		}
 	}
@@ -236,7 +313,7 @@
 					max-width: 50rpx;
 					max-height: 50rpx;
 				}
-				
+
 			}
 		}
 	}
@@ -276,7 +353,8 @@
 					max-width: 50rpx;
 					max-height: 50rpx;
 				}
-				.address-icon{
+
+				.address-icon {
 					height: 40rpx;
 					max-height: 40rpx;
 				}
@@ -300,13 +378,15 @@
 						font-size: 28rpx;
 						color: #333;
 					}
+
 					.icon-image {
 						width: 40rpx;
 						height: 40rpx;
 						max-width: 40rpx;
 						max-height: 40rpx;
 					}
-					.address-icon{
+
+					.address-icon {
 						height: 50rpx;
 						max-height: 50rpx;
 					}
