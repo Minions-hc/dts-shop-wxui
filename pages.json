@@ -148,7 +148,14 @@
 			"style": {
 				"navigationBarTitleText": "收货地址"
 			}
+		},
+		{
+			"path": "pages/lucky/index",
+			"style": {
+				"navigationBarTitleText": "抽奖活动详情"
+			}
 		}
+		
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

@@ -39,7 +39,7 @@
 		<!-- 活动区域 -->
 		<view class="activity-grid">
 			<view v-for="(item, index) in activities" :key="index" class="activity-item"
-				:style="{ backgroundImage: `url(${item.bg})` }">
+				:style="{ backgroundImage: `url(${item.bg})` }" @click="toPage(item)">
 				<!-- 活动内容 -->
 			</view>
 		</view>
@@ -52,16 +52,20 @@
 			return {
 				// 活动数据示例
 				activities: [{
-						bg: '/static/activity1.png'
+						bg: '/static/activity1.png',
+						path:'/pages/box/detail'
 					},
 					{
-						bg: '/static/activity2.png'
+						bg: '/static/activity2.png',
+						path:'/pages/lucky/index'
 					},
 					{
-						bg: '/static/activity3.png'
+						bg: '/static/activity3.png',
+						path:'/pages/box/detail'
 					},
 					{
-						bg: '/static/activity4.png'
+						bg: '/static/activity4.png',
+						path:'/pages/box/detail'
 					}
 				]
 			}
@@ -79,6 +83,11 @@
 					return url;
 				}
 
+			},
+			toPage(item){
+				uni.navigateTo({
+					url: item.path
+				})
 			}
 		},
 
