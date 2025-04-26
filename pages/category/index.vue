@@ -75,13 +75,13 @@ export default {
       ],
       products: {
         1: [
-          { title: 'LABUBU①', price: 299, image: '/static/serice2.jpg' },
-          { title: 'LABUBU②', price: 329, image: '/static/serice3.jpg' },
+          { title: 'LABUBU①', price: 299, image: '/static/serice2.jpg',type:'yifanshang' },
+          { title: 'LABUBU②', price: 329, image: '/static/serice3.jpg',type:'yifanshang' },
           // 更多产品...
         ],
         2: [
-          { title: '美林甲辰', price: 399, image: '/static/serice1.jpg' },
-          { title: '莫奈-睡莲', price: 459, image: '/static/serice2.jpg' },
+          { title: '美林甲辰', price: 399, image: '/static/serice1.jpg',type:'caileishang' },
+          { title: '莫奈-睡莲', price: 459, image: '/static/serice2.jpg',type:'caileishang' },
           // 更多产品...
         ]
       }
@@ -98,6 +98,12 @@ export default {
       this.activeCategory = index
     },
 	toBindBoxPage(item){
+		if(item.type == 'caileishang'){
+			uni.navigateTo({
+				url:'/pages/blindBox/caileishang'
+			})
+			return
+		}
 		uni.navigateTo({
 			url:'/pages/blindBox/yifanshang'
 		})
