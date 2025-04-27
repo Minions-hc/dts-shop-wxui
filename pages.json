@@ -110,7 +110,7 @@
 		{
 			"path": "pages/cart/index",
 			"style": {
-				"navigationBarTitleText": ""
+				"navigationBarTitleText": "我的购物车"
 			}
 		},
 		{
@@ -153,6 +153,37 @@
 			"path": "pages/lucky/index",
 			"style": {
 				"navigationBarTitleText": "抽奖活动详情"
+				}
+		},
+		{
+			"path": "pages/invite/index",
+			"style": {
+				"navigationBarTitleText": "邀请与分销记录"
+			}
+		},
+		{
+			"path": "pages/code/detail",
+			"style": {
+				"navigationBarTitleText": "兑换记录"
+			}
+		},
+		{
+			"path": "pages/order/detail",
+			"style": {
+				"navigationBarTitleText": "订单详情"
+			}
+		},
+		{
+			"path": "pages/record/index",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path" : "pages/record/rule",
+			"style" : 
+			{
+				"navigationBarTitleText" : "排行奖励规则"
 			}
 		}
 		

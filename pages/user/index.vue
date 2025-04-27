@@ -171,9 +171,9 @@
 			},
 			handleAssetClick(type) {
 				const routeMap = {
-					points: '/pages/assets/points',
-					balance: '/pages/wallet/index',
-					invites: '/pages/invite/list'
+					points: '/pages/points/index',
+					balance: '/pages/redpacket/index',
+					invites: '/pages/invite/index'
 				}
 				uni.navigateTo({
 					url: routeMap[type]

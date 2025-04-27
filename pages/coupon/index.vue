@@ -61,7 +61,7 @@
 
     <!-- 兑换按钮 -->
     <view class="exchange-btn">
-      <button class="btn">兑换码兑换</button>
+      <button class="btn" @click="navigatorToCode()">兑换码兑换</button>
     </view>
   </view>
 </template>
@@ -76,7 +76,12 @@ export default {
   methods: {
     switchTab(index) {
       this.currentTab = index
-    }
+    },
+	navigatorToCode() {
+		uni.navigateTo({
+			url : '/pages/code/index'
+		})
+	}
   }
 }
 </script>
