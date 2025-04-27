@@ -149,8 +149,35 @@
 			</view>
 		</view>
 		<!-- 底部悬浮按钮 -->
+		<!-- 修改后的底部悬浮按钮部分 -->
 		<view class="footer-section">
-			<button class="action-btn" @click="handleDraw">立即抽盒({{ drawCount }}次)</button>
+		  <view class="button-container">
+		    <!-- 四个图片按钮 -->
+		    <image 
+		      src="/static/all-in.png" 
+		      class="button-image" 
+		      mode="aspectFit"
+		      @click="handleDraw(0)"
+		    />
+		    <image 
+		      src="/static/pick-one.png" 
+		      class="button-image" 
+		      mode="aspectFit"
+		      @click="handleDraw(1)" 
+		    />
+		    <image 
+		      src="/static/pick-three.png" 
+		      class="button-image" 
+		      mode="aspectFit"
+		      @click="handleDraw(3)"
+		    />
+		    <image 
+		      src="/static/pick-three.png" 
+		      class="button-image" 
+		      mode="aspectFit"
+		      @click="handleDraw(10)"
+		    />
+		  </view>
 		</view>
 	</view>
 </template>
@@ -333,7 +360,20 @@
 						icon: 'none'
 					})
 				}, 1000)
-			}
+			},
+			handleDraw(count) {
+			    const drawMap = {
+			      0: '全收',
+			      1: '欧一发',
+			      3: '欧三发',
+			      10: '欧十发'
+			    }
+			    uni.showToast({
+			      title: `触发${drawMap[count]}操作`,
+			      icon: 'none'
+			    })
+			    // 实际抽奖逻辑...
+			  }
 
 		}
 	}
@@ -597,21 +637,35 @@
 	}
 
 	/* 底部按钮 */
+	// 更新后的样式
 	.footer-section {
-		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		padding: 20rpx;
-		background-color: #fff;
-		box-shadow: 0 -4rpx 12rpx rgba(0, 0, 0, 0.1);
-
-		.action-btn {
-			background-color: #ff4c4c;
-			color: white;
-			border-radius: 50rpx;
-			font-size: 32rpx;
-		}
+	  position: fixed;
+	  bottom: 0;
+	  left: 0;
+	  right: 0;
+	  padding: 0rpx 20rpx;
+	  background: #ed80a0; // 粉色背景
+	  border-top-left-radius: 35rpx; // 左上圆角
+	  border-top-right-radius: 35rpx; // 右上圆角
+	  box-shadow: 0 -4rpx 12rpx rgba(0, 0, 0, 0.1);
+	  z-index: 99;
+	  height: 120rpx;
+	
+	  .button-container {
+	   
+	    .button-image {
+		  position: relative;
+		  top: -55rpx;
+	      width: 150rpx;
+		  height: 150rpx;
+	      margin: 0 15rpx;
+	      transition: transform 0.2s ease;
+	
+	      &:active {
+	        transform: scale(0.95);
+	      }
+	    }
+	  }
 	}
 
 	// 弹窗样式
