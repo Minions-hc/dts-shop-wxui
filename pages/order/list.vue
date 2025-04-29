@@ -2,7 +2,7 @@
 	<view class="container">
 		<!-- 订单状态选项卡 -->
 		<view class="order-tabs">
-			<view class="tab-item" :class="{ active: activeTab === 0 }" @click="activeTab = 0">全部2</view>
+			<view class="tab-item" :class="{ active: activeTab === 0 }" @click="activeTab = 0">全部</view>
 			<view class="tab-item" :class="{ active: activeTab === 1 }" @click="activeTab = 1">待发货</view>
 			<view class="tab-item" :class="{ active: activeTab === 2 }" @click="activeTab = 2">待收货</view>
 			<view class="tab-item" :class="{ active: activeTab === 3 }" @click="activeTab = 3">已完成</view>
@@ -11,19 +11,19 @@
 		<!-- 订单列表 -->
 		<scroll-view scroll-y class="order-list">
 			<!-- 订单项1 -->
-			<view class="order-item">
+			<view class="order-item" v-for="item in orderList" :key="item.orderId">
 				<!-- 新增状态标签 -->
-				<view class="order-status">已完成</view>
+				<view class="order-status">{{getOrderStatus(item)}}</view>
 				<!-- 上部：时间 -->
 				<view class="order-header">
-					<text class="order-time">2025-04-19 22:52</text>
+					<text class="order-time">{{item.createTime}}</text>
 				</view>
 
 				<!-- 中部：商品信息 -->
 				<view class="order-middle" @click="navigatorToDetail()">
-					<image class="product-img" src="/static/product1.jpg" />
+					<image class="product-img" :src="item.image" lazy-load/>
 					<view class="product-info">
-						<text class="product-name">MOKOKO-甜心乐园(5)</text>
+						<text class="product-name">ssss</text>
 						<view class="discount-info">
 							<text>可抵扣0勋章</text>
 						</view>
@@ -36,40 +36,8 @@
 				<view class="order-footer">
 					<view class="payment-section">
 						<text>实付金额：</text>
-						<text class="payment-amount">￥3.00</text>
+						<text class="payment-amount">￥{{item.paymentAmount}}</text>
 						<button class="detail-btn" @click="navigatorToDetail()">查看详情</button>
-					</view>
-				</view>
-			</view>
-
-			<!-- 订单项2 -->
-			<view class="order-item">
-				<!-- 新增状态标签 -->
-				<view class="order-status">已完成</view>
-				<!-- 上部：时间 -->
-				<view class="order-header">
-					<text class="order-time">2025-04-17 16:38</text>
-				</view>
-
-				<!-- 中部：商品信息 -->
-				<view class="order-middle" @click="navigatorToDetail()">
-					<image class="product-img" src="/static/product1.jpg" />
-					<view class="product-info">
-						<text class="product-name">【免费抽奖】Mega Labubu-托尼托尼-乔巴400%抽奖活动</text>
-						<view class="discount-info">
-							<text>可抵扣0勋章</text>
-						</view>
-					</view>
-					<!-- 数量显示 -->
-					<text class="product-quantity">×1</text>
-				</view>
-
-				<!-- 下部：支付和操作 -->
-				<view class="order-footer">
-					<view class="payment-section">
-						<text>实付金额：</text>
-						<text class="payment-amount">￥3.00</text>
-						<button class="detail-btn"  @click="navigatorToDetail()">查看详情</button>
 					</view>
 				</view>
 			</view>
@@ -78,17 +46,46 @@
 </template>
 
 <script>
+	import {
+		get
+	} from "@/utils/rest-util.js"
 	export default {
+		onLoad(param){
+			const {type,userId} = param;
+			console.log(type)
+			this.activeTab = Number(type) || 0;
+			this.initData(userId);
+		},
 		data() {
 			return {
-				activeTab: 0 // 当前选中tab
+				activeTab: 0, // 当前选中tab
+				orderList:[]
 			}
+		},
+		computed:{
 		},
 		methods: {
 			navigatorToDetail() {
 				uni.navigateTo({
 					url : '/pages/order/detail'
 				})
+			},
+			initData(userId){
+				// const url = this.activeTab == 0 ? '' : '&orderStatusStr=' + this.
+				get('wx/order/queryOrderList?userId='+userId).then(json=>{
+					const result = json.data.data;
+					this.orderList = result.items || [];
+				})
+			},
+			getOrderStatus(item){
+				let str = '待发货';
+				if(item.orderStatus === 'COMPLETED'){
+					str = '已完成'
+				}
+				if(item.orderStatus === 'SHIPPED'){
+					str = '已发货'
+				}
+				return str;
 			}
 		}
 	}

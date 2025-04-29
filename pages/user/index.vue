@@ -3,7 +3,7 @@
 		<!-- 用户信息区域 -->
 		<view class="user-section">
 			<view class="user-info">
-				<image src="/static/avatar.png" class="avatar" mode="aspectFit" />
+				<image src="/static/avatar.png" class="avatar" mode="aspectFit" lazy-load/>
 				<text class="username">我的名字</text>
 			</view>
 			<!-- 新增资产信息区域 -->
@@ -65,8 +65,16 @@
 </template>
 
 <script>
+	import {
+		get
+	} from "@/utils/rest-util.js"
 	export default {
+		onLoad(param) {
+			this.getUserCurrentPoints('U10001');
+			this.getInvitationRecords('U10001')
+		},
 		data() {
+			
 			return {
 				activeOrderTab: 0,
 				orderStatus: [{
@@ -136,19 +144,13 @@
 				],
 				userAssets: [{
 						type: 'points',
-						value: 10,
+						value: 0,
 						unit: '积分',
 						label: '积分'
 					},
 					{
-						type: 'balance',
-						value: 0,
-						unit: '红包余额',
-						label: '红包余额'
-					},
-					{
 						type: 'invites',
-						value: 2,
+						value: 0,
 						unit: '邀请记录',
 						label: '邀请记录'
 					}
@@ -157,28 +159,57 @@
 		},
 		methods: {
 			navigateTo(path) {
+				const userId = 'U10001'
 				uni.navigateTo({
-					url: path
+					url: path + '?userId=' + userId
 				})
 			},
 			switchOrderTab(index) {
 				this.activeOrderTab = index
+				const userId = 'U10001'
 				// 实际应跳转对应订单列表页
-				this.navigateTo(`/pages/order/list?type=${index}`)
+				this.navigateTo(`/pages/order/list?type=${index}&userId=${userId}`)
 			},
 			handleService(item) {
 				this.navigateTo(item.path)
 			},
 			handleAssetClick(type) {
+				const userId = 'U10001'
 				const routeMap = {
-					points: '/pages/points/index',
-					balance: '/pages/redpacket/index',
-					invites: '/pages/invite/index'
+					points: '/pages/points/index?userId='+userId,
+					invites: '/pages/invite/index?userId='+userId
 				}
 				uni.navigateTo({
 					url: routeMap[type]
 				})
 			},
+			getUserCurrentPoints(userId){
+				get('wx/points/getUserCurrentPoints?userId='+userId).then(json => {
+					const result = json.data.data;
+					const currentPoints = result.currentPoints || 0;
+					const userAssets = this.userAssets
+					userAssets.forEach(item=>{
+						if(item.type === 'point'){
+							item.value = currentPoints
+						}
+					})
+					this.userAssets = userAssets;
+				})
+			},
+			getInvitationRecords(userId){
+				get('wx/invitation/getInvitationRecords?userId='+userId).then(json => {
+					const result = json.data.data;
+					const invites = result.items.length || 0
+					const userAssets = this.userAssets
+					userAssets.forEach(item=>{
+						if(item.type === 'invites'){
+							item.value = invites
+						}
+					})
+					this.userAssets = userAssets;
+					
+				})
+			}
 		}
 	}
 </script>

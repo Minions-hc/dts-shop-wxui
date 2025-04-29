@@ -3,8 +3,8 @@
 		<!-- 顶部菜单 -->
 		<view class="top-menu">
 			<view v-for="(item, index) in menus" :key="index"
-				:class="['menu-item', activeMenu === index ? 'active' : '']" @click="changeMenu(index)">
-				{{ item }}
+				:class="['menu-item', activeMenu === index ? 'active' : '']" @click="changeMenu(index,item.status)">
+				{{ item.name }}
 				<span v-if="activeMenu === index"></span>
 			</view>
 		</view>
@@ -12,7 +12,7 @@
 		<!-- 筛选按钮 -->
 		<view class="filter-btns">
 			<view v-for="(btn, index) in filters" :key="index"
-				:class="['filter-btn', activeFilter === index ? 'active' : '']" @click="changeFilter(index)">
+				:class="['filter-btn', activeFilter === index ? 'active' : '']" @click="changeFilter(btn,index)">
 				{{ btn }}
 			</view>
 		</view>
@@ -20,7 +20,7 @@
 		<!-- 保险箱入口 -->
     <view class="safe-box-btn" @click="navigateToSafeBox">
 	  <uni-icons type="locked" size="20"></uni-icons>
-      <text class="count">{{ safeBoxCount }}</text>
+      <text class="count">{{ lockProductsLength }}</text>
     </view>
 
 		<!-- 发货提示 -->
@@ -28,21 +28,20 @@
 
 		<!-- 产品列表 -->
 		<scroll-view class="product-list" scroll-y>
-			<view v-for="(item, index) in filteredProducts" :key="index" class="product-info">
+			<view v-for="(item, index) in filteredProducts" :key="item.productId" class="product-info">
 				<view class="product-item" @tap="toDetailPage(item)">
-					<image class="product-img" :src="item.image" />
+					<image class="product-img" :src="item.productImage" lazy-load/>
 
 					<view class="product-info">
 						<view class="top-section">
-							<text class="name">{{ item.name }}</text>
-							<text class="quantity">x{{ item.quantity }}</text>
+							<text class="name">{{ item.productName }}</text>
 						</view>
 						<view class="meta-info">
-							<text class="source">{{ item.source }}</text>
-							<text class="grade">{{ item.grade }}</text>
+							<text class="source">{{ item.activityType }}</text>
+							<text class="grade">{{ item.productLevel }}</text>
 						</view>
 						<view class="medal-info">
-							<text>可抵扣{{ item.medal }}勋章</text>
+							<text>可抵扣{{ item.productBadge }}勋章</text>
 							<view class="status-btn">{{ showStatusWord(item) }}</view>
 						</view>
 
@@ -57,10 +56,10 @@
 						</checkbox-group>
 					</view>
 					<view class="right-bottom-wrapper" v-if="!showShipStatus ||  activeMenu !== 0">
-						<view class="lock-icon" v-if="item.status === 1" @tap="lockProduct(item)"></view>
-						<view class="donate-btn" v-if="item.status === 2">查看订单</view>
-						<view class="donate-btn pink-btn" v-if="item.status === 1">赠送</view>
-						<view class="donate-btn pink-btn" v-if="item.status === 3" @tap="unLockProduct(item)">解锁</view>
+						<view class="lock-icon" v-if="item.status === 'pending'" @tap="lockProduct(item)"></view>
+						<view class="donate-btn" v-if="item.status === 'shipped'">查看订单</view>
+						<view class="donate-btn pink-btn" v-if="item.status === 'pedding'">赠送</view>
+						<view class="donate-btn pink-btn" v-if="item.status === 'locked'" @tap="unLockProduct(item)">解锁</view>
 					</view>
 					
 				</view>
@@ -87,87 +86,61 @@
 </template>
 
 <script>
+	import {
+		get,
+		post
+	} from "@/utils/rest-util.js"
 	export default {
 		onLoad() {
-			this.products = [{
-				id: 1,
-				image: '/static/serice2.jpg',
-				name: '【自制款】拉布布帆布袋',
-				quantity: 1,
-				source: '一番赏',
-				grade: 'D赏',
-				medal: 4,
-				status: 1, //'待处理',
-				time: '01-16 02:47',
-				checked: false
-			}]
-			this.initData()
+			this.loadPageData('pending');
+			this.loadLockData()
 		},
 		data() {
 			return {
-				menus: ['待处理', '已提货', '全部'],
+				menus: [{name:'待处理',status:'pending'},{name:'已提货',status:'shipped'},{name:'全部',status:'all'}],
 				filters: ['全部', 'A赏', 'B赏', '终赏', '其他'],
 				activeMenu: 0,
 				activeFilter: 0,
 				showShipStatus: false,
-				products: [],
-				filteredProducts: []
+				allProduct: [],
+				filteredProducts: [],
+				lockProductsLength: 0
 			}
 		},
 		computed: {
 			selectedCount() {
 				return this.filteredProducts.filter(item => item.checked).length
 			},
-			safeBoxCount(){
-				return this.products.filter(item => item.status === 3).length
-			}
 			
 		},
 		methods: {
 			showStatusWord(item) {
 				let str = '待处理';
-				if (item.status === 2) {
+				if (item.status === 'shipped') {
 					str = '已提货';
 				}
-				if (item.status === 3) {
+				if (item.status === 'locked') {
 					str = '锁定中';
 				}
 				return str
 			},
-			initData() {
-				this.filteredProducts = this.products.filter(item => {
-					const menuMatch = this.activeMenu === 0 ? item.status === 1 :
-						this.activeMenu === 1 ? item.status === 2 : true
-
-					const filterMatch = this.activeFilter === 0 ? true :
-						item.grade === this.filters[this.activeFilter]
-
-					return menuMatch && filterMatch
-				})
+			fiterProduct(level) {
+				if(level === '其他'){
+					this.filteredProducts =  this.allProduct.filter(item=> !['A赏','B赏','终赏'].some(obj=>obj === item.productLevel))
+					return
+				}
+				if(level === 'all'){
+					this.filteredProducts = this.allProduct;
+				} else {
+					this.filteredProducts = this.allProduct.filter(item=>item.productLevel == level)
+				}
+				
 			},
 			lockProduct(item){
-				this.filteredProducts = this.filteredProducts.map(obj => {
-					if(obj.id === item.id){
-						obj.status = 3
-					}
-					return obj
-				})
-				this.products = this.products.map(obj => {
-					if(obj.id === item.id){
-						obj.status = 3
-					}
-					return obj
-				})
-				this.initData()
+				
 			},
 			unLockProduct(item){
-				this.filteredProducts = this.filteredProducts.map(obj => {
-					if(obj.id === item.id){
-						obj.status = 1
-					}
-					return obj
-				})
-				this.initData()
+				
 			},
 			handleCancel() {
 				this.filteredProducts = this.filteredProducts.map(item => {
@@ -187,12 +160,14 @@
 				const flag = detail.value[0] || false;
 				item.checked = flag;
 			},
-			changeMenu(index) {
-				this.activeMenu = index
-				this.initData()
+			changeMenu(index,status) {
+				this.activeMenu = index;
+				this.loadPageData(status)
 			},
-			changeFilter(index) {
-				this.activeFilter = index
+			changeFilter(item,index) {
+				this.activeFilter = index;
+				const type = index === 0 ? 'all' : item;
+				this.fiterProduct(type)
 			},
 			navigateToSafeBox() {
 				uni.navigateTo({
@@ -202,12 +177,30 @@
 			handleShip() {
 				const selectCount = this.filteredProducts.filter(item => item.checked)
 				this.showShipStatus = !this.showShipStatus;
-				console.log(this.products)
 				// 处理发货逻辑
 			},
 			toDetailPage(item){
 				uni.navigateTo({
 					url: '/pages/box/detail'
+				})
+			},
+			loadPageData(status){
+				get('wx/boxproduct/getProductsByUser?userId=U10001&status='+status).then(json => {
+					const result = json.data.data;
+					this.allProduct = result.allProducts.map(item=>{
+						return {
+							...item,
+							checked:false
+						}
+					});
+					this.fiterProduct('all')
+				})
+			},
+			loadLockData(){
+				get('wx/boxproduct/getProductsByUser?userId=U10001&status=locked').then(json => {
+					const result = json.data.data;
+					this.lockProductsLength = result.allProducts?.length || 0;
+					console.log(this.lockProductsLength)
 				})
 			}
 		}
@@ -329,24 +322,23 @@
 				height: 200rpx;
 				border-radius: 12rpx;
 				margin-right: 20rpx;
+				flex-shrink: 0;
 			}
 
 			.product-info {
-				flex: 1;
+				flex-shrink: 0;
 
 				.top-section {
-					display: flex;
-					justify-content: space-between;
+					font-size: 32rpx;
+					width: 460rpx;
+					font-weight: bold;
+					white-space: nowrap; /* 禁止文本换行 */
+					overflow: hidden; /* 隐藏超出范围的内容 */
+					text-overflow: ellipsis; /* 使用省略号 */
+					display: -webkit-box; /* 将对象作为弹性伸缩盒子模型显示 */
+					-webkit-box-orient: vertical; /* 垂直排列子元素 */
+					-webkit-line-clamp: 2; /* 限制显示的行数为两行 */
 					margin-bottom: 15rpx;
-
-					.name {
-						font-size: 32rpx;
-						font-weight: bold;
-					}
-
-					.quantity {
-						color: #666;
-					}
 				}
 
 				.meta-info {

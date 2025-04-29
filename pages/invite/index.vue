@@ -22,32 +22,20 @@
     <scroll-view scroll-y class="content">
       <!-- 邀请记录列表 -->
       <view v-if="currentTab === 0" class="record-list">
-        <view class="record-item">
-			<image 
-			class="user-avatar" 
-			src="/static/points-bg.png" 
-			mode="aspectFill"
-		  />
-		  <view class="content-wrapper">
-          <view class="code-time">
-            <text class="invite-code">JFUDVTlv</text>
-            <text class="time">2025-04-09 23:25:30</text>
-          </view>
+		  <view class="record-item" v-for="item in recodeItems" :key="item.userId">
+		  	<image
+		  				class="user-avatar" 
+		  				:src="item.avatar" 
+		  				mode="aspectFill"
+						lazy-load
+		  	/>
+		  	<view class="content-wrapper">
+		  	<view class="code-time">
+		  	  <text class="invite-code">{{item.inviteCode}}</text>
+		  	  <text class="time">{{item.createTime}}</text>
+		  	</view>
+		  	</view>
 		  </view>
-        </view>
-
-        <view class="record-item">
-			<image class="user-avatar" 
-			src="/static/points-bg.png" 
-			mode="aspectFill"
-			/>
-			 <view class="content-wrapper">
-			  <view class="code-time">
-				<text class="invite-code">qZulbfju</text>
-				<text class="time">2025-03-04 17:03:29</text>
-			  </view>
-		  </view>
-        </view>
       </view>
 
       <!-- 分销订单列表（结构相同） -->
@@ -59,16 +47,29 @@
 </template>
 
 <script>
+	import {get} from "@/utils/rest-util.js"
 export default {
+	
+	onLoad(param){
+		const {userId} = param;
+		this.loadData(userId)
+	},
   data() {
     return {
-      currentTab: 0
+      currentTab: 0,
+	  recodeItems: []
     }
   },
   methods: {
     switchTab(index) {
       this.currentTab = index
-    }
+    },
+	loadData(userId){
+		get('wx/invitation/getInvitationRecords?userId='+userId).then(json=>{
+			const result = json.data.data;
+			this.recodeItems = result.items || [];
+		})
+	}
   }
 }
 </script>

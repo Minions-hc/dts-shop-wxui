@@ -19,10 +19,10 @@
       >
         <view 
           v-for="(item, index) in categories"
-          :key="index"
+          :key="item.id"
           class="category-item"
           :class="{ active: activeCategory === index }"
-          @click="switchCategory(index)"
+          @click="switchCategory(item,index)"
         >
           {{ item.name }}
 		  <image v-if="item.isHot" class="hot-serice" src="/static/hot.gif"></image>
@@ -40,18 +40,18 @@
         <view class="product-grid">
           <view 
             v-for="(product, pIndex) in currentProducts"
-            :key="pIndex"
+            :key="product.seriesId+activeCategory"
             class="product-card"
 			@tap="toBindBoxPage(product)"
           >
             <image
-              :src="product.image"
+              :src="product.seriesImage"
               mode="aspectFill"
               class="product-image"
               lazy-load
             />
             <view class="product-info">
-              <text class="product-title">{{ product.title }}</text>
+              <text class="product-title">{{ product.seriesName }}</text>
               <text class="product-price">¥{{ product.price }}</text>
             </view>
           </view>
@@ -62,40 +62,43 @@
 </template>
 
 <script>
+	import {
+		get,
+		post
+	} from "@/utils/rest-util.js"
 export default {
+	onLoad(){
+		this.loadAllData()
+		this.loadCateData();
+		this.queryPopularNew();
+	},
   data() {
     return {
       activeCategory: 0,
       categories: [
-		  {name: '人气新品', type: 4,isNew: true},
-		  {name: '爆款推荐', type: 5,isHot: true},
-        { name: 'LABUBU系列', type: 1 },
-        { name: 'Molly系列', type: 2 },
-        { name: 'Skullpanda', type: 3 }
+		  {name: '人气新品', id: -1,isNew: true},
+		  {name: '爆款推荐', id: -2,isHot: true},
       ],
-      products: {
-        1: [
-          { title: 'LABUBU①', price: 299, image: '/static/serice2.jpg',type:'yifanshang' },
-          { title: 'LABUBU②', price: 329, image: '/static/serice3.jpg',type:'yifanshang' },
-          // 更多产品...
-        ],
-        2: [
-          { title: '美林甲辰', price: 399, image: '/static/serice1.jpg',type:'caileishang' },
-          { title: '莫奈-睡莲', price: 459, image: '/static/serice2.jpg',type:'caileishang' },
-          // 更多产品...
-        ]
-      }
+	  currentProducts: [],
+	  allItems: []
     }
   },
   computed: {
-    currentProducts() {
-      const type = this.categories[this.activeCategory].type
-      return this.products[type] || []
-    }
+    
   },
   methods: {
-    switchCategory(index) {
+    switchCategory(item,index) {
+		console.log(item)
       this.activeCategory = index
+	  if(item.isHot) {
+		  this.queryPopularNew();
+			return;
+	  }
+	  if(item.isNew){
+		  this.queryHotRecommend();
+		  return;
+	  }
+	  this.currentProducts = this.allItems.filter(obj=>obj.categoryId === item.id)
     },
 	toBindBoxPage(item){
 		if(item.type == 'caileishang'){
@@ -106,6 +109,45 @@ export default {
 		}
 		uni.navigateTo({
 			url:'/pages/blindBox/yifanshang'
+		})
+	},
+	queryPopularNew(){
+		get('wx/home/getWxProductSeries?isHotRecommend=1').then(json => {
+			const result = json.data?.data;
+			this.currentProducts = result.items || []
+			
+		})
+	},
+	queryHotRecommend(){
+		get('wx/home/getWxProductSeries?isPopularNew=1').then(json => {
+			const result = json.data?.data;
+			this.currentProducts = result.items || []
+			
+		})
+	},
+	loadCateData(){
+		get('wx/home/getWxCategoryNames').then(json => {
+			const result = json.data?.data;
+			const items = result.items;
+			const categories = this.categories
+			items.forEach(item=>{
+				categories.push({
+					name: item.categoryName,
+					id: item.categoryId,
+					isHot: false,
+					isNew: false
+				})
+			})
+			console.log(categories)
+			this.categories = categories;
+			
+		})
+	},
+	loadAllData(){
+		get('wx/home/getWxProductSeries').then(json => {
+			const result = json.data?.data;
+			this.allItems = result.items || []
+			
 		})
 	}
   }

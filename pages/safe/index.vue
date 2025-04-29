@@ -8,15 +8,14 @@
 
 					<view class="product-info">
 						<view class="top-section">
-							<text class="name">{{ item.name }}</text>
-							<text class="quantity">x{{ item.quantity }}</text>
+							<text class="name">{{ item.productName }}</text>
 						</view>
 						<view class="meta-info">
-							<text class="source">{{ item.source }}</text>
-							<text class="grade">{{ item.grade }}</text>
+							<text class="source">{{ item.activityType }}</text>
+							<text class="grade">{{ item.productLevel }}</text>
 						</view>
 						<view class="medal-info">
-							<text>可抵扣{{ item.medal }}勋章</text>
+							<text>可抵扣{{ item.productBadge }}勋章</text>
 							<view class="status-btn">{{ showStatusWord(item) }}</view>
 						</view>
 
@@ -34,6 +33,10 @@
 </template>
 
 <script>
+	import {
+		get,
+		post
+	} from "@/utils/rest-util.js"
 	export default {
 		data() {
 			return {
@@ -45,18 +48,10 @@
 		},
 		methods: {
 			initData() {
-				this.lockProducts = [{
-					id: 1,
-					image: '/static/serice2.jpg',
-					name: '【自制款】拉布布帆布袋',
-					quantity: 1,
-					source: '一番赏',
-					grade: 'D赏',
-					medal: 4,
-					status: 1, //'待处理',
-					time: '01-16 02:47',
-					checked: false
-				}]
+				get('wx/boxproduct/getProductsByUser?userId=U10001&status=locked').then(json => {
+					const result = json.data.data;
+					this.lockProducts = result.allProducts || [];
+				})
 			},
 			unLockProduct(item) {
 
@@ -97,24 +92,26 @@
 					height: 200rpx;
 					border-radius: 12rpx;
 					margin-right: 20rpx;
+					flex-shrink: 0;
 				}
 
 				.product-info {
-					flex: 1;
+					width: calc(100% - 220rpx);
+					flex-shrink: 0;
 
 					.top-section {
-						display: flex;
 						justify-content: space-between;
 						margin-bottom: 15rpx;
+						font-size: 32rpx;
+						font-weight: bold;
+						width: 100%;
+						white-space: nowrap; /* 禁止文本换行 */
+						overflow: hidden; /* 隐藏超出范围的内容 */
+						text-overflow: ellipsis; /* 使用省略号 */
+						display: -webkit-box; /* 将对象作为弹性伸缩盒子模型显示 */
+						-webkit-box-orient: vertical; /* 垂直排列子元素 */
+						-webkit-line-clamp: 2; /* 限制显示的行数为两行 */
 
-						.name {
-							font-size: 32rpx;
-							font-weight: bold;
-						}
-
-						.quantity {
-							color: #666;
-						}
 					}
 
 					.meta-info {

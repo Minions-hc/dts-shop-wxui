@@ -1,4 +1,4 @@
-const BaseUrl = '';
+const BaseUrl = 'http://huangcheng.chaoshangshiduo.com/';
 const OssUrl =  '';
 const WebUrl = '';
 const Bucket = '';
