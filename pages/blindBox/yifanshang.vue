@@ -172,7 +172,7 @@
 		      @click="handleDraw(3)"
 		    />
 		    <image 
-		      src="/static/pick-three.png" 
+		      src="/static/pick-ten.png" 
 		      class="button-image" 
 		      mode="aspectFit"
 		      @click="handleDraw(10)"
