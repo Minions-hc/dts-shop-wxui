@@ -79,6 +79,10 @@
 					<view class="current-lottery">
 						<view class="lottery-title">当期中奖
 							<span class="active-class"></span>
+							<view v-if="status === 1" class="history-btn" @click="navToHistory">
+								<text>中奖名单</text>
+								<uni-icons type="arrowright" size="14" color="#666"></uni-icons>
+							</view>
 						</view>
 						<view class="lottery-time">
 							<view class="time">{{ currentLottery.time }}后抽取<text class="total-person">
@@ -134,6 +138,7 @@
 				imgHeight: '35vh', // 图片区域高度
 				contentHeight: 'calc(65vh - 100rpx)', // 计算内容区域高度
 				contentOffset: 0,
+				status: 1,
 				participants: {
 					total: 1701,
 					list: [{
@@ -208,6 +213,11 @@
 			navToHistory() {
 				uni.navigateTo({
 					url: '/pages/lottery/history'
+				})
+			},
+			handleMyCodes() {
+				uni.navigateTo({
+					url: '/pages/lucky/luckyCode'
 				})
 			},
 			scrollToRules() {
@@ -634,6 +644,19 @@
 				top: -10rpx;
 				left: 4rpx;
 				z-index: 2;
+			}
+			
+			.history-btn {
+				position: absolute;
+				right: 0;
+				display: inline-block;
+				align-items: center;
+				color: #666;
+			
+				text {
+					font-size: 26rpx;
+					margin-right: 8rpx;
+				}
 			}
 		}
 

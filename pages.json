@@ -185,6 +185,20 @@
 			{
 				"navigationBarTitleText" : "排行奖励规则"
 			}
+		},
+		{
+			"path" : "pages/lottery/history",
+			"style" : 
+			{
+				"navigationBarTitleText" : "参与记录"
+			}
+		},
+		{
+			"path" : "pages/lucky/luckyCode",
+			"style" : 
+			{
+				"navigationBarTitleText" : "我的抽奖码"
+			}
 		}
 		
 	],
