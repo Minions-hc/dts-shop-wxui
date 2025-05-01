@@ -4,33 +4,21 @@
     <view class="tab-bar">
       <view 
         class="tab-item"
-        :class="{ active: currentTab === 0 }"
-        @tap="switchTab(0)"
+        :class="{ active: currentTab === item.id }"
+		v-for="item in currentTabs" 
+		:key="item.id"
+        @tap="switchTab(item.id)"
       >
-        未使用
-      </view>
-      <view 
-        class="tab-item"
-        :class="{ active: currentTab === 1 }"
-        @tap="switchTab(1)"
-      >
-        已使用
-      </view>
-      <view 
-        class="tab-item"
-        :class="{ active: currentTab === 2 }"
-        @tap="switchTab(2)"
-      >
-        已过期
+        {{item.name}}
       </view>
     </view>
 
     <!-- 优惠券列表 -->
     <scroll-view scroll-y class="coupon-list">
-      <!-- 未使用优惠券 -->
-      <view v-if="currentTab === 0" class="coupon-item">
+      <!-- 优惠券 -->
+      <view class="coupon-item" v-for="item in couponList" :key="item.couponId" :class="{used:currentTab==='useedCoupons',expired:currentTab==='expiredCoupons'}">
         <view class="left-panel">
-          <text class="amount">20</text>
+          <text class="amount">{{item.couponAmount}}</text>
           <text class="type">优惠券</text>
         </view>
         <view class="right-panel">
@@ -40,22 +28,12 @@
               <view class="tag">通用</view>
             </view>
             <view class="detail-group">
-              <text class="expiry">3天后过期</text>
-              <text class="condition">满59元可用</text>
+       <!--       <text class="expiry">3天后过期</text>
+              <text class="condition">满59元可用</text> -->
             </view>
           </view>
-          <button class="use-btn">立即使用</button>
+          <button class="use-btn" @tap="useCoupon(item)">立即使用</button>
         </view>
-      </view>
-
-      <!-- 已使用状态 -->
-      <view v-if="currentTab === 1" class="coupon-item used">
-        <!-- 结构相同，样式不同 -->
-      </view>
-
-      <!-- 已过期状态 -->
-      <view v-if="currentTab === 2" class="coupon-item expired">
-        <!-- 结构相同，样式不同 -->
       </view>
     </scroll-view>
 
@@ -67,11 +45,28 @@
 </template>
 
 <script>
+	import {get} from "@/utils/rest-util.js"
 export default {
+	onLoad(param) {
+		const {userId} = param;
+		this.userId = userId
+		this.queryCouPonList()
+	},
   data() {
     return {
-      currentTab: 0
+      currentTab: 'unUseedCoupons',
+	  userId:'',
+	  currentTabs :[{id:'unUseedCoupons',name: '未使用'},{id:'useedCoupons',name: '已使用'},{id:'expiredCoupons',name: '已过期'}],
+	  unUseedCoupons: [], // 未使用
+	  useedCoupons: [], // 已使用
+	  expiredCoupons: [], //已过期
+	  allCouponList: {}
     }
+  },
+  computed:{
+	couponList(){
+		return this.allCouponList[this.currentTab]
+	}  
   },
   methods: {
     switchTab(index) {
@@ -79,8 +74,28 @@ export default {
     },
 	navigatorToCode() {
 		uni.navigateTo({
-			url : '/pages/code/index'
+			url : '/pages/code/index?userId='+ this.userId
 		})
+	},
+	queryCouPonList(){
+		get('wx/coupon/mylist?userId='+this.userId).then(json=>{
+			const result = json.data.data
+			this.unUseedCoupons = result.unUseedCoupons || [];
+			this.useedCoupons = result.useedCoupons || [];
+			this.expiredCoupons =  result.expiredCoupons || [];
+			this.allCouponList = {
+				unUseedCoupons: this.unUseedCoupons,
+				useedCoupons: this.useedCoupons,
+				expiredCoupons: this.expiredCoupons
+			}
+		})
+	},
+	useCoupon(item){
+		if(item.status == 1){
+			uni.navigateTo({
+				url : '/pages/category/index'
+			})
+		}
 	}
   }
 }

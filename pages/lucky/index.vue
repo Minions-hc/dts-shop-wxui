@@ -2,7 +2,7 @@
 	<view class="container">
 		<!-- 顶部图片区域 -->
 		<view class="top-section" :style="{height: imgHeight}">
-			<image src="/static/serice2.jpg" mode="aspectFill" class="product-image" />
+			<image :src="imageList[0]" mode="aspectFill" class="product-image" lazy-load/>
 			!-- 悬浮倒计时模块 -->
 			<view class="floating-countdown">
 				<view class="countdown-back">
@@ -20,7 +20,7 @@
 
 			<!-- 活动主信息 -->
 			<view class="main-info">
-				<view class="activity-title">【免费抽奖】LABUBU·情人节原色黑白塘胶公仔</view>
+				<view class="activity-title">{{activeInfo.activityName}}</view>
 				<view class="price">￥0</view>
 			</view>
 
@@ -31,7 +31,6 @@
 						<span class="active-class"></span>
 					</view>
 					<view class="rule-item" v-for="(rule, index) in rules" :key="index">
-						<text class="rule-index">{{ index + 1 }}、</text>
 						<text class="rule-content">{{ rule }}</text>
 					</view>
 				</view>
@@ -42,19 +41,19 @@
 						<span class="active-class"></span>
 					</view>
 
-					<view class="prize-item">
-						<text class="prize-name">CatchMeIfYouLikeMe情人节黑白（已拆验鉴别）</text>
-						<text class="prize-quantity">抽份/期</text>
+					<view class="prize-item" v-for="(item,index) in prizeList" :key="item.prizeId">
+						<view class="prize-name">{{index + 1}}、{{item.productName}}</view>
+						<view class="prize-quantity">抽{{item.productQuantity}}份/期</view>
 					</view>
 				</view>
 
 				<!-- 中间内容区域 -->
-				<scroll-view scroll-y class="content-section">
+				<scroll-view scroll-y class="content-section" >
 					<!-- 参与信息模块 -->
-					<view class="participation-section">
+					<view class="participation-section" >
 						<view class="participation-header">
-							<text class="participants-count">当期参与{{ participants.total }}人</text>
-							<view class="history-btn" @click="navToHistory">
+							<text class="participants-count">当期参与{{ participants.length }}人</text>
+							<view class="history-btn" @click="navToHistory(1)">
 								<text>往期记录</text>
 								<uni-icons type="arrowright" size="14" color="#666"></uni-icons>
 							</view>
@@ -67,10 +66,10 @@
 								:key="index">
 								<image :src="participant.avatar || '/static/default-avatar.png'" mode="aspectFill"
 									class="participant-avatar" lazy-load />
-								<view class="participation-badge" v-if="participant.participations > 0">
-									{{ participant.participations }}
+								<view class="participation-badge" v-if="participant.codeCount > 0">
+									{{ participant.codeCount }}
 								</view>
-								<text class="participant-name">{{ participant.name || participant.id }}</text>
+								<text class="participant-name">{{ participant.userId }}</text>
 							</view>
 						</scroll-view>
 					</view>
@@ -79,20 +78,20 @@
 					<view class="current-lottery">
 						<view class="lottery-title">当期中奖
 							<span class="active-class"></span>
-							<view v-if="status === 1" class="history-btn" @click="navToHistory">
+							<view v-if="status === 1" class="history-btn" @click="navToHistory(0)">
 								<text>中奖名单</text>
 								<uni-icons type="arrowright" size="14" color="#666"></uni-icons>
 							</view>
 						</view>
 						<view class="lottery-time">
-							<view class="time">{{ currentLottery.time }}后抽取<text class="total-person">
-									{{ currentLottery.total }}</text>位幸运用户</view>
+							<view class="time">{{ activeInfo.drawDate }}后抽取
+							<text class="total-person">{{ luckyUser }}</text>位幸运用户</view>
 						</view>
 					</view>
 					<image src="/static/active-detail.png" mode="scaleToFill" class="detail-image" />
 					<!-- 活动详情 -->
 					<view class="activity-detail-image" v-for="item in imageList">
-						<image :src="item.image" mode="scaleToFill" class="iamge-class" />
+						<image :src="item" mode="scaleToFill" class="iamge-class" lazy-load/>
 					</view>
 				</scroll-view>
 			</view>
@@ -122,72 +121,63 @@
 		      <text class="main-btn-text">转发助力增加抽奖码</text>
 		    </view>
 		  </view>
+		  <uni-popup ref="userCodespopup" background-color="#fff" @change="changePopup" type="bottom"  border-radius="10px 10px 0 0" >
+		  	<view class="userCode-popup-content" :class="{ 'popup-height': type === 'left' || type === 'right' }">
+				<!-- 主体内容 -->
+				    <view class="main-container">
+				      <!-- 第一部分：抽奖码数量 -->
+				      <view class="code-section">
+				        <view class="code-number">我的抽奖码<text class="active-class">{{userCodesList.length}}个</text></view>
+				      </view>
+				
+				      <!-- 第二部分：参与按钮 -->
+				      <view class="button-section" :class="{disabledBtn:activeInfo.active}">
+				        <view 
+				          class="participate-btn"
+				          @click="handleParticipate"
+						  v-if="userCodesList.length == 0"
+				        >
+				          参与抽奖
+				        </view>
+						<view class="participate-btn" v-else @click="handleShareCode">
+							转发助力
+						</view>
+				      </view>
+				
+				      <!-- 第三部分：提示文字 -->
+				      <view class="tip-section">
+				        <text class="tip-text" v-if="activeInfo.active">运气不够未中奖不要气馁,去下一个活动试试吧 ~</text>
+				      </view>
+				    </view>	 
+			</view>
+		</uni-popup>
 	</view>
 </template>
 
 <script>
+	import {
+		get,
+		post
+	} from "@/utils/rest-util.js"
 	export default {
+		onLoad(){
+			this.userId = 'U10001'
+			this.activityInfo()
+		},
 		data() {
 			return {
 				countdownTime: '20天05时58分44秒',
-				rules: [
-					'免费抽取，幸运拥有！',
-					'CatchMeIfYouLikeMe情人节黑白公仔！',
-					'中奖者请在7日内联系客服，逾期将视为放弃。'
-				],
+				rules: [],
 				imgHeight: '35vh', // 图片区域高度
 				contentHeight: 'calc(65vh - 100rpx)', // 计算内容区域高度
 				contentOffset: 0,
 				status: 1,
-				participants: {
-					total: 1701,
-					list: [{
-							id: 'ClpvUvdR',
-							name: '33卡門',
-							avatar: '/static/avatars/1.jpg',
-							participations: 0
-						},
-						{
-							id: 'Anson',
-							name: 'Angel Li',
-							avatar: '/static/avatars/2.jpg',
-							participations: 1
-						},
-						{
-							id: 'g8t5e7so',
-							name: 'Yang',
-							avatar: '/static/avatars/3.jpg',
-							participations: 1
-						},
-						{
-							id: '6QmSO4zI',
-							name: '薯条蛋',
-							avatar: '/static/avatars/4.jpg',
-							participations: 1
-						},
-						{
-							id: 'U83ndH2',
-							name: '可乐',
-							avatar: '/static/avatars/5.jpg',
-							participations: 1
-						},
-					]
-				},
-				currentLottery: {
-					time: '04/30 23:30',
-					total: 84
-				},
-				activityDetail: 'MATIVITIES',
-				imageList: [{
-						image: '/static/serice1.jpg'
-					},
-					{
-						image: '/static/serice2.jpg'
-					},
-					{
-						image: '/static/serice3.jpg'
-					}
-				]
+				activeInfo:{},
+				prizeList:[],
+				participants: [],
+				imageList: [],
+				userCodesList: [],
+				userId:''
 			}
 		},
 		computed: {
@@ -197,27 +187,40 @@
 					paddingTop: '140rpx'
 				}
 			},
+			luckyUser(){
+				let num = 0;
+				this.prizeList.forEach(item=>{
+					num+= item.productQuantity
+				})
+				return num
+			},
 			// 获取前5个参与者
 			firstFiveParticipants() {
-				return this.participants.list.slice(0, 5)
+				return this.participants.slice(0, 5)
 			},
 			// 获取剩余参与者
 			remainingParticipants() {
-				return this.participants.list.slice(5)
+				return this.participants.slice(5)
 			}
 		},
 		mounted() {
 			this.calculateLayout()
 		},
 		methods: {
-			navToHistory() {
+			handleShareCode(){
+				
+			},
+			changePopup(e){
+				console.log('当前模式：' + e.type + ',状态：' + e.show);
+			},
+			navToHistory(tab) {
 				uni.navigateTo({
-					url: '/pages/lottery/history'
+					url: `/pages/lottery/history?userId=${this.userId}&activityId=${this.activeInfo.activityId}&periodNumber=${this.activeInfo.periodNumber}&tab=${tab}`
 				})
 			},
 			handleMyCodes() {
 				uni.navigateTo({
-					url: '/pages/lucky/luckyCode'
+					url: '/pages/lucky/luckyCode?userId='+ this.userId
 				})
 			},
 			scrollToRules() {
@@ -233,15 +236,10 @@
 				})
 			},
 			handleShare() {
-				uni.share({
-					provider: 'weixin',
-					type: 0,
-					scene: 'WXSceneSession',
-					success: () => {
-						uni.showToast({
-							title: '分享成功'
-						})
-					}
+				get(`wx/luckyDraw/userCodes?userId=${this.userId}&activityId=${this.activeInfo.activityId}&periodNumber=${this.activeInfo.periodNumber}`).then(json=>{
+					const result = json.data?.data;
+					this.$refs.userCodespopup.open('bottom');
+					this.userCodesList = result || []
 				})
 			},
 			calculateLayout() {
@@ -266,6 +264,35 @@
 				}
 
 				this.lastScrollTop = scrollTop
+			},
+			activityInfo(){
+				const that = this;
+				get('wx/luckyDraw/activity').then(json=>{
+					const result = json.data?.data;
+					that.imageList = result.activityDetailImages || [];
+					that.activeInfo = result || {}
+					that.rules = result.activityRules?.split?.('\n');
+					that.prizeList = result?.prizeList || [];
+					that.participantsFun()
+				})
+			},
+			participantsFun(){
+				get(`wx/luckyDraw/participants?activityId=${this.activeInfo.activityId}&periodNumber=${this.activeInfo.periodNumber}`).then(json=>{
+					const result = json.data?.data;
+					this.participants = result || []
+				})
+			},
+			handleParticipate(){
+				const postData = {
+					userId: this.userId,
+					activityId:this.activeInfo.activityId
+				}
+				post(`wx/luckyDraw/joinLottery`,postData).then(json=>{
+					const result = json.data;
+					if(result.errmsg === '成功'){
+						this.handleMyCodes()
+					}
+				})
 			}
 		}
 	}
@@ -308,7 +335,7 @@
 
 			.countdown-back {
 				width: 350rpx;
-				height: 120rpx;
+				height: 135rpx;
 				position: relative;
 				top: -70rpx;
 				background-size: 100%;
@@ -359,7 +386,9 @@
 			border-radius: 16rpx;
 			padding: 30rpx;
 			margin: 0 30rpx;
-			margin-bottom: 20rpx;
+			margin-bottom: 10rpx;
+			padding-top: 20rpx;
+			padding-bottom: 10rpx;
 
 			.activity-title {
 				font-size: 34rpx;
@@ -413,7 +442,6 @@
 
 			.rule-item {
 				flex-direction: row;
-				margin-bottom: 20rpx;
 
 				.rule-index {
 					font-size: 28rpx;
@@ -428,10 +456,10 @@
 			}
 
 			.prize-item {
-				display: flex;
 				width: 100%;
-				align-content: space-between;
-				font-size: 22rpx;
+				display: flex;
+				justify-content: space-between;
+				font-size: 24rpx;
 			}
 		}
 	}
@@ -682,6 +710,66 @@
 		.iamge-class {
 			max-width: 100%;
 			width: 100%;
+		}
+	}
+	.userCode-popup-content{
+		padding: 20rpx;
+		.main-container {
+		  display: flex;
+		  flex-direction: column;
+		  align-items: center;
+		  justify-content: center;
+		  width: 100%;
+		}
+		
+		.code-section {
+		  margin-bottom: 30rpx;
+		  .code-number {
+		    font-size: 36rpx;
+		    color: #333;
+		    font-weight: bold;
+			.active-class{
+				color: #ef6e32;
+			}
+		  }
+		}
+		
+		.button-section {
+		  margin-bottom: 20rpx;
+		  width: 100%;
+		  
+		  .participate-btn {
+		    background: #e17c8c;
+		    color: #fff;
+		    font-size: 32rpx;
+		    padding: 28rpx 0;
+		    border-radius: 50rpx;
+		    text-align: center;
+		    width: 70%;
+		    margin: 0 auto;
+		    transition: all 0.3s;
+		    
+		    &:active {
+		      background: #0062cc;
+		      transform: scale(0.98);
+		    }
+		  }
+		}
+		.disabledBtn{
+			.participate-btn {
+				background: #d9d9d9;
+			}
+			
+		}
+		
+		.tip-section {
+		  text-align: center;
+		  .tip-text {
+		    display: block;
+		    font-size: 28rpx;
+		    color: #999;
+		    line-height: 1.6;
+		  }
 		}
 	}
 </style>

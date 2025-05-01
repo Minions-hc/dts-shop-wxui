@@ -21,7 +21,7 @@
       <!-- 费用明细 -->
       <view class="cost-item">
         <text>优惠券</text>
-        <text>-¥0.00</text>
+        <text>-¥{{orderInfo.discountAmount}}</text>
       </view>
       <view class="cost-item">
         <text>红包</text>
@@ -30,19 +30,19 @@
       <view class="cost-item">
         <text>积分抵扣</text>
         <view class="integral">
-          <text>10积分</text>
-          <text class="red-text">-¥1.00</text>
+          <text>{{orderInfo.pointsDeduction}}积分</text>
+          <text class="red-text">-¥{{pointFee}}</text>
         </view>
       </view>
       <view class="cost-item">
         <text>运费</text>
-        <text>+¥0.00</text>
+        <text>+¥{{orderInfo.shippingFee}}</text>
       </view>
 	  <view class="divider-line"></view>
 	  <!-- 实付金额 -->
 	  <view class="total-section">
 	    <text>实付：</text>
-	    <text class="total-amount">￥38.00</text>
+	    <text class="total-amount">￥{{orderInfo.paymentAmount}}</text>
 	  </view>
     </view>
 
@@ -51,17 +51,17 @@
       <view class="info-item">
         <text>订单编号</text>
         <view class="copy-wrapper">
-          <text>A041922520313591132</text>
+          <text>{{orderInfo.orderNo}}</text>
           <text class="copy-btn" @click="copyOrderNo">复制</text>
         </view>
       </view>
       <view class="info-item">
         <text>下单时间</text>
-        <text>2025-04-19 22:52:03</text>
+        <text>{{orderInfo.createTime}}</text>
       </view>
       <view class="info-item">
         <text>订单状态</text>
-        <text class="status-tag">已完成</text>
+        <text class="status-tag">{{getOrderStatus}}</text>
       </view>
     </view>
 
@@ -73,16 +73,53 @@
 </template>
 
 <script>
+import {get} from "@/utils/rest-util.js"
 export default {
+	onLoad(param){
+		const {orderId,userId,orderStatus} = param;
+		this.userId = userId;
+		this.orderId = orderId;
+		this.orderStatus = orderStatus;
+		this.initData();
+	},
+	data(){
+			return {
+				userId:'',
+				orderId:'',
+				orderStatus:'',
+				orderInfo: {}
+			}
+	},
+	computed:{
+		getOrderStatus(){
+			const orderStatus = this.orderInfo.orderStatus;
+			const orderMap = {
+				'WAIT_SHIPPING':'待发货',
+				'SHIPPED':'已发货',
+				'COMPLETED':'已完成'
+			}
+			return orderMap[orderStatus]
+		},
+		pointFee(){
+			return this.orderInfo.pointsDeduction / 10
+		}
+	},
   methods: {
     copyOrderNo() {
       uni.setClipboardData({
-        data: 'A041922520313591132',
+        data: this.orderInfo.orderNo,
         success: () => {
           uni.showToast({ title: '复制成功' })
         }
       })
-    }
+    },
+	initData(){
+		get(`wx/order/queryOrderList?userId=${this.userId}&orderId=${this.orderId}&orderStatus=${this.orderStatus}`).then(json=>{
+			const result = json.data.data;
+			const orderList = result.items || [];
+			this.orderInfo = orderList[0]
+		})
+	}
   }
 }
 </script>

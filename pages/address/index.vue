@@ -7,10 +7,10 @@
     </view>
 
     <!-- 地址卡片 -->
-    <view class="address-card">
+    <view class="address-card" v-for="item in addressList" :key="item.addressId">
       <!-- 操作图标 -->
-      <image class="icon-delete" src="/static/icon-delete.png" mode="aspectFit"/>
-	  <image class="icon-edit" src="/static/icon-edit.png" mode="aspectFit" @click="navigateToDetail(this)"/>
+      <image class="icon-delete" src="/static/icon-delete.png" mode="aspectFit" @tap="delAddress(item)"/>
+	  <image class="icon-edit" src="/static/icon-edit.png" mode="aspectFit" @click="navigateToDetail(item)"/>
       
       <!-- 地址头 -->
       <view class="address-header">
@@ -18,39 +18,16 @@
           <image class="icon-default" src="/static/default-address.png"/>
           <image class="icon-pickup" src="/static/send-address.png"/>
         </view>
-        <text class="user-name">张先生</text>
-		 <text class="phone">138****1313</text>
+        <text class="user-name">{{item.receiverName}}</text>
+		 <text class="phone">{{getShowNumber(item.phone)}}</text>
       </view>
 
       <!-- 地址详情 -->
       <view class="address-content">
-        <text class="address-text">广东省深圳市光明区公明街道奥园峰峦B-407</text>
+        <text class="address-text">{{item.detailAddress}}</text>
       </view>
 	  
     </view>
-	
-	<!-- 地址卡片 -->
-	<view class="address-card">
-	  <!-- 操作图标 -->
-	  <image class="icon-delete" src="/static/icon-delete.png" mode="aspectFit"/>
-	  <image class="icon-edit" src="/static/icon-edit.png" mode="aspectFit"/>
-	  
-	  <!-- 地址头 -->
-	  <view class="address-header">
-	    <view class="icon-group">
-	      <image class="icon-default" src="/static/default-address.png"/>
-	      <image class="icon-pickup" src="/static/send-address.png"/>
-	    </view>
-	    <text class="user-name">张先生</text>
-		 <text class="phone">138****1313</text>
-	  </view>
-	
-	  <!-- 地址详情 -->
-	  <view class="address-content">
-	    <text class="address-text">广东省深圳市光明区公明街道奥园峰峦B-407</text>
-	  </view>
-	  
-	</view>
 
     <!-- 图片按钮 -->
     <view class="action-buttons">
@@ -61,11 +38,45 @@
 </template>
 
 <script>
+	import {get,post} from "@/utils/rest-util.js"
 	export default {
+		onLoad(param) {
+			const {userId} = param;
+			this.userId = userId;
+			this.initAddressList()
+		},
+		data(){
+				return {
+					userId:'',
+					addressList:[]
+				}
+		},
 		methods: {
+			getShowNumber(phoneNumber){
+				return phoneNumber.replace(phoneNumber.substring(3,7),'****')
+			},
 			navigateToDetail(item) {
+				const addressUrl = item ? '&addressId='+item.addressId : ''
 				uni.navigateTo({
-					url: '/pages/address/detail'
+					url: '/pages/address/detail?userId='+this.userId+addressUrl
+				})
+			},
+			initAddressList(){
+				get(`wx/address/list?userId=${this.userId}`).then(json=>{
+					const result = json.data;
+					this.addressList = result.data || [];
+				})
+			},
+			delAddress(item){
+				const postData = {
+					userId:this.userId,
+					addressId:item.addressId
+				}
+				post(`wx/address/delete`,postData).then(json=>{
+					if(json.data.errmsg === '成功') {
+						uni.showToast({ title: '删除成功' })
+						this.initAddressList()
+					}
 				})
 			}
 		}

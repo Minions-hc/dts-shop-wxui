@@ -39,10 +39,10 @@
       >
         <view class="product-grid">
           <view 
-            v-for="(product, pIndex) in currentProducts"
-            :key="product.seriesId+activeCategory"
+            v-for="product in currentProducts"
+            :key="product.seriesId"
             class="product-card"
-			@tap="toBindBoxPage(product)"
+			@click="toBindBoxPage(product)"
           >
             <image
               :src="product.seriesImage"
@@ -100,8 +100,8 @@ export default {
 	  }
 	  this.currentProducts = this.allItems.filter(obj=>obj.categoryId === item.id)
     },
-	toBindBoxPage(item){
-		if(item.type == 'caileishang'){
+	toBindBoxPage(product){
+		if(product?.isAvoid){
 			uni.navigateTo({
 				url:'/pages/blindBox/caileishang'
 			})

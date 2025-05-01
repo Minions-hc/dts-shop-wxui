@@ -37,7 +37,7 @@
 					<view class="payment-section">
 						<text>实付金额：</text>
 						<text class="payment-amount">￥{{item.paymentAmount}}</text>
-						<button class="detail-btn" @click="navigatorToDetail()">查看详情</button>
+						<button class="detail-btn" @click="navigatorToDetail(item)">查看详情</button>
 					</view>
 				</view>
 			</view>
@@ -46,32 +46,30 @@
 </template>
 
 <script>
-	import {
-		get
-	} from "@/utils/rest-util.js"
+	import {get} from "@/utils/rest-util.js"
 	export default {
 		onLoad(param){
 			const {type,userId} = param;
-			console.log(type)
+			this.userId = userId;
 			this.activeTab = Number(type) || 0;
 			this.initData(userId);
 		},
 		data() {
 			return {
 				activeTab: 0, // 当前选中tab
-				orderList:[]
+				orderList:[],
+				userId:""
 			}
 		},
 		computed:{
 		},
 		methods: {
-			navigatorToDetail() {
+			navigatorToDetail(item) {
 				uni.navigateTo({
-					url : '/pages/order/detail'
+					url : `/pages/order/detail?userId=${this.userId}&orderId=${item.orderId}&orderStatus=${item.orderStatus}`
 				})
 			},
 			initData(userId){
-				// const url = this.activeTab == 0 ? '' : '&orderStatusStr=' + this.
 				get('wx/order/queryOrderList?userId='+userId).then(json=>{
 					const result = json.data.data;
 					this.orderList = result.items || [];

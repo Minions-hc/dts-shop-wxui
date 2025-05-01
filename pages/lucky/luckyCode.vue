@@ -39,11 +39,11 @@
                 <view class="code-row">
                   <text class="code">{{item.code}}</text>
                   <view class="status-tag" :class="item.status">
-                    {{item.statusText}}
+                    {{getStatusText(item)}}
                   </view>
                 </view>
                 <view class="meta-row">
-                  <text class="time">{{item.time}}</text>
+                  <text class="time">{{item.createTime}}</text>
                   <view class="helper" v-if="item.helper">
                     <image :src="item.helper.avatar" class="helper-avatar"/>
                     <text class="helper-name">{{item.helper.name}} 助力</text>
@@ -52,8 +52,8 @@
               </view>
             </view>
             <view class="bottom-section">
-              <text class="activity">{{item.activity}}</text>
-              <view class="period-tag">第{{item.period}}期</view>
+              <text class="activity">{{item.activityName}}</text>
+              <view class="period-tag">第{{item.periodNumber}}期</view>
             </view>
           </view>
         </scroll-view>
@@ -97,14 +97,14 @@
             :key="index" 
             class="help-item"
           >
-            <image :src="item.avatar" class="help-avatar"/>
+            <image :src="item.helperAvatar" class="help-avatar"/>
             <view class="center-info">
-              <text class="username">{{item.name}}</text>
-              <text class="help-time">{{item.time}}</text>
+              <text class="username">{{item.helperName}}</text>
+              <text class="help-time">{{item.helpTime}}</text>
             </view>
             <view class="right-info">
               <text class="plus">+</text>
-              <text class="count">{{item.count}}</text>
+              <text class="count">{{item.activityName}}</text>
               <text class="text">抽奖码</text>
             </view>
           </view>
@@ -115,58 +115,61 @@
 </template>
 
 <script>
+	import {
+		get,
+		post
+	} from "@/utils/rest-util.js"
 export default {
+	onLoad(param) {
+		const {userId} =  param;
+		this.userId = userId;
+		this.queryUserCodes();
+		this.queryHelpList()
+	},
   data() {
     return {
       activeTab: 0,
+	  userId:'',
+	  userCodesList:[],
       // 模拟接口数据
-      codeList: [
-        {
-          code: "T40309",
-          time: "04-20 14:30",
-          status: "pending",
-          statusText: "待开奖",
-          activity: "[免费抽奖] Mega Labubu·托尼托尼·乔巴400%抽奖活动",
-          period: 1,
-          helper: {
-            avatar: "https://via.placeholder.com/40",
-            name: "lucky"
-          }
-        },
-        {
-          code: "T40149",
-          time: "04-17 16:38",
-          status: "unwin",
-          statusText: "未中奖", 
-          activity: "[限时活动] 夏日限定盲盒抽奖",
-          period: 2
-        }
-      ],
-      winList: [
-        {
-          code: "T40555",
-          time: "04-22 10:00",
-          activity: "[周年庆] 限定款手办抽奖活动",
-          period: 3
-        }
-      ],
-      helpList: [
-        {
-          avatar: "https://via.placeholder.com/40",
-          name: "好友A",
-          time: "04-20 14:30",
-          count: 1
-        }
-      ]
+      codeList: [],
+      helpList: []
     }
   },
+  computed:{
+	 winList(){
+		 return this.codeList.filter(item=>item.status === 'WIN')
+	 } 
+  },
   methods: {
+	  getStatusText(item){
+		  let str = '待开奖';
+		  if(item.status == 'NOT_WIN'){
+			  str = '未中奖'
+		  }
+		  if(item.status == 'NOT_WIN'){
+			  str = '已中奖'
+		  }
+		  return str
+	  },
     switchTab(index) {
       this.activeTab = index
     },
     onSwiperChange(e) {
       this.activeTab = e.detail.current
-    }
+    },
+	queryUserCodes(){
+		get(`wx/luckyDraw/userCodes?userId=${this.userId}`).then(json=>{
+			const result = json.data?.data;
+			this.codeList = result || []
+		})
+	},
+	queryHelpList(){
+		get(`wx/luckyDraw/helpRecords/${this.userId}`).then(json=>{
+			const result = json.data?.data;
+			this.helpList = result || []
+		})
+	}
   }
 }
 </script>
@@ -220,15 +223,17 @@ export default {
 }
 
 .list-container {
-  padding: 30rpx;
+  padding: 30rpx 0rpx;
 }
 
 /* 抽奖码列表优化样式 */
 .code-item {
   background: #fff;
   border-radius: 16rpx;
+  margin: 0 30rpx;
   margin-bottom: 20rpx;
   padding: 24rpx;
+  
   
   .top-section {
     .left-info {
@@ -249,15 +254,15 @@ export default {
           border-radius: 24rpx;
           font-size: 24rpx;
           
-          &.pending {
+          &.PENDING {
             background: #ccc;
             color: #fff;
           }
-          &.unwin {
+          &.NOT_WIN {
             background: #999;
             color: #fff;
           }
-          &.win-status {
+          &.WIN {
             background: #ff4c4c;
             color: #fff;
           }
@@ -322,6 +327,7 @@ export default {
   background: #fff;
   border-radius: 16rpx;
   padding: 24rpx;
+  margin: 0 30rpx;
   margin-bottom: 20rpx;
   display: flex;
   align-items: center;

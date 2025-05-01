@@ -31,10 +31,16 @@
 </template>
 
 <script>
+	import {get,post} from "@/utils/rest-util.js"
 export default {
+	onLoad(param) {
+		const {userId} = param;
+		this.userId = userId;
+	},
   data() {
     return {
-      code: '' // 绑定兑换码输入
+      code: '', // 绑定兑换码输入
+	  userId:''
     }
   },
   methods: {
@@ -44,13 +50,21 @@ export default {
         uni.showToast({ title: '请输入兑换码', icon: 'none' })
         return
       }
+	  const postData = {
+		  userId:this.userId,
+		  redemptionCode: this.code
+	  }
+	  post('wx/redemptionCode/exchange',postData).then(json=>{
+		  
+	  })
       // 提交兑换请求...
     },
 	navigatorToCodeDatail() {
 		uni.navigateTo({
 			url: '/pages/code/detail'
 		})
-	}
+	},
+	
   }
 }
 </script>
