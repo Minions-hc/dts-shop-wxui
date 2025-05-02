@@ -22,60 +22,64 @@
 			</view>
 			<swiper :current="currentIndex" @change="onSwiperChange" class="box-swiper">
 				<swiper-item v-for="(box, index) in boxes" :key="box.id">
-					<!-- 换箱按钮 -->
-
-					<!-- 切换按钮 -->
-					<view class="nav-buttons">
-						<!-- 上一箱按钮 -->
-						<view class="nav-btn prev-btn" :disabled="currentIndex === 0" @click="switchBox('prev')">
-						</view>
-
-						<!-- 刷新按钮 -->
-						<view class="refresh-btn" @click="handleRefresh">
-						</view>
-
-						<!-- 下一箱按钮 -->
-						<view class="nav-btn next-btn" :disabled="currentIndex === boxes.length - 1"
-							@click="switchBox('next')">
-						</view>
-					</view>
-					<!-- 预览部分 -->
-					<view class="preview-section">
-						<!-- 预览标题 -->
-						<view class="preview-header">
-							<view class="header-left">
-								<view class="title">
-									预览
-								</view>
-								<view class="box-info">
-									第{{ currentIndex + 1 }}/{{ boxes.length }}箱
-									余量{{ currentBox.remain }}/{{ currentBox.total }}张
-								</view>
+					<view class="box-swiper-item">
+						<!-- 换箱按钮 -->
+						
+						<!-- 切换按钮 -->
+						<view class="nav-buttons">
+							<!-- 上一箱按钮 -->
+							<view class="nav-btn prev-btn" :disabled="currentIndex === 0" @click="switchBox('prev')">
 							</view>
-							<view class="header-right">
-								<view class="instruction" @click="navigatorToRule()">购买说明</view>
-								<view class="record" @tap="showPopup = true">开赏记录</view>
+						
+							<!-- 刷新按钮 -->
+							<view class="refresh-btn" @click="handleRefresh">
+							</view>
+						
+							<!-- 下一箱按钮 -->
+							<view class="nav-btn next-btn" :disabled="currentIndex === boxes.length - 1"
+								@click="switchBox('next')">
 							</view>
 						</view>
-
-
-						<!-- 产品列表 -->
-						<view class="product-grid">
-							<view v-for="(product, pIndex) in currentBox.products" :key="pIndex" class="product-card">
-								<image :src="product.image" mode="aspectFill" class="product-image" />
-								<view class="product-info">
-									<view class="title-row">
-										<!-- 产品类型标签 -->
-										<text class="product-type">{{ product.type }}</text>
-										<!-- 产品名称（带溢出处理） -->
-										<text class="product-name">{{ product.name }}</text>
+						<!-- 预览部分 -->
+						<view class="preview-section">
+							<!-- 预览标题 -->
+							<view class="preview-header">
+								<view class="header-left">
+									<view class="title">
+										预览
 									</view>
-									<text class="product-price">零售价：{{ product.price }}元</text>
-									<text class="product-prob">概率：{{ product.probability }}%</text>
+									<view class="box-info">
+										第{{ currentIndex + 1 }}/{{ boxes.length }}箱
+										余量{{ currentBox.remain }}/{{ currentBox.total }}张
+									</view>
+								</view>
+								<view class="header-right">
+									<view class="instruction" @click="navigatorToRule()">购买说明</view>
+									<view class="record" @tap="showPopup = true">开赏记录</view>
+								</view>
+							</view>
+						
+						
+							<!-- 产品列表 -->
+							<view class="product-grid">
+								<view v-for="(product, pIndex) in currentBox.products" :key="product.productId" class="product-card">
+									<image :src="product.productImage" mode="aspectFill" class="product-image" lazy-load=""/>
+									<view class="remain-qty">{{product.quantity - product.soldQuantity}}/{{product.quantity}}</view>
+									<view class="product-info">
+										<view class="title-row">
+											<!-- 产品类型标签 -->
+											<text class="product-type">{{ product.levelName }}</text>
+											<!-- 产品名称（带溢出处理） -->
+											<text class="product-name">{{ product.productName }}</text>
+										</view>
+										<text class="product-price">零售价：{{ product.productPrice }}元</text>
+										<text class="product-prob">概率：{{ getProductProbaby(product,currentBox) }}</text>
+									</view>
 								</view>
 							</view>
 						</view>
 					</view>
+					
 				</swiper-item>
 			</swiper>
 		</view>
@@ -128,7 +132,7 @@
 
 				<!-- 记录列表 -->
 				<scroll-view class="box-list" scroll-y>
-					<view v-for="(item, index) in boxeInfos" :key="item.id" class="box-item">
+					<view v-for="(item, index) in boxeInfos" :key="item.id" class="box-item" @tap="changeBox(index)">
 						<view class="box-img">
 							<image src="/static/box.png" mode="aspectFill" class="box-image"></image>
 							<text>第{{index + 1}}箱</text>
@@ -183,10 +187,22 @@
 </template>
 
 <script>
+	import {
+		get,
+		post
+	} from "@/utils/rest-util.js"
 	export default {
+		onLoad(param) {
+			const {userId,seriesId} = param;
+			this.seriesId = seriesId;
+			this.userId = userId;
+			this.getProductBoxBySeriesId(null)
+		},
 		data() {
 			return {
 				currentIndex: 0,
+				userId:'',
+				seriesId:'',
 				drawCount: 1,
 				showPopup: false,
 				showBoxPopup: false,
@@ -202,122 +218,9 @@
 					},
 					// 更多数据...
 				],
-				boxes: [{
-						id: 1,
-						name: '梦幻系列盲盒',
-						image: '/static/serice1.jpg',
-						luckyCount: 3,
-						remain: 5,
-						total: 10,
-						pricePerDraw: 89,
-						products: [{
-							type: 'A类',
-							name: '星空水晶球（超长名称测试超出隐藏效果）',
-							price: 299,
-							probability: 1.5,
-							image: '/static/serice2.jpg'
-						}, ]
-					},
-					{
-						id: 2,
-						name: '梦幻系列盲盒',
-						image: '/static/serice2.jpg',
-						luckyCount: 3,
-						remain: 5,
-						total: 10,
-						pricePerDraw: 79,
-						products: [{
-							type: 'A类',
-							name: '星空水晶球（超长名称测试超出隐藏效果）',
-							price: 299,
-							probability: 1.5,
-							image: '/static/serice3.jpg'
-						}, ]
-					},
-				],
-				boxeInfos: [{
-						id: 1,
-						remaining: 145,
-						items: [{
-								type: 'A',
-								current: 0,
-								total: 1
-							},
-							{
-								type: 'A',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'A',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'A',
-								current: 0,
-								total: 1
-							},
-							null, // 空项用于占位
-							{
-								type: 'A',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'A',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'B',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'B',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'B',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'B',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'B',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'C',
-								current: 37,
-								total: 55
-							},
-							{
-								type: 'D',
-								current: 30,
-								total: 57
-							},
-							{
-								type: 'E',
-								current: 31,
-								total: 55
-							},
-							{
-								type: 'F',
-								current: 38,
-								total: 55
-							}
-						]
-					},
-					// 其他箱子数据...
-				],
+				boxes: [],
+				dynamicHeight: "auto", // 初始值
+				boxeInfos: [],
 			}
 		},
 		computed: {
@@ -331,12 +234,29 @@
 
 		},
 		methods: {
+			changeBox(index){
+				this.currentIndex = index;
+				this.showBoxPopup = false
+				
+			},
 			switchBox(direction) {
+				if(direction === 'next' && this.currentIndex === this.boxes.length - 1){
+					uni.showToast({
+						title: '没有下一箱了',
+						icon: 'none'
+					})
+				} else if(direction === 'prev' && this.currentIndex === 0){
+					uni.showToast({
+						title: '没有上一箱了',
+						icon: 'none'
+					})
+				}
 				if (direction === 'prev' && this.currentIndex > 0) {
 					this.currentIndex--
 				} else if (direction === 'next' && this.currentIndex < this.boxes.length - 1) {
 					this.currentIndex++
 				}
+				
 			},
 			onSwiperChange(e) {
 				this.currentIndex = e.detail.current
@@ -353,13 +273,14 @@
 					title: '刷新中...'
 				})
 				// 实际刷新逻辑
-				setTimeout(() => {
+				const callBack = ()=>{
 					uni.hideLoading()
 					uni.showToast({
 						title: '刷新成功',
 						icon: 'none'
 					})
-				}, 1000)
+				}
+				this.getProductBoxBySeriesId(callBack)
 			},
 			handleDraw(count) {
 			    const drawMap = {
@@ -378,6 +299,55 @@
 				uni.navigateTo({
 					url: '/pages/blindBox/yifanshangRule'
 				})
+			},
+			getProductBoxBySeriesId(callBack){
+				get('wx/series/getProductBoxBySeriesId?seriesId='+this.seriesId).then(json=>{
+					const result = json.data.data;
+					const groupedByBoxNumber = result.groupedByBoxNumber || {};
+					const productQuantityMap = result.productQuantityMap || {};
+					const remainingQuantityMap = result.remainingQuantityMap || {}
+					const productBoxResultVos = result.productBoxResultVos || [];
+					const keys = Object.keys(groupedByBoxNumber);
+					const boxList = [];
+					const boxeInfos = []
+					keys.forEach(item=>{
+						const boxResult = productBoxResultVos.find(str=>str.boxNumber == item);
+						const obj = {
+							id:item,
+							image: groupedByBoxNumber[item]?.[0]?.productImage || '',
+							remain:remainingQuantityMap[item],
+							total:productQuantityMap[item],
+							pricePerDraw:boxResult?.seriesPrice || '0',
+							products:groupedByBoxNumber[item]
+						}
+						const box = {
+							id:item,
+							remaining:remainingQuantityMap[item],
+							items:groupedByBoxNumber[item].map(str=>{
+								return {
+									type:str.levelName,
+									current:str.quantity - str.soldQuantity,
+									total: str.quantity
+								}
+							})
+						}
+						boxeInfos.push(box)
+						boxList.push(obj)
+					})
+					this.boxes = boxList;
+					this.boxeInfos = boxeInfos;
+					callBack && callBack()
+				})
+			},
+			getProductProbaby(product,currentBox){
+				if(product.quantity === product.soldQuantity){
+					return '0%'
+				}
+				if(product.levelName=== '终赏'){
+					return '只赠不售'
+				}
+				const penson = (product.quantity - product.soldQuantity) / currentBox.remain
+				return (penson * 100).toFixed(3) + '%'
 			}
 
 		}
@@ -412,10 +382,21 @@
 
 	.carousel-section {
 		position: relative;
+		display: flex;
+		min-height: 100vh;
 
 		.box-swiper {
 			min-height: 600rpx;
+			max-height: 1000vh;
+			overflow: visible;
+			height: auto;
+			flex: 1;
 		}
+	}
+	.box-swiper-item{
+		min-height: 600rpx;
+		height: auto;
+		overflow: auto;
 	}
 
 	.control-bar {
@@ -596,6 +577,18 @@
 				overflow: hidden;
 				box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
 				border: 5rpx solid #d9d9d9;
+				position: relative;
+				.remain-qty{
+					position: absolute;
+					top: 0rpx;
+					left: 0rpx;
+					padding: 0 16rpx;
+					line-height: 32rpx;
+					border-radius: 8rpx;
+					background-color: #ed80a0;
+					color: #fff;
+					font-size: 18rpx;
+				}
 
 				.product-image {
 					height: 200rpx;

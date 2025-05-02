@@ -71,10 +71,12 @@ export default {
 		this.loadAllData()
 		this.loadCateData();
 		this.queryPopularNew();
+		this.userId = 'U10001';
 	},
   data() {
     return {
       activeCategory: 0,
+	  userId:'',
       categories: [
 		  {name: '人气新品', id: -1,isNew: true},
 		  {name: '爆款推荐', id: -2,isHot: true},
@@ -88,7 +90,6 @@ export default {
   },
   methods: {
     switchCategory(item,index) {
-		console.log(item)
       this.activeCategory = index
 	  if(item.isHot) {
 		  this.queryPopularNew();
@@ -103,12 +104,12 @@ export default {
 	toBindBoxPage(product){
 		if(product?.isAvoid){
 			uni.navigateTo({
-				url:'/pages/blindBox/caileishang'
+				url:'/pages/blindBox/caileishang?userId='+ this.userId + '&seriesId='+ product.seriesId
 			})
 			return
 		}
 		uni.navigateTo({
-			url:'/pages/blindBox/yifanshang'
+			url:'/pages/blindBox/yifanshang?userId='+ this.userId + '&seriesId='+ product.seriesId
 		})
 	},
 	queryPopularNew(){
@@ -138,7 +139,6 @@ export default {
 					isNew: false
 				})
 			})
-			console.log(categories)
 			this.categories = categories;
 			
 		})

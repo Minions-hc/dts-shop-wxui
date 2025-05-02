@@ -139,7 +139,7 @@
 				        >
 				          参与抽奖
 				        </view>
-						<view class="participate-btn" v-else @click="handleShareCode">
+						<view class="participate-btn" v-else @click="handHelpCode">
 							转发助力
 						</view>
 				      </view>
@@ -160,12 +160,15 @@
 		post
 	} from "@/utils/rest-util.js"
 	export default {
-		onLoad(){
+		onLoad(param){
+			const {userId,shareUserId} = param;
+			this.shareUserId = shareUserId;
 			this.userId = 'U10001'
 			this.activityInfo()
 		},
 		data() {
 			return {
+				shareUserId: '',
 				countdownTime: '20天05时58分44秒',
 				rules: [],
 				imgHeight: '35vh', // 图片区域高度
@@ -207,8 +210,16 @@
 			this.calculateLayout()
 		},
 		methods: {
-			handleShareCode(){
-				
+			handHelpCode(){
+				const postData = {
+					userId:this.userId,
+					activityId:this.activeInfo.activityId,
+					activityName:this.activeInfo.activityName,
+					periodNumber:this.activeInfo.periodNumber
+				}
+				post(`wx/luckyDraw/help`,postData).then(json=>{
+					
+				})
 			},
 			changePopup(e){
 				console.log('当前模式：' + e.type + ',状态：' + e.show);
