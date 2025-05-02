@@ -69,7 +69,7 @@
 		<!-- 底部操作 -->
 		<view class="bottom-action" v-if="!showShipStatus && activeMenu === 0">
 			<view class="ship-btn defaut-btn" :class="{disabled: selectedCount === 0}" @click="handleShip"></view>
-			<view class="defaut-btn market-btn" @click="navigateTo('/pages/market/index')"></view>
+			<view class="defaut-btn market-btn" @click="navigateToMarket()"></view>
 		</view>
 		<view class="bottom-action-select" v-if="showShipStatus &&  activeMenu === 0">
 			<view class="default-btn" @tap="checkAll">
@@ -172,6 +172,11 @@
 			navigateToSafeBox() {
 				uni.navigateTo({
 					url: '/pages/safe/index'
+				})
+			},
+			navigateToMarket() {
+				uni.navigateTo({
+					url: '/pages/market/index'
 				})
 			},
 			handleShip() {

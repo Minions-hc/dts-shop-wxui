@@ -223,6 +223,11 @@
 					url: '/pages/lucky/luckyCode?userId='+ this.userId
 				})
 			},
+			handleActivity(){
+				uni.navigateTo({
+					url: '/pages/lucky/luckyActivity'
+				})
+			},
 			scrollToRules() {
 				uni.pageScrollTo({
 					selector: '.rules-section',

@@ -19,7 +19,7 @@
 						<text class="price-value">￥99.00</text>
 						<text class="unit-value">/张</text>
 					</view>
-					<view class="instruction-btn">
+					<view class="instruction-btn" @click="navigatorToRule()">
 						购买说明
 					</view>
 				</view>
@@ -588,6 +588,11 @@
 				} else {
 					this.offsetX = 0
 				}
+			},
+			navigatorToRule() {
+				uni.navigateTo({
+					url: '/pages/blindBox/caileishangRule'
+				})
 			}
 		}
 	}

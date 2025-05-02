@@ -82,7 +82,7 @@
 		    </view>
 		  </view>
 		  <!-- 在页面最外层容器内添加 -->
-		    <view class="rule-button" @click="navigateToRule">
+		    <view class="rule-button" @click="navigateToRule()">
 		      <text>查看
 			  规则</text>
 			 
@@ -168,7 +168,12 @@
 			        3: '/static/record-third.png'
 			      }
 			    return medals[rank]
-			}
+			},
+			navigateToRule() {
+				uni.navigateTo({
+					url: '/pages/record/rule'
+				})
+			} 
 		},
 	}
 </script>

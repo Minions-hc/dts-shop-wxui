@@ -98,7 +98,7 @@ export default {
 		  this.queryHotRecommend();
 		  return;
 	  }
-	  this.currentProducts = this.allItems.filter(obj=>obj.categoryId === item.id)
+	  this.currentProducts = this.allItems.filter(obj=>obj.categoryId === item.id);
     },
 	toBindBoxPage(product){
 		if(product?.isAvoid){

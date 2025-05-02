@@ -97,7 +97,7 @@
 			},
 			toSeriesPage(item){
 				const seriesId = item.seriesId;
-				const url = '/pages/blindBox/caileishang?seriesId='+seriesId;
+				const url = '/pages/blindBox/yifanshang?seriesId='+seriesId;
 				this.navigateTo(url)
 			},
 			initPage() {

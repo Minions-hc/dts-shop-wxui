@@ -62,7 +62,7 @@
 				// 活动数据示例
 				activities: [{
 						bg: '/static/activity1.png',
-						path: '/pages/box/detail'
+						path:'/pages/record/index'
 					},
 					{
 						bg: '/static/activity2.png',
@@ -70,11 +70,11 @@
 					},
 					{
 						bg: '/static/activity3.png',
-						path: '/pages/box/detail'
+						path:'/pages/soulPower/index'
 					},
-					{
+				{
 						bg: '/static/activity4.png',
-						path: '/pages/box/detail'
+						path:'/pages/market/index'
 					}
 				],
 				firstDay:[{

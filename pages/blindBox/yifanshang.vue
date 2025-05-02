@@ -53,7 +53,7 @@
 								</view>
 							</view>
 							<view class="header-right">
-								<view class="instruction">购买说明</view>
+								<view class="instruction" @click="navigatorToRule()">购买说明</view>
 								<view class="record" @tap="showPopup = true">开赏记录</view>
 							</view>
 						</view>
@@ -373,7 +373,12 @@
 			      icon: 'none'
 			    })
 			    // 实际抽奖逻辑...
-			  }
+			  },
+			navigatorToRule() {
+				uni.navigateTo({
+					url: '/pages/blindBox/yifanshangRule'
+				})
+			}
 
 		}
 	}
@@ -415,7 +420,7 @@
 
 	.control-bar {
 		position: absolute;
-		top: -180rpx;
+		top: -150rpx;
 		left: 0;
 		right: 0;
 		display: flex;
@@ -452,6 +457,7 @@
 				text-align: center;
 				padding-left: 20rpx;
 				font-weight: bold;
+				color: #ed80a0;
 			}
 		}
 	}

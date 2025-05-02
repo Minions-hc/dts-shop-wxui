@@ -43,7 +43,7 @@
 		{
 			"path": "pages/market/index",
 			"style": {
-				"navigationBarTitleText": "集市换娃"
+				"navigationBarTitleText": ""
 			}
 		},
 		{
@@ -122,7 +122,7 @@
 		{
 			"path": "pages/agreement/index",
 			"style": {
-				"navigationBarTitleText": ""
+				"navigationBarTitleText": "规则与协议"
 			}
 		},
 		{
@@ -198,6 +198,48 @@
 			"style" : 
 			{
 				"navigationBarTitleText" : "我的抽奖码"
+			}
+		},
+		{
+			"path" : "pages/lucky/luckyActivity",
+			"style" : 
+			{
+				"navigationBarTitleText" : "我参与的活动"
+			}
+		},
+		{
+			"path" : "pages/market/detail",
+			"style" : 
+			{
+				"navigationBarTitleText" : "商品详情"
+			}
+		},
+		{
+			"path" : "pages/blindBox/soulPower",
+			"style" : 
+			{
+				"navigationBarTitleText" : ""
+			}
+		},
+		{
+			"path" : "pages/blindBox/soulPowerRule",
+			"style" : 
+			{
+				"navigationBarTitleText" : "魂力赏规则说明"
+			}
+		},
+		{
+			"path" : "pages/blindBox/yifanshangRule",
+			"style" : 
+			{
+				"navigationBarTitleText" : "一番赏规则说明"
+			}
+		},
+		{
+			"path" : "pages/blindBox/caileishangRule",
+			"style" : 
+			{
+				"navigationBarTitleText" : "踩雷赏规则说明"
 			}
 		}
 		
