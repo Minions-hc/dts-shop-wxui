@@ -20,7 +20,7 @@
 					</view>
 				</view>
 			</view>
-			<swiper :current="currentIndex" @change="onSwiperChange" class="box-swiper">
+			<swiper :current="currentIndex" @change="onSwiperChange" class="box-swiper" disable-touch>
 				<swiper-item v-for="(box, index) in boxes" :key="box.id">
 					<view class="box-swiper-item">
 						<!-- 换箱按钮 -->
@@ -55,7 +55,7 @@
 								</view>
 								<view class="header-right">
 									<view class="instruction" @click="navigatorToRule()">购买说明</view>
-									<view class="record" @tap="showPopup = true">开赏记录</view>
+									<view class="record" @tap="showRecods()">开赏记录</view>
 								</view>
 							</view>
 						
@@ -102,17 +102,24 @@
 
 				<!-- 记录列表 -->
 				<scroll-view class="record-list" scroll-y>
-					<view v-for="(item, index) in filteredRecords" :key="index" class="record-item">
+					<view v-for="(item, index) in filteredRecords" :key="item.productId" class="record-item">
 						<!-- 条目头部 -->
 						<view class="item-header">
-							<text class="serial">【第{{ item.id }}张】{{ item.user }}</text>
-							<text class="time">{{ item.time }}</text>
+							<view class="header-left">
+								<image :src="item.avatar" mode="aspectFit" lazy-load class="record-image"></image>
+								<text class="serial">【第{{ item.number }}张】{{ item.userId }}</text>
+							</view>
+							
+							<text class="time">{{ item.createdAt }}</text>
 						</view>
 
 						<!-- 奖品信息 -->
 						<view class="prize-info">
-							<text class="prize-name">{{ item.prize }}</text>
-							<text class="award">{{ item.award }} x{{ item.quantity }}</text>
+							<view class="info-left">
+								<image :src="item.productImage" mode="aspectFit" lazy-load class="record-image"></image>
+								<text class="prize-name">{{ item.productName }}</text>
+							</view>							
+							<text class="award">{{ item.levelName }} x 1</text>
 						</view>
 
 						<!-- 分隔线 -->
@@ -152,6 +159,37 @@
 				</scroll-view>
 			</view>
 		</view>
+		
+		<!-- 遮罩层 -->
+		    <view v-if="showMarkPopup" class="mask" @click="closeMask">
+		      <!-- 内容容器（阻止冒泡） -->
+		      <view class="popup-content" @click.stop>
+		        <!-- 第一部分：产品卡片 -->
+		        <view class="product-card">
+		          <image :src="productInfo.image" class="product-image"/>
+		          <view class="product-info">
+		            <text class="product-title">{{ productInfo.title }}</text>
+		            <text class="product-price">¥{{ productInfo.price }}</text>
+		          </view>
+		        </view>
+		
+		        <!-- 第四部分：悬浮GIF -->
+		        <image 
+		          src="/static/animation.gif" 
+		          class="float-gif"
+		          mode="widthFix"
+		        />
+		
+		        <!-- 第二部分：操作按钮 -->
+		        <view class="action-btns">
+		          <button class="btn cart-btn" @click="addToCart">加入购物车</button>
+		          <button class="btn buy-btn" @click="buyNow">立即购买</button>
+		        </view>
+		
+		        <!-- 第三部分：关闭按钮 -->
+		        <text class="close-icon" @click="showPopup = false">×</text>
+		      </view>
+		    </view>
 		<!-- 底部悬浮按钮 -->
 		<!-- 修改后的底部悬浮按钮部分 -->
 		<view class="footer-section">
@@ -191,6 +229,7 @@
 		get,
 		post
 	} from "@/utils/rest-util.js"
+	import {getRandomElements} from "@/utils/common.js"
 	export default {
 		onLoad(param) {
 			const {userId,seriesId} = param;
@@ -201,13 +240,14 @@
 		data() {
 			return {
 				currentIndex: 0,
+				showMarkPopup:false,
 				userId:'',
 				seriesId:'',
 				drawCount: 1,
 				showPopup: false,
 				showBoxPopup: false,
 				activeTab: '全部',
-				tabs: ['全部', '免单', 'A赏', 'B赏', 'C赏', 'D赏', 'E赏'],
+				tabs: [],
 				records: [{
 						id: 80,
 						user: 'AAA',
@@ -218,6 +258,11 @@
 					},
 					// 更多数据...
 				],
+				productInfo: {
+				        image: "/static/product.jpg",
+				        title: "高端无线蓝牙耳机",
+				        price: 399.00
+				      },
 				boxes: [],
 				dynamicHeight: "auto", // 初始值
 				boxeInfos: [],
@@ -229,11 +274,14 @@
 			},
 			filteredRecords() {
 				if (this.activeTab === '全部') return this.records
-				return this.records.filter(item => item.award === this.activeTab)
+				return this.records.filter(item => item.levelName === this.activeTab)
 			},
 
 		},
 		methods: {
+			closeMask(){
+				this.showMarkPopup = false;
+			},
 			changeBox(index){
 				this.currentIndex = index;
 				this.showBoxPopup = false
@@ -283,16 +331,18 @@
 				this.getProductBoxBySeriesId(callBack)
 			},
 			handleDraw(count) {
+				this.prizeDraw(count)
 			    const drawMap = {
 			      0: '全收',
 			      1: '欧一发',
 			      3: '欧三发',
 			      10: '欧十发'
 			    }
-			    uni.showToast({
-			      title: `触发${drawMap[count]}操作`,
-			      icon: 'none'
-			    })
+				// this.showMarkPopup = true
+			 //    uni.showToast({
+			 //      title: `触发${drawMap[count]}操作`,
+			 //      icon: 'none'
+			 //    })
 			    // 实际抽奖逻辑...
 			  },
 			navigatorToRule() {
@@ -348,7 +398,49 @@
 				}
 				const penson = (product.quantity - product.soldQuantity) / currentBox.remain
 				return (penson * 100).toFixed(3) + '%'
+			},
+			prizeDraw(count){
+				const boxNumber = this.boxes[this.currentIndex].id;
+				get(`wx/blindbox/numbers?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res=>{
+					const result = res.data.data;
+					const arr = result.map(item=> {return item.number})
+					let list = []
+					if(count !== 0){
+						list = getRandomElements(arr,count)
+					} else {
+						list = arr;
+					}
+					this.drawBlindBox(list,boxNumber)
+				})
+				
+			},
+			drawBlindBox(list,boxNumber){
+				const postData = {
+					userId:this.userId,
+					numbers:list,
+					boxNumber:boxNumber,
+					seriesId:this.seriesId
+				}
+				post('wx/blindbox/drawBlindBox',postData).then(res=>{
+					this.getProductBoxBySeriesId()
+					this.showMarkPopup = true;
+				})
+			},
+			showRecods(){
+				const boxNumber = this.boxes[this.currentIndex].id;
+				get(`wx/blindbox/openRecords?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res=>{
+					const result = res.data.data
+					const tabs = ['全部'];
+					const groupedByLevel = result.groupedByLevel || {};
+					const records = result.records || [];
+					const tabKeys = Object.keys(groupedByLevel);
+					this.tabs = tabs.concat(tabKeys)
+					this.records = records
+					this.showPopup = true
+				})
 			}
+			
+			
 
 		}
 	}
@@ -728,15 +820,30 @@
 	}
 
 	.record-list {
+		max-height: 50vh;
 		.record-item {
 			padding: 24rpx 15rpx;
 			border: 4rpx solid #424242;
 			margin-bottom: 10rpx;
+			.record-image{
+				width: 40rpx;
+				height: 40rpx;
+				margin-right: 10rpx;
+			}
+			
 
 			.item-header {
 				display: flex;
 				justify-content: space-between;
 				margin-bottom: 16rpx;
+				.record-image{
+					border-radius: 50%;
+				}
+				
+				.header-left{
+					display: inline-flex;
+					
+				}
 
 				.serial {
 					font-size: 28rpx;
@@ -754,11 +861,14 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-
+				.info-left{
+					display: inline-flex;
+				}
 				.prize-name {
 					font-size: 26rpx;
 					color: #666;
 					max-width: 70%;
+					margin-left: 15rpx;
 				}
 
 				.award {
@@ -848,4 +958,90 @@
 			}
 		}
 	}
+	.mask {
+	  position: fixed;
+	  top: 0;
+	  left: 0;
+	  right: 0;
+	  bottom: 0;
+	  background: rgba(0,0,0,0.9);
+	  display: flex;
+	  justify-content: center;
+	  align-items: center;
+	  z-index: 999;
+	  .popup-content {
+	    width: 80%;
+	    background: white;
+	    border-radius: 20rpx;
+	    padding: 40rpx;
+	    position: relative;
+	  }
+	  
+	  .product-card {
+	    position: relative;
+	    .product-image {
+	      width: 100%;
+	      height: 400rpx;
+	      border-radius: 12rpx;
+	    }
+	    .product-info {
+	      margin-top: 20rpx;
+	      .product-title {
+	        font-size: 32rpx;
+	        display: block;
+	        font-weight: bold;
+	      }
+	      .product-price {
+	        color: #FF4500;
+	        font-size: 40rpx;
+	        margin-top: 10rpx;
+	        display: block;
+	      }
+	    }
+	  }
+	  
+	  .float-gif {
+	    position: absolute;
+	    width: 200rpx;
+	    top: -80rpx;
+	    left: 50%;
+	    transform: translateX(-50%);
+	    z-index: 1000;
+	  }
+	  
+	  .action-btns {
+	    margin-top: 40rpx;
+	    display: flex;
+	    gap: 20rpx;
+	    .btn {
+	      flex: 1;
+	      height: 80rpx;
+	      line-height: 80rpx;
+	      font-size: 28rpx;
+	      border-radius: 40rpx;
+	      &::after { border: none }
+	    }
+	    .cart-btn {
+	      background: #FFD700;
+	      color: #333;
+	    }
+	    .buy-btn {
+	      background: #FF4500;
+	      color: white;
+	    }
+	  }
+	  
+	  .close-icon {
+	    position: absolute;
+	    right: 20rpx;
+	    top: 20rpx;
+	    font-size: 50rpx;
+	    color: #666;
+	    width: 60rpx;
+	    height: 60rpx;
+	    text-align: center;
+	    line-height: 50rpx;
+	  }
+	}
+
 </style>

@@ -122,11 +122,34 @@ function dateCompare(a, b) {
 	return flag;
 }
 
+// 随机抽奖
+function getRandomElements(arr, n) {
+	// 边界条件处理
+	if (!Array.isArray(arr) || n <= 0 || arr.length === 0) {
+		return [];
+	}
+
+	// 实际可获取的最大数量
+	const max = Math.min(n, arr.length);
+
+	// 创建数组副本避免修改原数组
+	const copy = [...arr];
+
+	// Fisher-Yates 洗牌算法
+	for (let i = copy.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[copy[i], copy[j]] = [copy[j], copy[i]];
+	}
+
+	return copy.slice(0, max);
+}
+
 export {
 	photoCompress,
 	dataURLtoFile,
 	getUrlParam,
 	initJsdk,
 	formatDate,
-	dateCompare
+	dateCompare,
+	getRandomElements
 }

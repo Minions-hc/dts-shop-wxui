@@ -315,7 +315,6 @@
 			&.active {
 				font-size: 32rpx;
 				color: #FF4081;
-				font-weight: bold;
 				position: relative;
 				span{
 					display: inline-block;

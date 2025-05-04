@@ -165,6 +165,12 @@
 				})
 			},
 			switchOrderTab(index) {
+				if(index === 0){
+					uni.switchTab({
+						url: "/pages/box/index"
+					})
+					return
+				}
 				this.activeOrderTab = index
 				const userId = 'U10001'
 				// 实际应跳转对应订单列表页
