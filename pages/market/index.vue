@@ -20,21 +20,21 @@
 
 		<!-- 系列横向滚动 -->
 		<scroll-view class="series-scroll" scroll-x :show-scrollbar="false">
-			<view v-for="(item, index) in seriesList" :key="index"
-				:class="['series-item', {active: activeSeries === index}]" @click="switchSeries(index)">
+			<view v-for="(item, index) in marketSeriesGroup" :key="index"
+				:class="['series-item',currentSeries === item.name ? 'active' : '']" @click="changeSeries(item)">
 				{{item.name}}
-				<span v-if="activeSeries === index"></span>
+				<span v-if="currentSeries === item.name"></span>
 			</view>
 		</scroll-view>
 
 		<!-- 产品网格 -->
 		<view class="product-grid">
-			<view v-for="(item, index) in productList" :key="index" class="product-item" @click="navigatorToDetail(item)">
-				<image :src="item.image" class="product-image" />
+			<view v-for="(item, index) in productList" :key="index" class="product-item" @click="toProductPage(item)">
+				<image :src="getProductImage(item)" class="product-image" />
 				<view class="product-info">
 					<text class="product-name">{{item.name}}</text>
-					<text class="product-status" :style="{color: item.stock ? '#ff4c4c' : '#999'}">
-						{{item.stock ? `需${item.medal}勋章` : '找客服咨询改价'}}
+					<text class="product-status" :style="{color: item.available ? '#ff4c4c' : '#999'}">
+						{{item.available ? `需${item.productBadge}勋章` : '找客服咨询改价'}}
 					</text>
 				</view>
 			</view>
@@ -43,69 +43,67 @@
 </template>
 
 <script>
+	import {
+		get,
+		post
+	} from "@/utils/rest-util.js"
 	export default {
 		data() {
 			return {
 				totalMedal: 2,
 				noticeList: ['【重要通知】如果在集市中没有找到想要的赏品或者赏品已售罄，请联系客服或加入社群咨询'],
-				activeSeries: 0,
-				seriesList: [{
-						id: 1,
-						name: 'SP'
-					},
-					{
-						id: 2,
-						name: 'Labubu'
-					},
-					{
-						id: 3,
-						name: 'Rayan'
-					},
-					{
-						id: 4,
-						name: 'Crybaby'
-					},
-					{
-						id: 5,
-						name: 'Hirono小野'
-					},
-					{
-						id: 6,
-						name: 'SKULLPANDA香那'
-					},
-					{
-						id: 7,
-						name: '蜡川实花'
-					}
-				],
-				productList: [{
-						image: '/static/products/1.jpg',
-						name: 'SP隐藏款-星空幻想',
-						medal: 15,
-						stock: true,
-						series: 1
-					},
-					{
-						image: '/static/products/2.jpg',
-						name: 'Labubu森林音乐会特别版',
-						medal: 12,
-						stock: false,
-						series: 2
-					}
-					// 更多模拟数据...
-				]
+				currentSeries: 0,
+				marketSeriesGroup: [],
+				productList: []
 			}
 		},
+		onLoad() {
+			this.initPage()	
+		},
 		methods: {
-			switchSeries(index) {
-				this.activeSeries = index
-				// 实际应过滤对应系列产品
+			changeSeries(item) {
+				this.currentSeries = item.name
+				this.productList = this.allSeries[this.currentSeries];
+				// 这里请求对应系列的商品数据
 			},
-			navigatorToDetail(item) {
-				let str = '/pages/market/detail?series=' + item.series;
+			toProductPage(item) {
+				let str = '/pages/market/detail?productId=' + item.productId;
 				uni.navigateTo({
 					url: str
 				})
+			},
+			initPage() {
+				get('wx/home/getWxMarketSeries').then(json => {
+					const result = json.data?.data;
+					if (result?.items) {
+						const setMap = {};
+						const allProduct = []
+						this.productList = result?.items?.map(item => {
+							allProduct.concat(item.products);
+							return {
+								name: item.productSeriesName,
+								productId: item.productId
+							}
+						}).filter(item => item);
+						const keys = Object.keys(result?.productSeriesGroup);
+						this.allSeries = result?.productSeriesGroup;
+						this.marketSeriesGroup = Object.keys(result?.productSeriesGroup).map(item => {
+							return {
+								name: item
+							}
+						})
+						this.currentSeries = this.marketSeriesGroup[0].name;
+						this.productList = result?.productSeriesGroup[this.currentSeries];
+					}
+				})
+			},
+			getProductImage(item) {
+				let productImageStr = item.productImage;
+				let productImage;
+				if (productImageStr) {
+					productImage = productImageStr.split(';')[0];
+				}
+				return productImage;
 			}
 		}
 	}

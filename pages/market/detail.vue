@@ -4,23 +4,27 @@
 		<view class="swiper-container">
 			<!-- 添加autoplay实现自动轮播 -->
 			<swiper :current="swiperIndex" @change="onSwiperChange" class="product-swiper" :autoplay="3000">
-				<swiper-item v-for="(img, index) in product.images" :key="index">
+				<swiper-item v-for="(img, index) in productImageList" :key="index">
 					<image :src="img" mode="widthFix" class="swiper-image" />
 				</swiper-item>
 			</swiper>
-			<view class="swiper-indicator">{{swiperIndex + 1}}/{{product.images.length}}</view>
+			<view class="swiper-indicator">{{swiperIndex + 1}}/{{product.productImageList.length}}</view>
 		</view>
 
 		<!-- 商品信息 -->
 		<view class="product-describe">
 			<!-- 状态及勋章 -->
-			<view class="status-section">
-				<text class="medal-text">{{product.medal}}个勋章可兑换</text>
+			<view v-if="product.available" class="status-section">
+				<text class="medal-text">{{product.productBadge}}个勋章可兑换</text>
+			</view>
+
+			<view v-if="!product.available" class="status-section">
+				<text class="medal-text">联系客户咨询改价</text>
 			</view>
 
 			<!-- 商品属性 -->
 			<view class="spec-section">
-				<text class="product-name">{{product.name}}</text>
+				<text class="product-name">{{product.productName}}</text>
 				<!-- 修改分享按钮布局 -->
 				<view class="share-wrapper">
 					<image src="/static/icon-share.png" class="share-btn" @click="handleShare" />
@@ -33,20 +37,20 @@
 			<!-- 商品详情 -->
 			<view class="detail-section">
 				<text class="detail-title">商品详情</text>
-				<image v-for="(img, index) in product.detailImages" :key="'detail'+index" :src="img" mode="widthFix"
+				<image v-for="(img, index) in productDeatils" :key="'detail'+index" :src="img" mode="widthFix"
 					class="detail-image" />
 			</view>
 		</view>
 
 		<!-- 底部操作栏 -->
-		<view class="footer-bar" :class="{disabled: !product.stock}">
+		<view class="footer-bar">
 			<!-- 修改客服按钮布局 -->
 			<view class="service-btn">
 				<image src="/static/icon8.png" class="icon" />
 				<text>客服</text>
 			</view>
 			<view class="exchange-btn">
-				{{product.stock ? '置换商品' : '已售罄'}}
+				{{product.availble ? '置换商品' : '已售罄'}}
 			</view>
 		</view>
 	</view>
@@ -57,22 +61,18 @@
 		data() {
 			return {
 				swiperIndex: 0,
-				product: {
-					images: [
-						'/static/1.png',
-						'/static/2.png',
-						'/static/3.png'
-					],
-					name: 'Labubu雨靴包',
-					medal: 48,
-					size: '13.5cm',
-					stock: true,
-					detailImages: [
-						'/static/detail/1.jpg',
-						'/static/detail/2.jpg'
-					]
-				}
+				productId: '',
+				userId : '',
+				product: {},
+				productImageList:[],
+				productDeatils: []
 			}
+		},
+		onLoad(param) {
+			const {userId, productId}=param;
+			this.productId = productId;
+			this.userId = userId;
+			this.getProductByProductId();
 		},
 		methods: {
 			onSwiperChange(e) {
@@ -86,7 +86,18 @@
 					title: this.product.name,
 					success: res => console.log('分享成功', res)
 				})
-			}
+			},getProductByProductId(productId) {
+				get('wx/market/getMarketProductByProductId?productId='+this.productId).then(json=>{
+					const result = json.data?.data?.item;
+					this.product = result;
+					if (result?.productImage) {
+						this.productImageList = result.productImage.split[';'];
+					}
+					if (result?.productDeatil) {
+						this.productDeatils = result.productDeatil.split[';'];
+					}
+				})
+			} 
 		}
 	}
 </script>
