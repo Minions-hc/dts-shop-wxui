@@ -67,19 +67,20 @@
 									<image :src="item.avatar" mode="aspectFit" lazy-load class="record-image"></image>
 									<text class="serial">【第{{ item.number }}张】{{ item.userId }}</text>
 								</view>
-								
+
 								<text class="time">{{ item.createdAt }}</text>
 							</view>
-					
+
 							<!-- 奖品信息 -->
 							<view class="prize-info">
 								<view class="info-left">
-									<image :src="item.productImage" mode="aspectFit" lazy-load class="record-image"></image>
+									<image :src="item.productImage" mode="aspectFit" lazy-load class="record-image">
+									</image>
 									<text class="prize-name">{{ item.productName }}</text>
-								</view>							
+								</view>
 								<text class="award">{{ item.levelName }} x 1</text>
 							</view>
-					
+
 							<!-- 分隔线 -->
 							<view v-if="index < filteredRecords.length-1" class="divider"></view>
 						</view>
@@ -110,7 +111,8 @@
 
 						<!-- 记录列表 -->
 						<scroll-view class="box-list" scroll-y>
-							<view v-for="(item, index) in boxeInfos" :key="item.id" class="box-item" @tap="changeBox(index)">
+							<view v-for="(item, index) in boxeInfos" :key="item.id" class="box-item"
+								@tap="changeBox(index)">
 								<view class="box-img">
 									<image src="/static/box.png" mode="aspectFill" class="box-image"></image>
 									<text>第{{index + 1}}箱</text>
@@ -121,7 +123,7 @@
 											{{obj.type}}赏{{obj.current}}/{{obj.total}}
 										</view>
 									</view>
-						
+
 								</view>
 								<view class="box-total">
 									剩{{item.remaining}}发
@@ -252,9 +254,59 @@
 					<text v-if="selectedCount.length > 0">{{slectedNum}}</text>
 					<text v-else class="tip-text">请先选择号码</text>
 				</view>
-				<button class="buy-btn">立即购买</button>
+				<button class="buy-btn" @tap="toShopping">立即购买</button>
 			</view>
 		</view>
+		<uni-popup ref="shopingPopup" background-color="#fff" @change="changePopup" type="bottom"
+			border-radius="10px 10px 0 0">
+			<view class="shopping-popup-content" :class="{ 'popup-height': type === 'left' || type === 'right' }">
+				<view class="modal-container">
+					<!-- 标题 -->
+					<view class="modal-title">LABUBU前方高能(18)</view>
+
+					<!-- 内容区域 -->
+					<view class="modal-content">
+						<!-- 价格信息 -->
+						<view class="info-item">
+							<view>单价：</view>
+							<view>￥59.00</view>
+						</view>
+						<view class="info-item">
+							<view>可用优惠券：</view>
+							<view>暂无可用优惠券</view>
+						</view>
+						<view class="info-item">
+							<view>可用红包：</view>
+							<view>￥0</view>
+						</view>
+						<view class="info-item">
+							<view>是否锁箱 </view>
+							<switch checked @change="switch1Change" />
+						</view>
+
+						<!-- 提货说明 -->
+						<view class="delivery-info">
+							<view>盒柜选择提货后7天内发货</view>
+							<view>盒柜提货运费12元满三件包邮，不支持7天无理由退换货</view>
+						</view>
+						<view class="total-parice-content">
+							小计：￥159.00
+						</view>
+						<view class="check-desc-item">
+							<view :class="['checkbox', chkDesc && 'checked']" @tap="changChk">
+								<view v-if="chkDesc" class="check-icon">✓</view>
+							</view>
+							<text>我已满18岁，已阅读并同意《用户使用协议》</text>
+						</view>
+					</view>
+
+
+					<!-- 操作按钮 -->
+					<view class="confirm-btn" @click="handleConfirm" :class="[!chkDesc && 'disabled-confirm']">确认购买
+					</view>
+				</view>
+			</view>
+		</uni-popup>
 	</view>
 </template>
 
@@ -282,7 +334,8 @@
 		},
 		data() {
 			return {
-				segments:[],
+				chkDesc: true,
+				segments: [],
 				seriesId: '',
 				userId: '',
 				showPopup: false,
@@ -290,7 +343,7 @@
 				tabs: [],
 				records: [],
 				currentIndex: 1, // 当前箱号
-				totalBoxes: 3, // 总箱数
+				totalBoxes: 0, // 总箱数
 				offsetX: 0, // 横向位移
 				touchStartX: 0, // 触摸起始位置
 				isAnimating: false, // 动画进行中
@@ -302,67 +355,6 @@
 					available: true,
 					sold: true
 				},
-				items: [{
-						id: 1,
-						image: '/static/serice2.jpg',
-						sold: false,
-						checked: false
-					},
-					{
-						id: 2,
-						image: '/static/serice2.jpg',
-						sold: false,
-						checked: false
-					},
-					{
-						id: 3,
-						image: '/static/serice2.jpg',
-						sold: false,
-						checked: false
-					},
-					{
-						id: 4,
-						image: '/static/serice2.jpg',
-						sold: false,
-						checked: false
-					},
-					{
-						id: 5,
-						image: '/static/serice2.jpg',
-						sold: false,
-						checked: false
-					},
-					{
-						id: 6,
-						image: '/static/serice2.jpg',
-						sold: false,
-						checked: false
-					},
-					{
-						id: 7,
-						image: '/static/serice2.jpg',
-						sold: true,
-						checked: false
-					},
-					{
-						id: 8,
-						image: '/static/serice2.jpg',
-						sold: true,
-						checked: false
-					},
-					{
-						id: 2,
-						image: '/static/serice2.jpg',
-						sold: false,
-						checked: false
-					},
-					{
-						id: 9,
-						image: '/static/serice2.jpg',
-						sold: false,
-						checked: false
-					}
-				],
 				selectedCount: [], // 已选数量示例
 				boxeInfos: [],
 				currentX: 0,
@@ -372,7 +364,7 @@
 			}
 		},
 		computed: {
-			getBoxTatalQty(){
+			getBoxTatalQty() {
 				const index = this.currentIndex - 1;
 				return this.boxes[index]?.total || 0;
 			},
@@ -380,7 +372,7 @@
 				const index = this.currentIndex - 1;
 				return this.boxes[index];
 			},
-			getBoxRemainQty(){
+			getBoxRemainQty() {
 				const index = this.currentIndex - 1;
 				return this.boxes[index]?.remain || 0;
 			},
@@ -390,9 +382,6 @@
 			},
 			isAllChecked() {
 				return this.filteredItems.every(item => item.checked)
-			},
-			availableItems() {
-				return this.items.filter(item => !item.sold)
 			},
 			formattedCurrentIndex() {
 				return this.currentIndex.toString().padStart(2, '0') // 补零显示
@@ -406,6 +395,9 @@
 			}
 		},
 		methods: {
+			changePopup(e) {
+				console.log('当前模式：' + e.type + ',状态：' + e.show);
+			},
 			getProductProbaby(product, currentBox) {
 				if (product.quantity === product.soldQuantity) {
 					return '0%'
@@ -418,10 +410,6 @@
 			},
 			getStock(item) {
 				return item.quantity - item.soldQuantity
-			},
-			toggleFilter(type) {
-				if (type === 'sold') return // 禁用已售切换
-				this.filters[type] = !this.filters[type]
 			},
 			toggleSelect(item, index) {
 				if (item.sold) return
@@ -438,9 +426,6 @@
 				const selectedCount = []
 				this.filteredItems.forEach((item, i) => {
 					this.$set(item, 'checked', targetState);
-					// if(targetState){
-					// 	selectedCount.push(i+1)
-					// }
 				})
 				this.selectedCount = this.filteredItems.map((item, i) => {
 					if (item.checked) {
@@ -448,30 +433,31 @@
 					}
 				}).filter(item => item);
 			},
+			handleConfirm() {
+				if (!this.chkDesc) {
+					return
+				}
+
+			},
 			// 切换箱子
 			async switchBox(direction) {
-				if (this.isAnimating) return
-
 				const oldIndex = this.currentIndex
 				this.currentIndex = direction === 'next' ?
 					Math.min(this.currentIndex + 1, this.totalBoxes) :
 					Math.max(this.currentIndex - 1, 1)
-
-				if (oldIndex === this.currentIndex) return
-
-				this.isAnimating = true
-				// 设置动画方向
-				this.offsetX = direction === 'next' ? -100 : 100
-
-				await this.loadBoxData()
-
-				// 触发重排确保动画生效
-				this.$nextTick(() => {
-					setTimeout(() => {
-						this.offsetX = 0
-						this.isAnimating = false
-					}, 50)
-				})
+				if (this.currentIndex === oldIndex && direction === 'next') {
+					uni.showToast({
+						title: '没有下一箱了',
+						icon: 'none'
+					})
+				} else if (this.currentIndex === oldIndex && direction === 'prev') {
+					uni.showToast({
+						title: '没有上一箱了',
+						icon: 'none'
+					})
+				} else if (this.currentIndex !== oldIndex) {
+					this.queryProductList()
+				}
 			},
 			// 加载箱子数据
 			async loadBoxData() {
@@ -508,17 +494,14 @@
 			},
 			handleDraw(count) {
 				this.prizeDraw(count)
-				// this.showMarkPopup = true
-				//    uni.showToast({
-				//      title: `触发${drawMap[count]}操作`,
-				//      icon: 'none'
-				//    })
-				// 实际抽奖逻辑...
 			},
 			navigatorToRule() {
 				uni.navigateTo({
 					url: '/pages/blindBox/caileishangRule'
 				})
+			},
+			toShopping() {
+				this.$refs.shopingPopup.open('bottom');
 			},
 			getProductBoxBySeriesId(callBack) {
 				get('wx/series/getProductBoxBySeriesId?seriesId=' + this.seriesId).then(json => {
@@ -527,6 +510,7 @@
 					const productQuantityMap = result.productQuantityMap || {};
 					const remainingQuantityMap = result.remainingQuantityMap || {}
 					const productBoxResultVos = result.productBoxResultVos || [];
+					this.totalBoxes = result.boxTotalNum
 					const keys = Object.keys(groupedByBoxNumber);
 					const boxList = [];
 					const boxeInfos = []
@@ -555,12 +539,15 @@
 						boxList.push(obj)
 					})
 					this.productSeries = result.productSeries;
-					
+
 					this.boxes = boxList;
 					this.boxeInfos = boxeInfos;
 					this.queryProductList()
 					callBack && callBack()
 				})
+			},
+			changChk() {
+				this.chkDesc = !this.chkDesc;
 			},
 			queryProductList() {
 				const boxNumber = this.boxes[this.currentIndex - 1].id;
@@ -572,23 +559,26 @@
 							checked: false
 						}
 					})
-					const soldOutList = result.filter(item=>item.soldOut).map(item=> {return item.number});
+					const soldOutList = result.filter(item => item.soldOut).map(item => {
+						return item.number
+					});
 					const maxNum = Math.max(soldOutList)
 					this.setPressArray(maxNum)
 				})
 			},
-			
-			setPressArray(maxNum){
+
+			setPressArray(maxNum) {
 				const priceRanges = this.boxes[this.currentIndex]?.products?.[0]?.priceRanges || '[]'
 				const priceRangesParan = JSON.parse(priceRanges)
-				const segments = priceRangesParan.map?.(item=>{
+				const segments = priceRangesParan.map?.(item => {
 					return {
 						end: item.maxQuantity,
-						price:item.price
+						price: item.price
 					}
 				})
+				const maxValue = this.boxes[this.currentIndex].total
 				segments.push({
-					end: Infinity,
+					end: maxValue,
 					price: 100
 				})
 
@@ -614,8 +604,8 @@
 					return item.number
 				})
 				const list = getRandomElements(filteredItems, count)
-				this.filteredItems = this.filteredItems.map(item=>{
-					const checked = item.soldOut ? false : (list.some(obj=> obj === item.number) ? true : false)
+				this.filteredItems = this.filteredItems.map(item => {
+					const checked = item.soldOut ? false : (list.some(obj => obj === item.number) ? true : false)
 					return {
 						...item,
 						checked
@@ -626,7 +616,7 @@
 						return i + 1
 					}
 				}).filter(item => item);
-				
+
 
 			},
 			drawBlindBox(list, boxNumber) {
@@ -642,10 +632,13 @@
 					// this.showMarkPopup = true;
 				})
 			},
-			changeBox(index){
+			changeBox(index) {
 				this.currentIndex = index + 1;
-				this.showBoxPopup = false;				
+				this.showBoxPopup = false;
 			},
+			switch1Change(value) {
+				console.log(value)
+			}
 		}
 	}
 </script>
@@ -702,22 +695,22 @@
 				display: flex;
 				align-content: space-between;
 
-				.progress-bar {
-					height: 16rpx;
-					background: #eeeeee;
-					border-radius: 8rpx;
-					margin-bottom: 12rpx;
-					width: 60%;
-					flex-shrink: 0;
-					margin-top: 10rpx;
+				// .progress-bar {
+				// 	height: 16rpx;
+				// 	background: #eeeeee;
+				// 	border-radius: 8rpx;
+				// 	margin-bottom: 12rpx;
+				// 	width: 60%;
+				// 	flex-shrink: 0;
+				// 	margin-top: 10rpx;
 
-					.progress-inner {
-						height: 100%;
-						background: #e17c8c;
-						border-radius: 8rpx;
-						transition: width 0.3s;
-					}
-				}
+				// 	.progress-inner {
+				// 		height: 100%;
+				// 		background: #e17c8c;
+				// 		border-radius: 8rpx;
+				// 		transition: width 0.3s;
+				// 	}
+				// }
 
 				.progress-text {
 					font-size: 24rpx;
@@ -1231,7 +1224,7 @@
 		background: #fff;
 		box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.08);
 		padding: 24rpx;
-		z-index: 999;
+		z-index: 99;
 
 		/* 操作按钮区域 */
 		.action-section {
@@ -1278,18 +1271,18 @@
 				}
 			}
 
-			.progress-bar {
-				height: 12rpx;
-				background: #eee;
-				border-radius: 6rpx;
+			// .progress-bar {
+			// 	height: 12rpx;
+			// 	background: #eee;
+			// 	border-radius: 6rpx;
 
-				.progress-inner {
-					height: 100%;
-					background: #1890ff;
-					border-radius: 6rpx;
-					transition: width 0.3s;
-				}
-			}
+			// 	.progress-inner {
+			// 		height: 100%;
+			// 		background: #1890ff;
+			// 		border-radius: 6rpx;
+			// 		transition: width 0.3s;
+			// 	}
+			// }
 
 			.stock-info {
 				display: flex;
@@ -1391,63 +1384,68 @@
 
 	.record-list {
 		max-height: 50vh;
+
 		.record-item {
 			padding: 24rpx 15rpx;
 			border: 4rpx solid #424242;
 			margin-bottom: 10rpx;
-			.record-image{
+
+			.record-image {
 				width: 40rpx;
 				height: 40rpx;
 				margin-right: 10rpx;
 			}
-			
-	
+
+
 			.item-header {
 				display: flex;
 				justify-content: space-between;
 				margin-bottom: 16rpx;
-				.record-image{
+
+				.record-image {
 					border-radius: 50%;
 				}
-				
-				.header-left{
+
+				.header-left {
 					display: inline-flex;
-					
+
 				}
-	
+
 				.serial {
 					font-size: 28rpx;
 					color: #333;
 					font-weight: 500;
 				}
-	
+
 				.time {
 					font-size: 24rpx;
 					color: #999;
 				}
 			}
-	
+
 			.prize-info {
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				.info-left{
+
+				.info-left {
 					display: inline-flex;
 				}
+
 				.prize-name {
 					font-size: 26rpx;
 					color: #666;
 					max-width: 70%;
 					margin-left: 15rpx;
 				}
-	
+
 				.award {
 					font-size: 26rpx;
 					color: #ff1773;
 					font-weight: 500;
 				}
 			}
-	
+
 			.divider {
 				height: 2rpx;
 				background: #eee;
@@ -1525,6 +1523,103 @@
 					font-size: 24rpx;
 				}
 
+			}
+		}
+	}
+
+	/* 弹窗容器 */
+	.modal-container {
+		background: #FFFFFF;
+		border-radius: 16rpx;
+		padding: 32rpx;
+	}
+
+	/* 标题样式 */
+	.modal-title {
+		font-size: 36rpx;
+		font-weight: 600;
+		color: #333333;
+		text-align: center;
+		margin-bottom: 32rpx;
+	}
+
+	/* 内容区域 */
+	.modal-content {
+		padding: 0 20rpx;
+	}
+
+	/* 信息条目 */
+	.info-item {
+		font-size: 28rpx;
+		color: #666666;
+		line-height: 50rpx;
+		position: relative;
+		padding-left: 20rpx;
+		display: flex;
+		justify-content: space-between;
+	}
+
+	/* 提货说明 */
+	.delivery-info {
+		margin-top: 32rpx;
+		font-size: 26rpx;
+		color: #999999;
+		line-height: 40rpx;
+		color: red;
+		font-weight: bold;
+	}
+
+	.total-parice-content {
+		width: 100%;
+		font-size: 24rpx;
+		line-height: 40rpx;
+		color: red;
+		text-align: right;
+		margin-top: 8rpx;
+	}
+
+	/* 确认按钮 */
+	.confirm-btn {
+		height: 88rpx;
+		background: #000;
+		border-radius: 44rpx;
+		font-size: 32rpx;
+		color: #FFFFFF;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-top: 24rpx;
+	}
+	.disabled-confirm{
+		background: #999;
+		color: #000;
+	}
+
+	.check-desc-item {
+		display: flex;
+		text-align: center;
+		font-size: 24rpx;
+		margin: 15rpx 0;
+
+		.checkbox {
+			width: 30rpx;
+			height: 30rpx;
+			border: 2rpx solid red;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-right: 10rpx;
+
+			&.checked {
+				background: red;
+				border-color: red;
+
+				.check-icon {
+					color: #fff;
+					font-size: 28rpx;
+					transform: translateY(-2rpx);
+				}
 			}
 		}
 	}

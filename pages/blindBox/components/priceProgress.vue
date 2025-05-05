@@ -9,15 +9,20 @@
         class="segment"
         :style="{
           width: segment.width + '%',
-          backgroundColor: segment.color
+		  backgroundColor: '#ebedf0'
         }"
       >
+		
         <!-- 价格标签 -->
         <view v-if="currentPriceIndex(index)" class="price-label">
           ￥{{ currentPrice }}
         </view>
-		<view class="segment-divider" :style="{ left: divider.position + '%' ,backgroundColor: index === processedSegments.length - 1 ? segment.color : ''}"></view>
+		<view class="segment-divider" :style="{ left: divider.position + '%' ,backgroundColor: currentPriceIndex(index) ? segment.color : ''}"></view>
       </view>
+	  <view class="segment-item" :style="{
+	    width: itemWidth + '%',
+		left: leftValue + '%'
+	  }"></view>
     </view>
   </view>
 </template>
@@ -49,7 +54,10 @@ export default {
   data(){
 	  return {
 		  flag: false,
-		  indexFlag: false
+		  indexFlag: false,
+		  itemWidth: 0,
+		  leftValue: 0,
+		  indexValue: 0
 	  }
   },
   computed: {
@@ -57,7 +65,7 @@ export default {
       const total = this.getTotalRange()
       return this.segments.map((segment, index, arr) => {
         const prevEnd = index > 0 ? arr[index - 1].end : 0
-        const width = ((segment.end - prevEnd) / total) * 10
+        const width = ((segment.end - prevEnd) / total) * 100
         let color = this.colors.normal
 		
         if (index === arr.length - 1) {
@@ -76,20 +84,34 @@ export default {
   },
   methods: {
     getTotalRange() {
-      const lastValidSegment = this.segments.find(s => s.end !== Infinity)
+      const lastValidSegment = this.segments[this.segments.length - 1]
       return lastValidSegment ? lastValidSegment.end : 0
     },
 	currentPriceIndex(i){
-		let indexValue = 0;
-		const test =  this.segments.map((item,index)=>{
-			if(item.end >= this.currentValue &&  !indexValue && !this.flag){
-				indexValue = index
+		const listWidth = []
+		const total = this.getTotalRange();
+		const test =  this.segments.map((item,index,arr)=>{
+			const prevEnd = index > 0 ? arr[index - 1].end : 0
+			const width = ((item.end - prevEnd) / total) * 100;
+			listWidth.push(width)
+			if(item.end >= this.currentValue && !this.flag){
+				this.indexValue = index
 				this.flag = true
 				return
 			}
 		})
-		return i == indexValue
-	}
+		let num = 0;
+		let countWidth = 0
+		for(let i = 0; i < this.indexValue;i++ ){
+			num = num + listWidth[i];
+			if(i < this.indexValue - 1){
+				countWidth = countWidth + this.segments[i].end
+			}
+		}
+		this.itemWidth = ((this.currentValue - countWidth) / total) * 100;
+		this.leftValue = (num / total) * 100;
+		return this.indexValue == this.segments.length - 1 ? i == this.indexValue - 1 : i == this.indexValue
+	},
   }
 }
 </script>
@@ -103,7 +125,7 @@ export default {
 .progress-bar {
   height: 16rpx;
   background: transparent;
-  border-radius: 8rpx;
+  border-radius: 8rpx !important;
   display: flex;
   position: relative;
   overflow: visible; /* 允许溢出显示分隔符 */
@@ -113,6 +135,11 @@ export default {
   height: 100%;
   position: relative;
   transition: all 0.3s ease;
+}
+.segment-item{
+	position: absolute;
+	height: 100%;
+	background-color: #fed1a9;
 }
 
 .segment-divider {
