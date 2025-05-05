@@ -54,7 +54,10 @@
 	import {dateCompare,formatDate} from '@/utils/common.js'
 	export default {
 		onLoad() {
-			this.userId = 'U10001';
+			this.userId = 'U10001';			
+		},
+		
+		onShow() {
 			this.currentCheckInDay()
 		},
 		data() {
@@ -130,7 +133,7 @@
 			},
 			async userCheckIn() {
 				const flag = await this.checkDate();
-				if(!flag){
+				if(flag){
 					uni.showToast({ title: '您今日已签到' })
 					return
 				}

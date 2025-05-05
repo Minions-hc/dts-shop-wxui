@@ -221,6 +221,69 @@
 		    />
 		  </view>
 		</view>
+		<uni-popup ref="shopingPopup" background-color="#fff" @change="changePopup" type="bottom"
+			border-radius="10px 10px 0 0">
+			<view class="shopping-popup-content" :class="{ 'popup-height': type === 'left' || type === 'right' }">
+				<view class="modal-container">
+					<!-- 标题 -->
+					<view class="modal-title">{{productSeries.seriesName}}</view>
+		
+					<!-- 内容区域 -->
+					<view class="modal-content">
+						<!-- 价格信息 -->
+						<view class="info-item">
+							<view>单价：</view>
+							<view>￥{{currentBox.pricePerDraw}}</view>
+						</view>
+						<view class="info-item">
+							<view>可用优惠券：</view>
+							<view>暂无可用优惠券</view>
+						</view>
+						<view class="info-item">
+							<view>可用红包：</view>
+							<view>￥0</view>
+						</view>
+						<view class="info-item">
+							<view>积分抵扣 </view>
+							<view class="">
+								<text>10积分</text>
+								<text  class="point-class">-￥{{calcPointPrice()}}</text>
+								<switch :checked="isDeduction" @change="switch1Change" class="uni-swaitch"/>
+							</view>
+							
+						</view>
+						<view class="info-item">
+							<view>是否锁箱 </view>
+							<switch :checked="isLockBox" @change="switchLockBox" class="uni-swaitch"/>
+						</view>
+						<view class="info-item">
+							<view>是否开启动画 </view>
+							<switch  @change="switchAnimate" class="uni-swaitch"/>
+						</view>
+		
+						<!-- 提货说明 -->
+						<view class="delivery-info">
+							<view>盒柜选择提货后7天内发货</view>
+							<view>盒柜提货运费12元满三件包邮，不支持7天无理由退换货</view>
+						</view>
+						<view class="total-parice-content">
+							小计：￥{{currentBox.pricePerDraw * drawCount}}
+						</view>
+						<view class="check-desc-item">
+							<view :class="['checkbox', chkDesc && 'checked']" @tap="changChk">
+								<view v-if="chkDesc" class="check-icon">✓</view>
+							</view>
+							<text>我已满18岁，已阅读并同意《用户使用协议》</text>
+						</view>
+					</view>
+		
+		
+					<!-- 操作按钮 -->
+					<view class="confirm-btn" @click="handleConfirm" :class="[!chkDesc && 'disabled-confirm']">确认购买
+					</view>
+				</view>
+			</view>
+		</uni-popup>
 	</view>
 </template>
 
@@ -235,10 +298,17 @@
 			const {userId,seriesId} = param;
 			this.seriesId = seriesId;
 			this.userId = userId;
+		},
+		onShow() {
 			this.getProductBoxBySeriesId(null)
+			this.getUserPoint()
 		},
 		data() {
 			return {
+				isDeduction:true,
+				isLockBox:true,
+				isOpenAnimate:false,
+				chkDesc: true,
 				currentIndex: 0,
 				showMarkPopup:false,
 				userId:'',
@@ -248,16 +318,7 @@
 				showBoxPopup: false,
 				activeTab: '全部',
 				tabs: [],
-				records: [{
-						id: 80,
-						user: 'AAA',
-						time: '04/26 17:01:51',
-						prize: '【自制款】拉布布帆布袋',
-						award: 'D赏',
-						quantity: 1
-					},
-					// 更多数据...
-				],
+				records: [],
 				productInfo: {
 				        image: "/static/product.jpg",
 				        title: "高端无线蓝牙耳机",
@@ -266,6 +327,7 @@
 				boxes: [],
 				dynamicHeight: "auto", // 初始值
 				boxeInfos: [],
+				productSeries: {}
 			}
 		},
 		computed: {
@@ -279,13 +341,28 @@
 
 		},
 		methods: {
+			changChk() {
+				this.chkDesc = !this.chkDesc;
+			},
 			closeMask(){
 				this.showMarkPopup = false;
+			},
+			changePopup(){
+				
 			},
 			changeBox(index){
 				this.currentIndex = index;
 				this.showBoxPopup = false
 				
+			},
+			switch1Change(e) {
+				this.isDeduction = e.detail.value
+			},
+			switchAnimate(e){
+				this.isOpenAnimate = e.detail.value;
+			},
+			switchLockBox(e){
+				this.isLockBox = e.detail.value;
 			},
 			switchBox(direction) {
 				if(direction === 'next' && this.currentIndex === this.boxes.length - 1){
@@ -324,19 +401,20 @@
 				this.getProductBoxBySeriesId(callBack)
 			},
 			handleDraw(count) {
-				this.prizeDraw(count)
-			    const drawMap = {
-			      0: '全收',
-			      1: '欧一发',
-			      3: '欧三发',
-			      10: '欧十发'
-			    }
-				// this.showMarkPopup = true
-			 //    uni.showToast({
-			 //      title: `触发${drawMap[count]}操作`,
-			 //      icon: 'none'
-			 //    })
-			    // 实际抽奖逻辑...
+				const callBack = (num)=>{
+					this.drawCount = num
+					this.$refs.shopingPopup.open('bottom');
+				}
+				if(count === 0){
+					const boxNumber = this.boxes[this.currentIndex].id;
+					get(`wx/blindbox/numbers?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res=>{
+						const result = res.data.data;
+						const arr = result.map(item=> {return item.number})
+						callBack(arr.length)
+					})
+				} else {
+					callBack(count)
+				}
 			  },
 			navigatorToRule() {
 				uni.navigateTo({
@@ -350,6 +428,7 @@
 					const productQuantityMap = result.productQuantityMap || {};
 					const remainingQuantityMap = result.remainingQuantityMap || {}
 					const productBoxResultVos = result.productBoxResultVos || [];
+					this.productSeries = result.productSeries;
 					const keys = Object.keys(groupedByBoxNumber);
 					const boxList = [];
 					const boxeInfos = []
@@ -432,8 +511,16 @@
 					this.records = records
 					this.showPopup = true
 				})
+			},
+			handleConfirm(){
+				this.prizeDraw()
+			},
+			getUserPoint(){
+				
+			},
+			calcPointPrice(){
+				return '0.00'
 			}
-			
 			
 
 		}
@@ -1036,6 +1123,111 @@
 	    text-align: center;
 	    line-height: 50rpx;
 	  }
+	}
+	/* 弹窗容器 */
+	.modal-container {
+		background: #FFFFFF;
+		border-radius: 16rpx;
+		padding: 32rpx;
+	}
+	
+	/* 标题样式 */
+	.modal-title {
+		font-size: 36rpx;
+		font-weight: 600;
+		color: #333333;
+		text-align: center;
+		margin-bottom: 32rpx;
+	}
+	
+	/* 内容区域 */
+	.modal-content {
+		padding: 0 20rpx;
+	}
+	
+	/* 信息条目 */
+	.info-item {
+		font-size: 28rpx;
+		color: #666666;
+		line-height: 50rpx;
+		position: relative;
+		padding-left: 20rpx;
+		display: flex;
+		justify-content: space-between;
+		margin: 15rpx 0;
+		.uni-swaitch{
+			line-height: 40rpx;
+			margin-left: 10rpx;
+		}
+		.point-class{
+			color: red;
+			margin-left: 10rpx;
+		}
+	}
+	
+	/* 提货说明 */
+	.delivery-info {
+		margin-top: 32rpx;
+		font-size: 26rpx;
+		color: #999999;
+		line-height: 40rpx;
+		color: red;
+		font-weight: bold;
+	}
+	
+	.total-parice-content {
+		width: 100%;
+		font-size: 24rpx;
+		line-height: 40rpx;
+		color: red;
+		text-align: right;
+		margin-top: 8rpx;
+	}
+	
+	/* 确认按钮 */
+	.confirm-btn {
+		height: 88rpx;
+		background: #000;
+		border-radius: 44rpx;
+		font-size: 32rpx;
+		color: #FFFFFF;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-top: 24rpx;
+	}
+	.disabled-confirm{
+		background: #999;
+		color: #000;
+	}
+	
+	.check-desc-item {
+		display: flex;
+		text-align: center;
+		font-size: 24rpx;
+		margin: 15rpx 0;
+	
+		.checkbox {
+			width: 30rpx;
+			height: 30rpx;
+			border: 2rpx solid red;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-right: 10rpx;
+	
+			&.checked {
+				background: red;
+				border-color: red;
+	
+				.check-icon {
+					color: #fff;
+					font-size: 28rpx;
+					transform: translateY(-2rpx);
+				}
+			}
+		}
 	}
 
 </style>

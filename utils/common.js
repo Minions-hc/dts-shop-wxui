@@ -107,14 +107,14 @@ function formatDate(value) {
 
 function dateCompare(a, b) {
 	var flag = false;
-	var arr = a.split("-");
-	var starttime = new Date(arr[0], arr[1], arr[2]);
+	var arr = a.split(" ")[0];
+	var starttime = new Date(arr);
 	var starttimes = starttime.getTime();
-	var arrs = b.split("-");
-	var endTime = new Date(arrs[0], arrs[1], arrs[2]);
+	var arrs = b.split(" ")[0];
+	var endTime = new Date(arrs);
 	var endTimes = endTime.getTime();
 	// 进行日期比较
-	if (endTimes > starttimes) {
+	if (endTimes === starttimes) {
 		flag = true;
 	} else {
 		flag = false;

@@ -281,7 +281,7 @@
 						</view>
 						<view class="info-item">
 							<view>是否锁箱 </view>
-							<switch checked @change="switch1Change" />
+							<switch :checked="isLockBox" @change="switch1Change" />
 						</view>
 
 						<!-- 提货说明 -->
@@ -330,6 +330,9 @@
 			} = param;
 			this.seriesId = seriesId;
 			this.userId = userId;
+			
+		},
+		onShow() {
 			this.getProductBoxBySeriesId(null)
 		},
 		data() {
@@ -360,7 +363,8 @@
 				currentX: 0,
 				filteredItems: [],
 				productSeries: {},
-				currentValue: 0
+				currentValue: 0,
+				isLockBox:true
 			}
 		},
 		computed: {
@@ -465,11 +469,6 @@
 					title: '加载中...'
 				})
 				try {
-					// const res = await uni.request({
-					//   url: `/api/boxes/${this.currentIndex}`
-					// })
-					// this.currentBox = res.data
-					// this.totalBoxes = res.total
 				} finally {
 					uni.hideLoading()
 				}
@@ -644,8 +643,8 @@
 				this.currentIndex = index + 1;
 				this.showBoxPopup = false;
 			},
-			switch1Change(value) {
-				console.log(value)
+			switch1Change(e) {
+				this.isLockBox = e.detail.value;
 			},
 			getCurrentSeriesPrice() {
 				return this.segments.find(s => this.currentValue <= s.end)?.price || 0
@@ -681,6 +680,9 @@
 					}
 				})
 				return totalPrice;
+			},
+			getUserPoint(){
+				
 			}
 		}
 	}
@@ -1313,19 +1315,6 @@
 					font-size: 26rpx;
 				}
 			}
-
-			// .progress-bar {
-			// 	height: 12rpx;
-			// 	background: #eee;
-			// 	border-radius: 6rpx;
-
-			// 	.progress-inner {
-			// 		height: 100%;
-			// 		background: #1890ff;
-			// 		border-radius: 6rpx;
-			// 		transition: width 0.3s;
-			// 	}
-			// }
 
 			.stock-info {
 				display: flex;

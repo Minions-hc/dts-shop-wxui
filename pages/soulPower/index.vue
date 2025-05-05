@@ -48,7 +48,7 @@
 		},
 		methods: {
 			navigatorToBlindBox(item) {
-				let blindBoxurl = '/pages/blindBox/soulPower?series=' + item.series;
+				let blindBoxurl = '/pages/blindBox/soulPower?seriesId=' + item.series;
 				uni.navigateTo({
 					url: blindBoxurl
 				})
