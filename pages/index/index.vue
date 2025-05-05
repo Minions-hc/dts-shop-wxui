@@ -52,8 +52,23 @@
 					<text class="sales">已售{{item.purchaseCount}}</text>
 				</view>
 			</view>
+			
+			</view>
+			<!-- 进群抽奖浮窗 -->
+			  <view v-if="showGroup" class="group-container">
+			    <image 
+			      class="close-icon" 
+			      src="/static/group-close.png" 
+			      @click.stop="closeGroup"
+			    />
+			    <image 
+			      class="group-image" 
+			      src="/static/group-banner.png" 
+			      mode="widthFix"
+			      @click="navigateToGroup"
+			    />
+			  </view>
 		</view>
-	</view>
 </template>
 
 <script>
@@ -73,13 +88,18 @@
 				seriesList: [],
 				avoidList: [],
 				productList: [],
-				productSeriesGroup: []
+				productSeriesGroup: [],
+				showGroup: true // 初始显示状态
 			}
 		},
 		onLoad() {
 			this.initPage();
 			this.loadHotProduct();
 			this.loadisAvoidProduct();
+			 const savedState = uni.getStorageSync('groupBannerState')
+			    if (savedState !== '') {
+			      this.showGroup = savedState
+			    }
 		},
 		methods: {
 			switchTab(index) {
@@ -146,7 +166,20 @@
 					img = defaultAovidImg
 				}
 				return series.seriesImage ? series.seriesImage : img
-			}
+			},
+			// 跳转页面
+			    navigateToGroup() {
+			      uni.navigateTo({
+			        url: '/pages/group/index'
+			      })
+			    },
+			    
+			    // 关闭浮窗
+			    closeGroup() {
+			      this.showGroup = false
+			      // 持久化存储状态
+			      uni.setStorageSync('groupBannerState', false)
+			    }
 		}
 	}
 </script>
@@ -409,5 +442,35 @@
 				}
 			}
 		}
+	}
+	
+	.group-container {
+	  position: fixed;
+	  right: 20rpx;
+	  bottom: 10rpx; /* 根据实际情况调整 */
+	  z-index: 999;
+	  width: 200rpx;
+	  height: auto;
+	
+	  .group-image {
+	    width: 100%;
+	    height: auto;
+	    animation: float 3s ease-in-out infinite;
+	  }
+	
+	  .close-icon {
+	    position: absolute;
+	    top: -20rpx;
+	    right: -20rpx;
+	    width: 40rpx;
+	    height: 40rpx;
+	    z-index: 1000;
+	  }
+	}
+	
+	/* 浮动动画 */
+	@keyframes float {
+	  0%, 100% { transform: translateY(0); }
+	  50% { transform: translateY(-20rpx); }
 	}
 </style>

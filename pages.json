@@ -241,6 +241,13 @@
 			{
 				"navigationBarTitleText" : "踩雷赏规则说明"
 			}
+		},
+		{
+			"path" : "pages/group/index",
+			"style" : 
+			{
+				"navigationBarTitleText" : ""
+			}
 		}
 		
 	],
