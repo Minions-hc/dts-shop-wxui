@@ -60,19 +60,26 @@
 
 					<!-- 记录列表 -->
 					<scroll-view class="record-list" scroll-y>
-						<view v-for="(item, index) in filteredRecords" :key="index" class="record-item">
+						<view v-for="(item, index) in filteredRecords" :key="item.productId" class="record-item">
 							<!-- 条目头部 -->
 							<view class="item-header">
-								<text class="serial">【第{{ item.id }}张】{{ item.user }}</text>
-								<text class="time">{{ item.time }}</text>
+								<view class="header-left">
+									<image :src="item.avatar" mode="aspectFit" lazy-load class="record-image"></image>
+									<text class="serial">【第{{ item.number }}张】{{ item.userId }}</text>
+								</view>
+								
+								<text class="time">{{ item.createdAt }}</text>
 							</view>
-
+					
 							<!-- 奖品信息 -->
 							<view class="prize-info">
-								<text class="prize-name">{{ item.prize }}</text>
-								<text class="award">{{ item.award }} x{{ item.quantity }}</text>
+								<view class="info-left">
+									<image :src="item.productImage" mode="aspectFit" lazy-load class="record-image"></image>
+									<text class="prize-name">{{ item.productName }}</text>
+								</view>							
+								<text class="award">{{ item.levelName }} x 1</text>
 							</view>
-
+					
 							<!-- 分隔线 -->
 							<view v-if="index < filteredRecords.length-1" class="divider"></view>
 						</view>
@@ -103,7 +110,7 @@
 
 						<!-- 记录列表 -->
 						<scroll-view class="box-list" scroll-y>
-							<view v-for="(item, index) in boxes" :key="item.boxId" class="box-item">
+							<view v-for="(item, index) in boxeInfos" :key="item.id" class="box-item" @tap="changeBox(index)">
 								<view class="box-img">
 									<image src="/static/box.png" mode="aspectFill" class="box-image"></image>
 									<text>第{{index + 1}}箱</text>
@@ -114,7 +121,7 @@
 											{{obj.type}}赏{{obj.current}}/{{obj.total}}
 										</view>
 									</view>
-
+						
 								</view>
 								<view class="box-total">
 									剩{{item.remaining}}发
@@ -226,26 +233,16 @@
 
 			<!-- 进度条区域 -->
 			<view class="progress-section">
-				<!-- 价格显示 -->
-				<view class="price-section">
-					<text class="current-price">￥{{ currentPrice }}</text>
-				</view>
 				<!-- 分段进度条 -->
 				<view class="progress-container">
-					<price-progress :segments="[
-						{ end: 3, price: 1 },
-						{ end: 6, price: 4 },
-						{ end: 8, price: 5 },
-						{ end: Infinity, price: 9 }
-					  ]" :current-value="8" :colors="{
-						normal: '#f0f0f0',
-						penultimate: '#ff9900',
-						last: '#ee0000'
-					  }" />
+					<price-progress 
+					    :segments="segments"
+					    :currentValue="currentValue"
+					  />
 				</view>
 				<view class="stock-info">
-					<text>剩191张</text>
-					<text>共222张</text>
+					<text>剩{{getBoxRemainQty}}张</text>
+					<text>共{{getBoxTatalQty}}张</text>
 				</view>
 			</view>
 
@@ -285,6 +282,7 @@
 		},
 		data() {
 			return {
+				segments:[],
 				seriesId: '',
 				userId: '',
 				showPopup: false,
@@ -369,17 +367,22 @@
 				boxeInfos: [],
 				currentX: 0,
 				filteredItems: [],
-				productSeries: {}
+				productSeries: {},
+				currentValue: 0
 			}
 		},
 		computed: {
+			getBoxTatalQty(){
+				const index = this.currentIndex - 1;
+				return this.boxes[index]?.total || 0;
+			},
 			boxProductInfo() {
 				const index = this.currentIndex - 1;
 				return this.boxes[index];
 			},
 			getBoxRemainQty(){
 				const index = this.currentIndex - 1;
-				return this.boxes[index].remain;
+				return this.boxes[index]?.remain || 0;
 			},
 			productImages() {
 				const index = this.currentIndex - 1;
@@ -552,6 +555,7 @@
 						boxList.push(obj)
 					})
 					this.productSeries = result.productSeries;
+					
 					this.boxes = boxList;
 					this.boxeInfos = boxeInfos;
 					this.queryProductList()
@@ -568,7 +572,28 @@
 							checked: false
 						}
 					})
+					const soldOutList = result.filter(item=>item.soldOut).map(item=> {return item.number});
+					const maxNum = Math.max(soldOutList)
+					this.setPressArray(maxNum)
 				})
+			},
+			
+			setPressArray(maxNum){
+				const priceRanges = this.boxes[this.currentIndex]?.products?.[0]?.priceRanges || '[]'
+				const priceRangesParan = JSON.parse(priceRanges)
+				const segments = priceRangesParan.map?.(item=>{
+					return {
+						end: item.maxQuantity,
+						price:item.price
+					}
+				})
+				segments.push({
+					end: Infinity,
+					price: 100
+				})
+
+				this.currentValue = maxNum
+				this.segments = segments;
 			},
 			showRecods() {
 				const boxNumber = this.boxes[this.currentIndex].id;
@@ -616,6 +641,10 @@
 					this.getProductBoxBySeriesId()
 					// this.showMarkPopup = true;
 				})
+			},
+			changeBox(index){
+				this.currentIndex = index + 1;
+				this.showBoxPopup = false;				
 			},
 		}
 	}
@@ -1189,7 +1218,7 @@
 	}
 
 	.default-warpper {
-		min-height: 300rpx;
+		min-height: 260rpx;
 		width: 100%;
 	}
 
@@ -1361,46 +1390,64 @@
 	}
 
 	.record-list {
+		max-height: 50vh;
 		.record-item {
 			padding: 24rpx 15rpx;
 			border: 4rpx solid #424242;
 			margin-bottom: 10rpx;
-
+			.record-image{
+				width: 40rpx;
+				height: 40rpx;
+				margin-right: 10rpx;
+			}
+			
+	
 			.item-header {
 				display: flex;
 				justify-content: space-between;
 				margin-bottom: 16rpx;
-
+				.record-image{
+					border-radius: 50%;
+				}
+				
+				.header-left{
+					display: inline-flex;
+					
+				}
+	
 				.serial {
 					font-size: 28rpx;
 					color: #333;
 					font-weight: 500;
 				}
-
+	
 				.time {
 					font-size: 24rpx;
 					color: #999;
 				}
 			}
-
+	
 			.prize-info {
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-
+				.info-left{
+					display: inline-flex;
+				}
 				.prize-name {
 					font-size: 26rpx;
 					color: #666;
 					max-width: 70%;
+					margin-left: 15rpx;
 				}
-
+	
 				.award {
 					font-size: 26rpx;
 					color: #ff1773;
 					font-weight: 500;
 				}
 			}
-
+	
 			.divider {
 				height: 2rpx;
 				background: #eee;
