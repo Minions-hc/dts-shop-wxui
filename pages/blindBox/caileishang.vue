@@ -16,7 +16,7 @@
 				</view>
 				<view class="price-section">
 					<view class="price-left">
-						<text class="price-value">￥{{productSeries.price}}</text>
+						<text class="price-value">￥{{getCurrentSeriesPrice()}}</text>
 						<text class="unit-value">/张</text>
 					</view>
 					<view class="instruction-btn" @click="navigatorToRule()">
@@ -262,18 +262,18 @@
 			<view class="shopping-popup-content" :class="{ 'popup-height': type === 'left' || type === 'right' }">
 				<view class="modal-container">
 					<!-- 标题 -->
-					<view class="modal-title">LABUBU前方高能(18)</view>
+					<view class="modal-title">{{productSeries.seriesName}}</view>
 
 					<!-- 内容区域 -->
 					<view class="modal-content">
 						<!-- 价格信息 -->
 						<view class="info-item">
 							<view>单价：</view>
-							<view>￥59.00</view>
+							<view>￥{{getCurrentSeriesPrice()}}</view>
 						</view>
 						<view class="info-item">
 							<view>可用优惠券：</view>
-							<view>暂无可用优惠券</view>
+							<view v-if="">暂无可用优惠券</view>
 						</view>
 						<view class="info-item">
 							<view>可用红包：</view>
@@ -290,7 +290,7 @@
 							<view>盒柜提货运费12元满三件包邮，不支持7天无理由退换货</view>
 						</view>
 						<view class="total-parice-content">
-							小计：￥159.00
+							小计：{{getTotalPrice()}}
 						</view>
 						<view class="check-desc-item">
 							<view :class="['checkbox', chkDesc && 'checked']" @tap="changChk">
@@ -501,6 +501,14 @@
 				})
 			},
 			toShopping() {
+				if (this.selectedCount.length == 0) {
+					uni.showToast({
+						title:'您没有选中号码！！！',
+						icon:'warning',
+						duration:2000,
+					})
+					return;
+				}
 				this.$refs.shopingPopup.open('bottom');
 			},
 			getProductBoxBySeriesId(callBack) {
@@ -638,6 +646,41 @@
 			},
 			switch1Change(value) {
 				console.log(value)
+			},
+			getCurrentSeriesPrice() {
+				return this.segments.find(s => this.currentValue <= s.end)?.price || 0
+			},
+			getTotalPrice() {
+				let totalPrice = 0;
+				const buyNum = this.selectedCount.length;
+				if (buyNum == 0) {
+					return totalPrice;
+				}
+				let tmpCurrentValue = this.currentValue;
+				const totalValue = this.currentValue + buyNum;
+				const currentSegment = this.segments.find(s => this.currentValue <= s.end);
+				const toBeSegment = this.segments.find(s => totalValue <= s.end);
+				
+				if (currentSegment.end == toBeSegment.end) {
+					return buyNum * toBeSegment.price;
+				}
+				
+				this.segments.forEach(segment => {
+					if (currentSegment.end == segment.end) {
+						totalPrice =  totalPrice + (segment.end - tmpCurrentValue) * segment.price;
+						tmpCurrentValue = segment.end;
+					}
+					
+					if (currentSegment.end < segment.end && segment.end < toBeSegment.end) {
+						totalPrice =  totalPrice + (segment.end - tmpCurrentValue) * segment.price;
+						tmpCurrentValue = segment.end;
+					}
+					
+					if (segment.end == toBeSegment.end) {
+						totalPrice =  totalPrice + (totalValue - tmpCurrentValue) * segment.price;
+					}
+				})
+				return totalPrice;
 			}
 		}
 	}
