@@ -52,7 +52,10 @@
 			const {type,userId} = param;
 			this.userId = userId;
 			this.activeTab = Number(type) || 0;
-			this.initData(userId);
+			
+		},
+		onShow(){
+			this.initData(this.userId);
 		},
 		data() {
 			return {

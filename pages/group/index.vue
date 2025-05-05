@@ -48,7 +48,9 @@ export default {
       scrollTop: 0,
       duration: 0
     })
-    this.initPage()
+  },
+  onShow(){
+  	this.initPage()
   },
   methods: {
     // 初始化页面

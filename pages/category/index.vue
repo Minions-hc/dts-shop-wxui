@@ -68,10 +68,13 @@
 	} from "@/utils/rest-util.js"
 export default {
 	onLoad(){
+		
+		this.userId = 'U10001';
+	},
+	onShow() {
 		this.loadAllData()
 		this.loadCateData();
 		this.queryPopularNew();
-		this.userId = 'U10001';
 	},
   data() {
     return {

@@ -70,6 +70,9 @@
 	} from "@/utils/rest-util.js"
 	export default {
 		onLoad(param) {
+			
+		},
+		onShow(){
 			this.getUserCurrentPoints('U10001');
 			this.getInvitationRecords('U10001')
 		},

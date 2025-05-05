@@ -99,6 +99,9 @@
 				userId
 			} = param;
 			this.userId = userId;
+			
+		},
+		onShow(){
 			this.queryLuckyKing();
 			this.queryTotalPoint();
 			this.queryUserPoint()

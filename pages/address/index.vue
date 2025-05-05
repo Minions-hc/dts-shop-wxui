@@ -43,6 +43,8 @@
 		onLoad(param) {
 			const {userId} = param;
 			this.userId = userId;
+		},
+		onShow(){
 			this.initAddressList()
 		},
 		data(){

@@ -63,6 +63,9 @@
 			this.activeTab = Number(tab);
 			this.activityId = activityId;
 			this.periodNumber = periodNumber;
+			
+		},
+		onShow(){
 			if (this.activeTab === 0) {
 				this.getParticipants()
 			} else {

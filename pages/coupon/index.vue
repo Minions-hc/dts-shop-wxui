@@ -50,6 +50,9 @@ export default {
 	onLoad(param) {
 		const {userId} = param;
 		this.userId = userId
+		
+	},
+	onShow(){
 		this.queryCouPonList()
 	},
   data() {

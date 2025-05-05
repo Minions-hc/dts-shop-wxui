@@ -92,6 +92,9 @@
 	} from "@/utils/rest-util.js"
 	export default {
 		onLoad() {
+			
+		},
+		onShow(){
 			this.loadPageData('pending');
 			this.loadLockData()
 		},

@@ -57,8 +57,8 @@
 				productList: []
 			}
 		},
-		onLoad() {
-			this.initPage()	
+		onShow(){
+			this.initPage();
 		},
 		methods: {
 			changeSeries(item) {

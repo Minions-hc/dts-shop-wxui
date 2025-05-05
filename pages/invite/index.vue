@@ -52,7 +52,9 @@ export default {
 	
 	onLoad(param){
 		const {userId} = param;
-		this.loadData(userId)
+	},
+	onShow(){
+		this.loadData()
 	},
   data() {
     return {

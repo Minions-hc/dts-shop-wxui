@@ -80,6 +80,8 @@ export default {
 		this.userId = userId;
 		this.orderId = orderId;
 		this.orderStatus = orderStatus;
+	},
+	onShow(){
 		this.initData();
 	},
 	data(){

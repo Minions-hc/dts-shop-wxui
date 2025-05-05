@@ -44,6 +44,9 @@
 			}
 		},
 		onLoad(param) {
+			
+		},
+		onShow(){
 			this.initData()
 		},
 		methods: {

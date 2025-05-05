@@ -72,6 +72,9 @@
 			const {userId, productId}=param;
 			this.productId = productId;
 			this.userId = userId;
+			
+		},
+		onShow(){
 			this.getProductByProductId();
 		},
 		methods: {

@@ -80,8 +80,10 @@
 			} = param;
 			this.userId = userId;
 			this.addressId = addressId;
-			console.log(param)
-			if (addressId) {
+			
+		},
+		onShow(){
+			if (this.addressId) {
 				this.initAddressList();
 			}
 		},

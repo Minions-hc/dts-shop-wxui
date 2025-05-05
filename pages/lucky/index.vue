@@ -164,6 +164,9 @@
 			const {userId,shareUserId} = param;
 			this.shareUserId = shareUserId;
 			this.userId = 'U10001'
+			
+		},
+		onShow(){
 			this.activityInfo()
 		},
 		data() {
