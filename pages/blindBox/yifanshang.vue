@@ -88,7 +88,7 @@
 			<view class="popup-content" @tap.stop>
 				<!-- 弹窗标题 -->
 				<view class="popup-header">
-					<text class="title">开赏记录(88)</text>
+					<text class="title">开赏记录({{records.length}})</text>
 					<image src="/static/icons/close.png" class="close-icon" @tap="showPopup = false" />
 				</view>
 
@@ -309,13 +309,6 @@
 			onSwiperChange(e) {
 				this.currentIndex = e.detail.current
 			},
-			handleDraw() {
-				uni.showToast({
-					title: `正在抽取${this.currentBox.name}`,
-					icon: 'none'
-				})
-				// 这里可以添加实际的抽盒逻辑
-			},
 			handleRefresh() {
 				uni.showLoading({
 					title: '刷新中...'
@@ -419,7 +412,8 @@
 					userId:this.userId,
 					numbers:list,
 					boxNumber:boxNumber,
-					seriesId:this.seriesId
+					seriesId:this.seriesId,
+					activityType:'一番赏'
 				}
 				post('wx/blindbox/drawBlindBox',postData).then(res=>{
 					this.getProductBoxBySeriesId()

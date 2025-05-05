@@ -3,20 +3,20 @@
 		<!-- 产品详情区域 -->
 		<view class="product-detail">
 			<view class="product-image">
-				<image src="/static/serice3.jpg" mode="aspectFill" class="img" lazy-load />
+				<image :src="productSeries.seriesImage" mode="aspectFill" class="img" lazy-load />
 			</view>
 			<view class="product-info">
-				<text class="product-name">Angry Molly · 篝火(5)</text>
-				<text class="product-desc">【39起一抽/保底7款限定/222抽】</text>
+				<text class="product-name">{{productSeries.seriesName}}</text>
+				<text class="product-desc">{{productSeries.seriesDescription}}</text>
 				<view class="progress-section">
 					<view class="progress-bar">
 						<view class="progress-inner" :style="{width: (191/222*100)+'%'}"></view>
 					</view>
-					<text class="progress-text">剩余191张</text>
+					<text class="progress-text">剩余{{getBoxRemainQty}}张</text>
 				</view>
 				<view class="price-section">
 					<view class="price-left">
-						<text class="price-value">￥99.00</text>
+						<text class="price-value">￥{{productSeries.price}}</text>
 						<text class="unit-value">/张</text>
 					</view>
 					<view class="instruction-btn" @click="navigatorToRule()">
@@ -38,7 +38,7 @@
 				<!-- 右侧记录 -->
 				<view class="right-section" @tap="showPopup = true">
 					<image src="/static/recode-img.png" class="record-icon" />
-					<text class="record-text">选号记录</text>
+					<text class="record-text" @tap="showRecods()">选号记录</text>
 				</view>
 			</view>
 			<!-- 弹窗遮罩 -->
@@ -80,8 +80,8 @@
 				</view>
 			</view>
 			<view class="product-grid">
-				<view v-for="(item, index) in productImages" :key="index" class="grid-item">
-					<image v-if="index < 7" :src="item.image" mode="aspectFill" class="grid-img" />
+				<view v-for="(item, index) in productImages" :key="item.productId" class="grid-item">
+					<image v-if="index < 7" :src="item.productImage" mode="aspectFill" class="grid-img" />
 					<image v-else src="/static/more-btn.png" mode="aspectFill" class="grid-img" />
 				</view>
 			</view>
@@ -89,7 +89,7 @@
 				<view class="control-btn prev-btn" @tap="switchBox('prev')">上一箱</view>
 
 				<view class="control-btn pagination-info" @tap="showBoxPopup = true">
-					<text>第{{ formattedCurrentIndex }}箱/共{{ totalBoxes }}箱</text>
+					<text>第{{ formattedCurrentIndex }}箱/共{{ boxes.length }}箱</text>
 				</view>
 				<!-- 切换房间弹窗 -->
 				<!-- 弹窗遮罩 -->
@@ -103,7 +103,7 @@
 
 						<!-- 记录列表 -->
 						<scroll-view class="box-list" scroll-y>
-							<view v-for="(item, index) in boxes" :key="item.id" class="box-item">
+							<view v-for="(item, index) in boxes" :key="item.boxId" class="box-item">
 								<view class="box-img">
 									<image src="/static/box.png" mode="aspectFill" class="box-image"></image>
 									<text>第{{index + 1}}箱</text>
@@ -133,7 +133,7 @@
 			<view class="filter-header">
 				<text class="section-title">选择款式</text>
 				<view class="check-group">
-					<view class="check-item" >
+					<view class="check-item">
 						<view :class="['checkbox', filters.available && 'checked']">
 							<view v-if="filters.available" class="check-icon">✓</view>
 						</view>
@@ -156,19 +156,21 @@
 			<!-- 产品网格 -->
 			<view class="product-grid">
 				<view v-for="(item, index) in filteredItems" :key="index" class="grid-item"
-					:class="{sold: item.sold,checked:item.checked}" @tap="toggleSelect(item,index)">
+					:class="{sold: item.soldOut,checked:item.checked}" @tap="toggleSelect(item,index)">
 					<!-- 未选中覆盖层 -->
-					<view v-if="!item.sold" class="unselected-overlay">
+					<view v-if="!item.soldOut" class="unselected-overlay">
 						<text class="serial-number">{{ index + 1 }}</text>
 					</view>
 
-					<image :src="item.image" mode="aspectFill" class="product-image" />
+					<image :src="item.image" v-if="item.soldOut" mode="aspectFill" class="product-image" />
+					<image src="/static/default-image.png" v-if="!item.soldOut" mode="aspectFill"
+						class="product-image" />
 
 					<!-- 选中标记 -->
-					<view v-if="item.checked && !item.sold" class="check-mark"></view>
+					<view v-if="item.checked && !item.soldOut" class="check-mark"></view>
 
 					<!-- 已售遮罩 -->
-					<view v-if="item.sold" class="sold-overlay">
+					<view v-if="item.soldOut" class="sold-overlay">
 						<text class="sold-text">已售</text>
 					</view>
 				</view>
@@ -185,27 +187,27 @@
 
 			<!-- 产品表格 -->
 			<view class="product-grid">
-				<view v-for="(item, index) in productList" :key="index" class="product-card">
+				<view v-for="(item, index) in productImages" :key="item.productId" class="product-card">
 					<!-- 库存显示 -->
 					<view class="stock-indicator">
-						{{ item.stock }}/{{ item.total }}
+						{{ getStock(item) }}/{{ item.quantity }}
 					</view>
 					<!-- 产品图片 -->
-					<image :src="item.image" mode="aspectFill" class="product-image" />
+					<image :src="item.productImage" mode="aspectFill" class="product-image" />
 
 					<!-- 产品信息 -->
 					<view class="product-info">
 						<!-- 名称区域 -->
 						<view class="name-section">
-							<text class="type-tag">{{ item.type }}</text>
-							<text class="product-name">{{ item.name }}</text>
+							<text class="type-tag">{{ item.levelName }}</text>
+							<text class="product-name">{{ item.productName }}</text>
 						</view>
 
 						<!-- 价格信息 -->
-						<text class="price-text">零售价：{{ item.price }}元</text>
+						<text class="price-text">零售价：{{ item.productPrice }}元</text>
 
 						<!-- 概率信息 -->
-						<text class="probability-text">概率：{{ item.probability }}%</text>
+						<text class="probability-text">概率：{{ getProductProbaby(item,boxes[currentIndex - 1]) }}</text>
 					</view>
 				</view>
 			</view>
@@ -216,25 +218,31 @@
 		<view class="fixed-bottom">
 			<!-- 操作按钮区域 -->
 			<view class="action-section">
-				<button class="action-btn primary">欧一发</button>
-				<button class="action-btn primary">欧三发</button>
-				<button class="action-btn primary">欧十发</button>
+				<button class="action-btn primary" @tap="handleDraw(1)">欧一发</button>
+				<button class="action-btn primary" @tap="handleDraw(3)">欧三发</button>
+				<button class="action-btn primary" @tap="handleDraw(10)">欧十发</button>
 				<button class="action-btn secondary">刷新</button>
 			</view>
 
 			<!-- 进度条区域 -->
 			<view class="progress-section">
 				<!-- 价格显示 -->
-				    <view class="price-section">
-				      <text class="current-price">￥{{ currentPrice }}</text>
-				    </view>
+				<view class="price-section">
+					<text class="current-price">￥{{ currentPrice }}</text>
+				</view>
 				<!-- 分段进度条 -->
-				    <view class="progress-container">
-				      <price-progress 
-						:current="145" 
-						  :total="233"
-				      />
-				    </view>
+				<view class="progress-container">
+					<price-progress :segments="[
+						{ end: 3, price: 1 },
+						{ end: 6, price: 4 },
+						{ end: 8, price: 5 },
+						{ end: Infinity, price: 9 }
+					  ]" :current-value="8" :colors="{
+						normal: '#f0f0f0',
+						penultimate: '#ff9900',
+						last: '#ee0000'
+					  }" />
+				</view>
 				<view class="stock-info">
 					<text>剩191张</text>
 					<text>共222张</text>
@@ -254,28 +262,35 @@
 </template>
 
 <script>
-	import priceProgress from './components/priceProgress.vue'
+	import priceProgress from './components/priceProgress.vue';
+	import {
+		get,
+		post
+	} from "@/utils/rest-util.js"
+	import {
+		getRandomElements
+	} from "@/utils/common.js"
 	export default {
-		components:{priceProgress},
+		components: {
+			priceProgress
+		},
+		onLoad(param) {
+			const {
+				userId,
+				seriesId
+			} = param;
+			this.seriesId = seriesId;
+			this.userId = userId;
+			this.getProductBoxBySeriesId(null)
+		},
 		data() {
 			return {
-				productImages: new Array(8).fill({
-					image: '/static/serice2.jpg'
-				}),
+				seriesId: '',
+				userId: '',
 				showPopup: false,
 				activeTab: '全部',
-				tabs: ['全部', '免单', 'A赏', 'B赏', 'C赏', 'D赏', 'E赏'],
-				records: [{
-						id: 80,
-						user: 'AAA',
-						time: '04/26 17:01:51',
-						prize: '【自制款】拉布布帆布袋',
-						award: 'D赏',
-						quantity: 1
-					},
-					// 更多数据...
-				],
-				totalItems: 15,
+				tabs: [],
+				records: [],
 				currentIndex: 1, // 当前箱号
 				totalBoxes: 3, // 总箱数
 				offsetX: 0, // 横向位移
@@ -284,89 +299,7 @@
 				currentBox: {}, // 当前箱子数据
 				showBoxPopup: false,
 				currentPrice: '33',
-				boxes: [{
-						id: 1,
-						remaining: 145,
-						items: [{
-								type: 'A',
-								current: 0,
-								total: 1
-							},
-							{
-								type: 'A',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'A',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'A',
-								current: 0,
-								total: 1
-							},
-							null, // 空项用于占位
-							{
-								type: 'A',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'A',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'B',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'B',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'B',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'B',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'B',
-								current: 1,
-								total: 1
-							},
-							{
-								type: 'C',
-								current: 37,
-								total: 55
-							},
-							{
-								type: 'D',
-								current: 30,
-								total: 57
-							},
-							{
-								type: 'E',
-								current: 31,
-								total: 55
-							},
-							{
-								type: 'F',
-								current: 38,
-								total: 55
-							}
-						]
-					},
-					// 其他箱子数据...
-				],
+				boxes: [],
 				filters: {
 					available: true,
 					sold: true
@@ -432,63 +365,31 @@
 						checked: false
 					}
 				],
-				productList: [{
-						image: '/static/serice1.jpg',
-						type: 'A类',
-						name: '深海幻光限定套装',
-						price: '699',
-						probability: '0.529',
-						stock: 1, // 新增字段
-						total: 2 // 新增字段
-					},
-					{
-						image: '/static/serice2.jpg',
-						type: 'B类',
-						name: '星耀璀璨钻石项链',
-						price: '999',
-						probability: '0.329',
-						stock: 1, // 新增字段
-						total: 2 // 新增字段
-					},
-					{
-						image: '/static/serice2.jpg',
-						type: 'C类',
-						name: '星耀璀璨钻石项链',
-						price: '999',
-						probability: '0.329',
-						stock: 1, // 新增字段
-						total: 2 // 新增字段
-					},
-					{
-						image: '/static/serice2.jpg',
-						type: 'D类',
-						name: '星耀璀璨钻石项链',
-						price: '999',
-						probability: '0.329',
-						stock: 1, // 新增字段
-						total: 2 // 新增字段
-					},
-					// 更多数据...
-				],
 				selectedCount: [], // 已选数量示例
+				boxeInfos: [],
+				currentX: 0,
+				filteredItems: [],
+				productSeries: {}
 			}
 		},
 		computed: {
-			displayedItems() {
-				return this.totalItems > 8 ?
-					this.productImages.slice(0, 7) :
-					this.productImages
+			boxProductInfo() {
+				const index = this.currentIndex - 1;
+				return this.boxes[index];
+			},
+			getBoxRemainQty(){
+				const index = this.currentIndex - 1;
+				return this.boxes[index].remain;
+			},
+			productImages() {
+				const index = this.currentIndex - 1;
+				return this.boxes[index]?.products || []
 			},
 			isAllChecked() {
-				return this.availableItems.every(item => item.checked)
+				return this.filteredItems.every(item => item.checked)
 			},
 			availableItems() {
 				return this.items.filter(item => !item.sold)
-			},
-			filteredItems() {
-				return this.items.filter(item => {
-					return this.filters.available
-				})
 			},
 			formattedCurrentIndex() {
 				return this.currentIndex.toString().padStart(2, '0') // 补零显示
@@ -497,39 +398,52 @@
 				if (this.activeTab === '全部') return this.records
 				return this.records.filter(item => item.award === this.activeTab)
 			},
-			slectedNum (){
+			slectedNum() {
 				return this.selectedCount.join(',')
 			}
 		},
 		methods: {
+			getProductProbaby(product, currentBox) {
+				if (product.quantity === product.soldQuantity) {
+					return '0%'
+				}
+				if (product.levelName === '终赏') {
+					return '只赠不售'
+				}
+				const penson = (product.quantity - product.soldQuantity) / currentBox.remain
+				return (penson * 100).toFixed(3) + '%'
+			},
+			getStock(item) {
+				return item.quantity - item.soldQuantity
+			},
 			toggleFilter(type) {
 				if (type === 'sold') return // 禁用已售切换
 				this.filters[type] = !this.filters[type]
 			},
-			toggleSelect(item,index) {
+			toggleSelect(item, index) {
 				if (item.sold) return
 				this.$set(item, 'checked', !item.checked)
-				if(item.checked){
-					this.selectedCount.push(index+1);
-					this.selectedCount = this.selectedCount.sort((a,b)=>a- b)
+				if (item.checked) {
+					this.selectedCount.push(index + 1);
+					this.selectedCount = this.selectedCount.sort((a, b) => a - b)
 				} else {
-					this.selectedCount = this.selectedCount.filter(obj=>obj !== (index + 1));
+					this.selectedCount = this.selectedCount.filter(obj => obj !== (index + 1));
 				}
 			},
 			toggleAll() {
 				const targetState = !this.isAllChecked;
 				const selectedCount = []
-				this.availableItems.forEach((item,i) => {
+				this.filteredItems.forEach((item, i) => {
 					this.$set(item, 'checked', targetState);
 					// if(targetState){
 					// 	selectedCount.push(i+1)
 					// }
 				})
-				this.selectedCount = this.filteredItems.map((item,i)=>{
-					if(item.checked){
-						return i +1
+				this.selectedCount = this.filteredItems.map((item, i) => {
+					if (item.checked) {
+						return i + 1
 					}
-				}).filter(item=>item);
+				}).filter(item => item);
 			},
 			// 切换箱子
 			async switchBox(direction) {
@@ -589,11 +503,120 @@
 					this.offsetX = 0
 				}
 			},
+			handleDraw(count) {
+				this.prizeDraw(count)
+				// this.showMarkPopup = true
+				//    uni.showToast({
+				//      title: `触发${drawMap[count]}操作`,
+				//      icon: 'none'
+				//    })
+				// 实际抽奖逻辑...
+			},
 			navigatorToRule() {
 				uni.navigateTo({
 					url: '/pages/blindBox/caileishangRule'
 				})
-			}
+			},
+			getProductBoxBySeriesId(callBack) {
+				get('wx/series/getProductBoxBySeriesId?seriesId=' + this.seriesId).then(json => {
+					const result = json.data.data;
+					const groupedByBoxNumber = result.groupedByBoxNumber || {};
+					const productQuantityMap = result.productQuantityMap || {};
+					const remainingQuantityMap = result.remainingQuantityMap || {}
+					const productBoxResultVos = result.productBoxResultVos || [];
+					const keys = Object.keys(groupedByBoxNumber);
+					const boxList = [];
+					const boxeInfos = []
+					keys.forEach(item => {
+						const boxResult = productBoxResultVos.find(str => str.boxNumber == item);
+						const obj = {
+							id: item,
+							image: groupedByBoxNumber[item]?.[0]?.productImage || '',
+							remain: remainingQuantityMap[item],
+							total: productQuantityMap[item],
+							pricePerDraw: boxResult?.seriesPrice || '0',
+							products: groupedByBoxNumber[item]
+						}
+						const box = {
+							id: item,
+							remaining: remainingQuantityMap[item],
+							items: groupedByBoxNumber[item].map(str => {
+								return {
+									type: str.levelName,
+									current: str.quantity - str.soldQuantity,
+									total: str.quantity
+								}
+							})
+						}
+						boxeInfos.push(box)
+						boxList.push(obj)
+					})
+					this.productSeries = result.productSeries;
+					this.boxes = boxList;
+					this.boxeInfos = boxeInfos;
+					this.queryProductList()
+					callBack && callBack()
+				})
+			},
+			queryProductList() {
+				const boxNumber = this.boxes[this.currentIndex - 1].id;
+				get(`wx/blindbox/numbers?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(json => {
+					const result = json.data.data || [];
+					this.filteredItems = result.map(item => {
+						return {
+							...item,
+							checked: false
+						}
+					})
+				})
+			},
+			showRecods() {
+				const boxNumber = this.boxes[this.currentIndex].id;
+				get(`wx/blindbox/openRecords?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res => {
+					const result = res.data.data
+					const tabs = ['全部'];
+					const groupedByLevel = result.groupedByLevel || {};
+					const records = result.records || [];
+					const tabKeys = Object.keys(groupedByLevel);
+					this.tabs = tabs.concat(tabKeys)
+					this.records = records
+					this.showPopup = true
+				})
+			},
+			prizeDraw(count) {
+				const boxNumber = this.boxes[this.currentIndex].id;
+				const filteredItems = this.filteredItems.filter(item => !item.soldOut).map(item => {
+					return item.number
+				})
+				const list = getRandomElements(filteredItems, count)
+				this.filteredItems = this.filteredItems.map(item=>{
+					const checked = item.soldOut ? false : (list.some(obj=> obj === item.number) ? true : false)
+					return {
+						...item,
+						checked
+					}
+				})
+				this.selectedCount = this.filteredItems.map((item, i) => {
+					if (item.checked) {
+						return i + 1
+					}
+				}).filter(item => item);
+				
+
+			},
+			drawBlindBox(list, boxNumber) {
+				const postData = {
+					userId: this.userId,
+					numbers: list,
+					boxNumber: boxNumber,
+					seriesId: this.seriesId,
+					activityType: '踩雷赏'
+				}
+				post('wx/blindbox/drawBlindBox', postData).then(res => {
+					this.getProductBoxBySeriesId()
+					// this.showMarkPopup = true;
+				})
+			},
 		}
 	}
 </script>
@@ -1166,7 +1189,7 @@
 	}
 
 	.default-warpper {
-		min-height: 160rpx;
+		min-height: 300rpx;
 		width: 100%;
 	}
 
@@ -1256,6 +1279,8 @@
 
 			.selection-info {
 				flex: 1;
+				width: 55%;
+				overflow: hidden;
 
 				.tip-text {
 					color: #ff4a4a;
