@@ -144,6 +144,19 @@ function getRandomElements(arr, n) {
 	return copy.slice(0, max);
 }
 
+async function requestPayment(prepayData) {
+	// 2. 发起微信支付
+	const paymentRes = await uni.requestPayment({
+		provider: 'wxpay',
+		timeStamp: prepayData.timeStamp,
+		nonceStr: prepayData.nonceStr,
+		package: prepayData.package,
+		signType: 'MD5',
+		paySign: prepayData.paySign,
+	});
+	return paymentRes
+}
+
 export {
 	photoCompress,
 	dataURLtoFile,
@@ -151,5 +164,6 @@ export {
 	initJsdk,
 	formatDate,
 	dateCompare,
-	getRandomElements
+	getRandomElements,
+	requestPayment
 }

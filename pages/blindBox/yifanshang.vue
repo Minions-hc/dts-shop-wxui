@@ -237,7 +237,7 @@
 						</view>
 						<view class="info-item">
 							<view>可用优惠券：</view>
-							<view>暂无可用优惠券</view>
+							<view :style="{display:'flex'}">暂无可用优惠券<uni-icons type="right" size="20"></uni-icons></view>
 						</view>
 						<view class="info-item">
 							<view>可用红包：</view>
@@ -246,7 +246,7 @@
 						<view class="info-item">
 							<view>积分抵扣 </view>
 							<view class="">
-								<text>10积分</text>
+								<text>{{currentPoints}}积分</text>
 								<text  class="point-class">-￥{{calcPointPrice()}}</text>
 								<switch :checked="isDeduction" @change="switch1Change" class="uni-swaitch"/>
 							</view>
@@ -301,7 +301,7 @@
 		},
 		onShow() {
 			this.getProductBoxBySeriesId(null)
-			this.getUserPoint()
+			this.getUserCurrentPoints()
 		},
 		data() {
 			return {
@@ -327,7 +327,8 @@
 				boxes: [],
 				dynamicHeight: "auto", // 初始值
 				boxeInfos: [],
-				productSeries: {}
+				productSeries: {},
+				currentPoints: 0
 			}
 		},
 		computed: {
@@ -401,6 +402,12 @@
 				this.getProductBoxBySeriesId(callBack)
 			},
 			handleDraw(count) {
+				if (count != 0 && count > this.boxes[this.currentIndex].remaining) {
+					uni.showToast({
+						title: '库存不足~'
+					});
+					return;
+				}
 				const callBack = (num)=>{
 					this.drawCount = num
 					this.$refs.shopingPopup.open('bottom');
@@ -515,11 +522,15 @@
 			handleConfirm(){
 				this.prizeDraw()
 			},
-			getUserPoint(){
-				
+			getUserCurrentPoints(){
+				get('wx/points/getUserCurrentPoints?userId='+this.userId).then(json => {
+					const result = json.data.data;
+					this.currentPoints = result.currentPoints || 0;
+					
+				})
 			},
 			calcPointPrice(){
-				return '0.00'
+				return this.currentPoints / 10
 			}
 			
 
@@ -1177,11 +1188,12 @@
 	
 	.total-parice-content {
 		width: 100%;
-		font-size: 24rpx;
+		font-size: 28rpx;
 		line-height: 40rpx;
 		color: red;
 		text-align: right;
 		margin-top: 8rpx;
+		font-weight: bold;
 	}
 	
 	/* 确认按钮 */

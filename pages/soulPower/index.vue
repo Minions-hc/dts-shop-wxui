@@ -7,20 +7,31 @@
 			<view class="top-section">
 				<image class="desc-image" :src="soulImageurl[index]" mode="scaleToFill" />
 				<view class="power-info">
-					<text class="value">{{ item.power }}</text>
+					<text class="value">{{ item.price }}</text>
 				</view>
 			</view>
 
 			<!-- 下半部分：动态产品图 -->
 			<view class="bottom-section">
-				<image class="cover-image" :src="item.productImg" mode="aspectFill" />
+				<image class="cover-image" :src="item.seriesImage" mode="aspectFill" />
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+import {
+		get,
+		post
+	} from "@/utils/rest-util.js"
+
 	export default {
+		onLoad() {
+			this.userId = 'U10001'
+		},
+		onShow() {
+			this.getSpiritPowerSeries ()
+		},
 		data() {
 			return {
 				soulImageurl: [
@@ -28,29 +39,21 @@
 					'/static/intermediate.png', // 中级背景
 					'/static/advanced.png' // 高级背景
 				],
-				soulPowerList: [{
-						power: 100,
-						productImg: '/static/soulPowerProdutImage.png',
-						series: 1
-					},
-					{
-						power: 500,
-						productImg: '/static/soulPowerProdutImage.png',
-						series: 2
-					},
-					{
-						power: 1000,
-						productImg: '/static/soulPowerProdutImage.png',
-						series: 3
-					},
-				]
+				soulPowerList: [],
+				userId: ''
 			}
 		},
 		methods: {
 			navigatorToBlindBox(item) {
-				let blindBoxurl = '/pages/blindBox/soulPower?seriesId=' + item.series;
+				let blindBoxurl = '/pages/blindBox/soulPower?userId='+this.userId+'&&seriesId=' + item.seriesId;
 				uni.navigateTo({
 					url: blindBoxurl
+				})
+			},
+			getSpiritPowerSeries(){
+				get('wx/series/getSpiritPowerSeries').then(json=>{
+					const result = json.data?.data || [];
+					this.soulPowerList = result
 				})
 			}
 		}

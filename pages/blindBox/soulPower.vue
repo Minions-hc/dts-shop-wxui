@@ -173,7 +173,7 @@
 				<image src="/static/pick-three.png" class="button-image" mode="aspectFit" @click="handleDraw(3)" />
 				<image src="/static/pick-ten.png" class="button-image" mode="aspectFit" @click="handleDraw(10)" />
 			</view>
-			<view class="soulPower"><text>我的魂力值:1</text></view>
+			<view class="soulPower"><text>我的魂力值:{{spiritPower}}</text></view>
 			<view class="soulPowerDescribe"><text>在一番赏中获取小赏将增加魂力值</text></view>
 		</view>
 		<uni-popup ref="shopingPopup" background-color="#fff" @change="changePopup" type="bottom"
@@ -182,59 +182,34 @@
 				<view class="modal-container">
 					<!-- 标题 -->
 					<view class="modal-title">{{productSeries.seriesName}}</view>
-		
+
 					<!-- 内容区域 -->
 					<view class="modal-content">
-						<!-- 价格信息 -->
 						<view class="info-item">
-							<view>单价：</view>
-							<view>￥{{currentBox.pricePerDraw}}</view>
+							<view>共{{drawCount}}件 小计<text
+									class="soul-power-count">魂力X{{currentBox.pricePerDraw * drawCount}}</text></view>
+							<view>剩余魂力 {{spiritPower}}</view>
 						</view>
-						<view class="info-item">
-							<view>可用优惠券：</view>
-							<view>暂无可用优惠券></view>
-						</view>
-						<view class="info-item">
-							<view>可用红包：</view>
-							<view>￥0</view>
-						</view>
-						<view class="info-item">
-							<view>积分抵扣 </view>
-							<view class="">
-								<text>10积分</text>
-								<text  class="point-class">-￥{{calcPointPrice()}}</text>
-								<switch :checked="isDeduction" @change="switch1Change" class="uni-swaitch"/>
-							</view>
-							
-						</view>
-						<view class="info-item">
-							<view>是否锁箱 </view>
-							<switch :checked="isLockBox" @change="switchLockBox" class="uni-swaitch"/>
-						</view>
-						<view class="info-item">
-							<view>是否开启动画 </view>
-							<switch  @change="switchAnimate" class="uni-swaitch"/>
-						</view>
-		
-						<!-- 提货说明 -->
-						<view class="delivery-info">
-							<view>盒柜选择提货后7天内发货</view>
-							<view>盒柜提货运费12元满三件包邮，不支持7天无理由退换货</view>
-						</view>
-						<view class="total-parice-content">
-							小计：￥{{currentBox.pricePerDraw * drawCount}}
-						</view>
-						<view class="check-desc-item">
-							<view :class="['checkbox', chkDesc && 'checked']" @tap="changChk">
-								<view v-if="chkDesc" class="check-icon">✓</view>
-							</view>
-							<text>我已满18岁，已阅读并同意《用户使用协议》</text>
-						</view>
+
+
+
 					</view>
-		
-		
+
+
 					<!-- 操作按钮 -->
 					<view class="confirm-btn" @click="handleConfirm" :class="[!chkDesc && 'disabled-confirm']">确认购买
+					</view>
+					<view class="check-desc-item">
+						<view :class="['checkbox', chkDesc && 'checked']" @tap="changChk">
+							<view v-if="chkDesc" class="check-icon">✓</view>
+						</view>
+						<text>我已满18岁，已阅读并同意《用户使用协议》</text>
+					</view>
+
+					<!-- 提货说明 -->
+					<view class="delivery-info">
+						<view>盒柜选择提货后7天内发货</view>
+						<view>盒柜提货运费12元满三件包邮，不支持7天无理由退换货</view>
 					</view>
 				</view>
 			</view>
@@ -247,24 +222,29 @@
 		get,
 		post
 	} from "@/utils/rest-util.js"
-	import {getRandomElements} from "@/utils/common.js"
+	import {
+		getRandomElements
+	} from "@/utils/common.js"
 	export default {
 		onLoad(param) {
-			const {userId,seriesId} = param;
+			const {
+				userId,
+				seriesId
+			} = param;
 			this.seriesId = seriesId;
 			this.userId = userId;
 		},
 		onShow() {
 			this.getProductBoxBySeriesId(null)
-			this.getUserPoint()
+			this.getCurrentSpiritPower();
 		},
 		data() {
 			return {
 				chkDesc: true,
 				currentIndex: 0,
-				showMarkPopup:false,
-				userId:'',
-				seriesId:'',
+				showMarkPopup: false,
+				userId: '',
+				seriesId: '',
 				drawCount: 1,
 				showPopup: false,
 				showBoxPopup: false,
@@ -272,17 +252,18 @@
 				tabs: [],
 				records: [],
 				productInfo: {
-				        image: "/static/product.jpg",
-				        title: "高端无线蓝牙耳机",
-				        price: 399.00
-				      },
+					image: "/static/product.jpg",
+					title: "高端无线蓝牙耳机",
+					price: 399.00
+				},
 				boxes: [],
 				dynamicHeight: "auto", // 初始值
 				boxeInfos: [],
-				productSeries:{},
-				isDeduction:true,
-				isOpenAnimate:false,
-				isLockBox:true
+				productSeries: {},
+				isDeduction: true,
+				isOpenAnimate: false,
+				isLockBox: true,
+				spiritPower: 0
 			}
 		},
 		computed: {
@@ -293,42 +274,42 @@
 				if (this.activeTab === '全部') return this.records
 				return this.records.filter(item => item.levelName === this.activeTab)
 			},
-	
+
 		},
 		methods: {
 			switch1Change(e) {
 				this.isDeduction = e.detail.value
 			},
-			switchAnimate(e){
+			switchAnimate(e) {
 				this.isOpenAnimate = e.detail.value;
 			},
-			switchLockBox(e){
+			switchLockBox(e) {
 				this.isLockBox = e.detail.value;
 			},
 			changChk() {
 				this.chkDesc = !this.chkDesc;
 			},
-			closeMask(){
+			closeMask() {
 				this.showMarkPopup = false;
 			},
-			changePopup(){
-				
+			changePopup() {
+
 			},
-			changeBox(index){
+			changeBox(index) {
 				this.currentIndex = index;
 				this.showBoxPopup = false
-				
+
 			},
 			switch1Change(value) {
 				console.log(value)
 			},
 			switchBox(direction) {
-				if(direction === 'next' && this.currentIndex === this.boxes.length - 1){
+				if (direction === 'next' && this.currentIndex === this.boxes.length - 1) {
 					uni.showToast({
 						title: '没有下一箱了',
 						icon: 'none'
 					})
-				} else if(direction === 'prev' && this.currentIndex === 0){
+				} else if (direction === 'prev' && this.currentIndex === 0) {
 					uni.showToast({
 						title: '没有上一箱了',
 						icon: 'none'
@@ -339,7 +320,7 @@
 				} else if (direction === 'next' && this.currentIndex < this.boxes.length - 1) {
 					this.currentIndex++
 				}
-				
+
 			},
 			onSwiperChange(e) {
 				this.currentIndex = e.detail.current
@@ -349,7 +330,7 @@
 					title: '刷新中...'
 				})
 				// 实际刷新逻辑
-				const callBack = ()=>{
+				const callBack = () => {
 					uni.hideLoading()
 					uni.showToast({
 						title: '刷新成功',
@@ -359,29 +340,37 @@
 				this.getProductBoxBySeriesId(callBack)
 			},
 			handleDraw(count) {
-				const callBack = (num)=>{
+				if (count != 0 && count > this.boxes[this.currentIndex].remaining) {
+					uni.showToast({
+						title: '库存不足~'
+					});
+					return;
+				}
+				const callBack = (num) => {
 					this.drawCount = num
 					this.$refs.shopingPopup.open('bottom');
 				}
-				if(count === 0){
+				if (count === 0) {
 					const boxNumber = this.boxes[this.currentIndex].id;
-					get(`wx/blindbox/numbers?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res=>{
+					get(`wx/blindbox/numbers?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res => {
 						const result = res.data.data;
-						const arr = result.map(item=> {return item.number})
+						const arr = result.map(item => {
+							return item.number
+						})
 						callBack(arr.length)
 					})
 				} else {
 					callBack(count)
 				}
-				
-			  },
+
+			},
 			navigatorToRule() {
 				uni.navigateTo({
 					url: '/pages/blindBox/yifanshangRule'
 				})
 			},
-			getProductBoxBySeriesId(callBack){
-				get('wx/series/getProductBoxBySeriesId?seriesId='+this.seriesId).then(json=>{
+			getProductBoxBySeriesId(callBack) {
+				get('wx/series/getProductBoxBySeriesId?seriesId=' + this.seriesId).then(json => {
 					const result = json.data.data;
 					const groupedByBoxNumber = result.groupedByBoxNumber || {};
 					const productQuantityMap = result.productQuantityMap || {};
@@ -391,23 +380,23 @@
 					const keys = Object.keys(groupedByBoxNumber);
 					const boxList = [];
 					const boxeInfos = []
-					keys.forEach(item=>{
-						const boxResult = productBoxResultVos.find(str=>str.boxNumber == item);
+					keys.forEach(item => {
+						const boxResult = productBoxResultVos.find(str => str.boxNumber == item);
 						const obj = {
-							id:item,
+							id: item,
 							image: groupedByBoxNumber[item]?.[0]?.productImage || '',
-							remain:remainingQuantityMap[item],
-							total:productQuantityMap[item],
-							pricePerDraw:boxResult?.seriesPrice || '0',
-							products:groupedByBoxNumber[item]
+							remain: remainingQuantityMap[item],
+							total: productQuantityMap[item],
+							pricePerDraw: boxResult?.seriesPrice || '0',
+							products: groupedByBoxNumber[item]
 						}
 						const box = {
-							id:item,
-							remaining:remainingQuantityMap[item],
-							items:groupedByBoxNumber[item].map(str=>{
+							id: item,
+							remaining: remainingQuantityMap[item],
+							items: groupedByBoxNumber[item].map(str => {
 								return {
-									type:str.levelName,
-									current:str.quantity - str.soldQuantity,
+									type: str.levelName,
+									current: str.quantity - str.soldQuantity,
 									total: str.quantity
 								}
 							})
@@ -420,47 +409,53 @@
 					callBack && callBack()
 				})
 			},
-			getProductProbaby(product,currentBox){
-				if(product.quantity === product.soldQuantity){
+			getProductProbaby(product, currentBox) {
+				if (product.quantity === product.soldQuantity) {
 					return '0%'
 				}
-				if(product.levelName=== '终赏'){
+				if (product.levelName === '终赏') {
 					return '只赠不售'
 				}
 				const penson = (product.quantity - product.soldQuantity) / currentBox.remain
 				return (penson * 100).toFixed(3) + '%'
 			},
-			prizeDraw(count){
+			prizeDraw(count) {
 				const boxNumber = this.boxes[this.currentIndex].id;
-				get(`wx/blindbox/numbers?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res=>{
+				get(`wx/blindbox/numbers?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res => {
 					const result = res.data.data;
-					const arr = result.map(item=> {return item.number})
+					const arr = result.map(item => {
+						return item.number
+					})
 					let list = []
-					if(count !== 0){
-						list = getRandomElements(arr,count)
+					if (count !== 0) {
+						list = getRandomElements(arr, count)
 					} else {
 						list = arr;
 					}
-					this.drawBlindBox(list,boxNumber)
+					console.log(list)
+					this.drawBlindBox(list, boxNumber)
 				})
-				
+
 			},
-			drawBlindBox(list,boxNumber){
+			drawBlindBox(list, boxNumber) {
 				const postData = {
-					userId:this.userId,
-					numbers:list,
-					boxNumber:boxNumber,
-					seriesId:this.seriesId,
-					activityType:'一番赏'
+					userId: this.userId,
+					numbers: list,
+					boxNumber: boxNumber,
+					seriesId: this.seriesId,
+					activityType: '魂力赏',
+					spiritPower: this.boxes[this.currentIndex].pricePerDraw * this.drawCount
 				}
-				post('wx/blindbox/drawBlindBox',postData).then(res=>{
-					this.getProductBoxBySeriesId()
-					this.showMarkPopup = true;
+				post('wx/blindbox/drawBlindBox', postData).then(res => {
+					if(res.data.errmsg === '成功'){
+						this.getProductBoxBySeriesId()
+					}
+					// this.showMarkPopup = true;
 				})
 			},
-			showRecods(){
+			showRecods() {
 				const boxNumber = this.boxes[this.currentIndex].id;
-				get(`wx/blindbox/openRecords?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res=>{
+				get(`wx/blindbox/openRecords?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res => {
 					const result = res.data.data
 					const tabs = ['全部'];
 					const groupedByLevel = result.groupedByLevel || {};
@@ -471,12 +466,16 @@
 					this.showPopup = true
 				})
 			},
-			handleConfirm(){
-				this.prizeDraw()
+			handleConfirm() {
+				this.prizeDraw(this.drawCount)
 			},
-			// 查询用户积分数据
-			getUserPoint(){
-				
+			calcPointPrice() {
+				return '0.00'
+			},
+			getCurrentSpiritPower() {
+				get('wx/user/currentSpiritPower?userId=' + this.userId).then(json => {
+					this.spiritPower = json.data?.data || 0
+				})
 			}
 		}
 	}
@@ -1122,71 +1121,62 @@
 			line-height: 50rpx;
 		}
 	}
+
 	/* 弹窗容器 */
 	.modal-container {
 		background: #FFFFFF;
 		border-radius: 16rpx;
 		padding: 32rpx;
 	}
-	
+
 	/* 标题样式 */
 	.modal-title {
 		font-size: 36rpx;
 		font-weight: 600;
 		color: #333333;
-		text-align: center;
+		text-align: left;
 		margin-bottom: 32rpx;
 	}
-	
-	/* 内容区域 */
-	.modal-content {
-		padding: 0 20rpx;
-	}
-	
+
 	/* 信息条目 */
 	.info-item {
-		font-size: 28rpx;
+		font-size: 26rpx;
 		color: #666666;
 		line-height: 50rpx;
 		position: relative;
-		padding-left: 20rpx;
-		display: flex;
-		justify-content: space-between;
-		margin: 15rpx 0;
-		.uni-swaitch{
-			line-height: 40rpx;
-			margin-left: 10rpx;
-		}
-		.point-class{
-			color: red;
+
+		.soul-power-count {
+			font-size: 30rpx;
+			font-weight: bold;
+			color: #FF4500;
 			margin-left: 10rpx;
 		}
 	}
-	
+
 	/* 提货说明 */
 	.delivery-info {
 		margin-top: 32rpx;
-		font-size: 26rpx;
+		font-size: 24rpx;
 		color: #999999;
 		line-height: 40rpx;
-		color: red;
 		font-weight: bold;
 	}
-	
+
 	.total-parice-content {
 		width: 100%;
-		font-size: 24rpx;
+		font-size: 28rpx;
 		line-height: 40rpx;
 		color: red;
 		text-align: right;
 		margin-top: 8rpx;
+		font-weight: bold;
 	}
-	
+
 	/* 确认按钮 */
 	.confirm-btn {
 		height: 88rpx;
 		background: #000;
-		border-radius: 44rpx;
+		border-radius: 10rpx;
 		font-size: 32rpx;
 		color: #FFFFFF;
 		display: flex;
@@ -1194,17 +1184,18 @@
 		justify-content: center;
 		margin-top: 24rpx;
 	}
-	.disabled-confirm{
+
+	.disabled-confirm {
 		background: #999;
 		color: #000;
 	}
-	
+
 	.check-desc-item {
 		display: flex;
 		text-align: center;
 		font-size: 24rpx;
 		margin: 15rpx 0;
-	
+
 		.checkbox {
 			width: 30rpx;
 			height: 30rpx;
@@ -1214,11 +1205,11 @@
 			align-items: center;
 			justify-content: center;
 			margin-right: 10rpx;
-	
+
 			&.checked {
 				background: red;
 				border-color: red;
-	
+
 				.check-icon {
 					color: #fff;
 					font-size: 28rpx;

@@ -67,13 +67,13 @@
 				// 这里请求对应系列的商品数据
 			},
 			toProductPage(item) {
-				let str = '/pages/market/detail?productId=' + item.productId;
+				let str = '/pages/market/detail?productId=' + item.productId + '&userId=U10001';
 				uni.navigateTo({
 					url: str
 				})
 			},
 			initPage() {
-				get('wx/home/getWxMarketSeries').then(json => {
+				get('wx/market/getWxMarketSeries').then(json => {
 					const result = json.data?.data;
 					if (result?.items) {
 						const setMap = {};
@@ -85,15 +85,15 @@
 								productId: item.productId
 							}
 						}).filter(item => item);
-						const keys = Object.keys(result?.productSeriesGroup);
-						this.allSeries = result?.productSeriesGroup;
-						this.marketSeriesGroup = Object.keys(result?.productSeriesGroup).map(item => {
+						const keys = Object.keys(result?.marketProductGroup);
+						this.allSeries = result?.marketProductGroup;
+						this.marketSeriesGroup = Object.keys(result?.marketProductGroup).map(item => {
 							return {
 								name: item
 							}
 						})
 						this.currentSeries = this.marketSeriesGroup[0].name;
-						this.productList = result?.productSeriesGroup[this.currentSeries];
+						this.productList = result?.marketProductGroup[this.currentSeries];
 					}
 				})
 			},

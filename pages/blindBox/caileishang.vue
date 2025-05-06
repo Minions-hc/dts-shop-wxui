@@ -230,7 +230,7 @@
 				<button class="action-btn primary" @tap="handleDraw(1)">欧一发</button>
 				<button class="action-btn primary" @tap="handleDraw(3)">欧三发</button>
 				<button class="action-btn primary" @tap="handleDraw(10)">欧十发</button>
-				<button class="action-btn secondary">刷新</button>
+				<button class="action-btn secondary" @tap="handleRefresh">刷新</button>
 			</view>
 
 			<!-- 进度条区域 -->
@@ -273,7 +273,7 @@
 						</view>
 						<view class="info-item">
 							<view>可用优惠券：</view>
-							<view v-if="">暂无可用优惠券</view>
+							<view :style="{display:'flex'}">暂无可用优惠券<uni-icons type="right" size="20"></uni-icons></view>
 						</view>
 						<view class="info-item">
 							<view>可用红包：</view>
@@ -473,25 +473,32 @@
 					uni.hideLoading()
 				}
 			},
-			// 触摸事件处理
-			touchStart(e) {
-				this.touchStartX = e.touches[0].clientX
-			},
-			touchMove(e) {
-				if (this.isAnimating) return
-				const deltaX = e.touches[0].clientX - this.touchStartX
-				this.offsetX = (deltaX / window.innerWidth) * 100
-			},
-			touchEnd(e) {
-				if (this.isAnimating) return
-				const deltaX = e.changedTouches[0].clientX - this.touchStartX
-				if (Math.abs(deltaX) > 50) {
-					this.switchBox(deltaX > 0 ? 'prev' : 'next')
-				} else {
-					this.offsetX = 0
+			handleRefresh() {
+				uni.showLoading({
+					title: '刷新中...'
+				})
+				// 实际刷新逻辑
+				const callBack = () => {
+					this.selectedCount = []
+					this.filteredItems.forEach((item, i) => {
+						this.$set(item, 'checked', false);
+					})
+					uni.hideLoading()
+					uni.showToast({
+						title: '刷新成功',
+						icon: 'none'
+					})
 				}
+				
+				this.getProductBoxBySeriesId(callBack)
 			},
 			handleDraw(count) {
+				if (count > this.boxes[this.currentIndex].remaining) {
+					uni.showToast({
+						title: '库存不足~'
+					});
+					return;
+				}
 				this.prizeDraw(count)
 			},
 			navigatorToRule() {
@@ -618,6 +625,7 @@
 						checked
 					}
 				})
+				
 				this.selectedCount = this.filteredItems.map((item, i) => {
 					if (item.checked) {
 						return i + 1
@@ -1603,11 +1611,12 @@
 
 	.total-parice-content {
 		width: 100%;
-		font-size: 24rpx;
+		font-size: 28rpx;
 		line-height: 40rpx;
 		color: red;
 		text-align: right;
 		margin-top: 8rpx;
+		font-weight: bold;
 	}
 
 	/* 确认按钮 */
