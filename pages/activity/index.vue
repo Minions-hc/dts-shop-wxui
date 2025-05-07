@@ -58,7 +58,8 @@
 		},
 		
 		onShow() {
-			this.currentCheckInDay()
+			this.currentCheckInDay();
+			this.userConsumptionInFirday()
 		},
 		data() {
 			return {
@@ -121,7 +122,8 @@
 				userId: '',
 				currentDay: 0,
 				pointCount: 0,
-				lastCheckInDay:''
+				lastCheckInDay:'',
+				userInFirday:true
 			}
 		},
 		
@@ -137,6 +139,10 @@
 					uni.showToast({ title: '您今日已签到' })
 					return
 				}
+				if(this.userInFirday){
+					uni.showToast({ title: '您最近五天没有消费，不允许签到' })
+					return
+				}
 				const day = this.currentDay >= 7 ? 1 : (this.currentDay === 0 ? 1 : this.currentDay + 1)
 				const postData = {
 					userId: this.userId,
@@ -148,6 +154,14 @@
 					if(result.errmsg === '成功') {
 						uni.showToast({ title: '签到成功' })
 						this.currentCheckInDay()
+					}
+				})
+			},
+			userConsumptionInFirday(){
+				get('wx/checkin/userConsumptionInFirday?userId='+this.userId).then(res=>{
+					if(res.data.errmsg === '成功'){
+						const result = res.data.data
+						this.userInFirday = result.userConsumptionInFirday
 					}
 				})
 			},

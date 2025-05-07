@@ -7,7 +7,7 @@
 
 		<!-- 下半部分操作区 -->
 		<view class="bottom-section">
-			<button class="login-btn" open-type="getUserInfo" @getuserinfo="onGetUserInfo">
+			<button class="login-btn" open-type="getUserInfo" @getuserinfo="onGetUserInfo" @click="handleLogin">
 				授权登录
 			</button>
 
@@ -36,14 +36,50 @@
 				agreed: false
 			}
 		},
+		onLoad() {
+			const userCode = uni.getStorageSync('userCode');
+			if(userCode){
+				uni.reLaunch({ url: '/pages/index/index' })
+			}
+		},
 		methods: {
-			onGetUserInfo(e) {
-				// 处理授权逻辑
-				console.log('用户信息:', e.detail.userInfo)
-				uni.showToast({
-					title: '登录成功'
-				})
-			},
+			// 获取用户信息
+			    async onGetUserInfo(e) {
+			      if (e.detail.errMsg === 'getUserInfo:ok') {
+			        try {
+			          // 1. 获取code
+			          const loginRes = await uni.login({ provider: 'weixin' })
+					  console.log(loginRes)
+					   uni.setStorageSync('userCode', loginRes.code)
+					  uni.reLaunch({ url: '/pages/index/index' })
+					 
+			          
+			          // 2. 发送登录请求
+			          const res = await uni.request({
+			            url: 'https://your-domain.com/api/wechat/login',
+			            method: 'POST',
+			            data: {
+			              code: loginRes.code,
+			              rawData: e.detail.rawData,
+			              signature: e.detail.signature,
+			              encryptedData: e.detail.encryptedData,
+			              iv: e.detail.iv
+			            }
+			          })
+			
+			          // 3. 处理登录结果
+			          if (res.data.code === 0) {
+			            uni.setStorageSync('token', res.data.data.token)
+			            uni.setStorageSync('userInfo', res.data.data.userInfo)
+			            uni.showToast({ title: '登录成功' })
+			          }
+			        } catch (error) {
+			          uni.showToast({ title: '登录失败', icon: 'none' })
+			        }
+			      } else {
+			        uni.showToast({ title: '授权失败', icon: 'none' })
+			      }
+			    },
 			handleSkip() {
 				uni.showModal({
 					title: '提示',
@@ -57,6 +93,17 @@
 					}
 				})
 			},
+			// 处理登录按钮点击
+			    handleLogin() {
+			      // 检查是否已同意隐私协议
+			      if (!this.agreed) {
+			        uni.showModal({
+			          title: '提示',
+			          content: '请先阅读并同意隐私协议',
+			          showCancel: false
+			        })
+			      }
+			    },
 			toggleAgreement() {
 				console.log(this.agreed)
 				this.agreed = true

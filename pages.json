@@ -1,11 +1,19 @@
 {
 	"pages": [
 		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "潮赏士多"
 			}
 		},
+		
 		{
 			"path": "pages/activity/index",
 			"style": {
@@ -28,6 +36,7 @@
 				"enablePullDownRefresh": true
 			}
 		},
+		
 		{
 			"path": "pages/box/detail",
 			"style": {

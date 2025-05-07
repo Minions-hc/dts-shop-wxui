@@ -65,17 +65,18 @@
 						<!-- 筛选按钮 -->
 						<view class="filter-btns">
 							<view v-for="(btn, index) in categories" :key="index"
-								:class="['filter-btn', activeFilter === index ? 'active' : '']" @click="changeFilter(btn,index)">
+								:class="['filter-btn', activeFilter === index ? 'active' : '']"
+								@click="changeFilter(btn,index)">
 								{{ btn }}
 							</view>
 						</view>
 					</scroll-view>
 					<!-- 产品列表 -->
 					<scroll-view class="product-list" scroll-y>
-						<view v-for="(item, index) in filteredProducts" :key="item.productId" class="product-info">
+						<view v-for="(item, index) in filteredProducts" :key="item.id" class="product-info">
 							<view class="product-item" @tap="toDetailPage(item)">
-								<image class="product-img" :src="item.productImage" lazy-load/>
-					
+								<image class="product-img" :src="item.productImage" lazy-load />
+
 								<view class="product-info">
 									<view class="top-section">
 										<text class="name">{{ item.productName }}</text>
@@ -88,11 +89,11 @@
 										<text>可抵扣{{ item.productBadge }}勋章</text>
 										<view class="status-btn">{{ showStatusWord(item) }}</view>
 									</view>
-					
+
 								</view>
 							</view>
 							<view class="bottom-section">
-								<view class="check-product" >
+								<view class="check-product">
 									<view class="check-item">
 										<view :class="['checkbox', item.checked && 'checked']" @tap="chkProduct(item)">
 											<view v-if="item.checked" class="check-icon">✓</view>
@@ -114,16 +115,17 @@
 								取消
 							</view>
 						</view>
-						<view class="sel-btn" v-if="!(selectItems.length === 0 && countDrage == 0)">
+
+						<view class="sel-btn" v-if="selectItems.length > 0 && countDrage == 0" @tap="exchangeBox">
+							去兑换
+						</view>
+						<view class="sel-btn" v-else>
 							<view v-if="selectItems.length === 0">
 								请选择
 							</view>
 							<view v-if="selectItems.length > 0 && countDrage > 0">
 								还需要{{countDrage}}个勋章
-							</view>							
-						</view>
-						<view class="sel-btn" v-else @tap="exchangeBox">
-							去兑换
+							</view>
 						</view>
 					</view>
 				</view>
@@ -169,33 +171,37 @@
 		},
 		computed: {
 			selectItems() {
-				return this.filteredProducts.filter(item=>item.checked)
+				return this.filteredProducts.filter(item => item.checked)
 			},
-			countDrage(){
-				const chkItems = this.filteredProducts.filter(item=>item.checked);
+			countDrage() {
+				const chkItems = this.filteredProducts.filter(item => item.checked);
 				let count = 0;
-				chkItems.forEach(item=>{
+				chkItems.forEach(item => {
 					count = count + item.productBadge
 				})
-				
+				if (!!this.product && count > this.product.productBadge) {
+					return 0
+				}
+
 				return !!this.product ? this.product.productBadge - count : 0
 			}
 		},
 		methods: {
-			chkProduct(item){
+			chkProduct(item) {
 				item.checked = !item.checked;
 			},
 			fiterProduct(level) {
-				if(level === '其他'){
-					this.filteredProducts =  this.productList.filter(item=> !['A赏','B赏','终赏'].some(obj=>obj === item.productLevel))
+				if (level === '其他') {
+					this.filteredProducts = this.productList.filter(item => !['A赏', 'B赏', '终赏'].some(obj => obj === item
+						.productLevel))
 					return
 				}
-				if(level === 'all'){
+				if (level === 'all') {
 					this.filteredProducts = this.productList;
 				} else {
-					this.filteredProducts = this.productList.filter(item=>item.productLevel == level)
+					this.filteredProducts = this.productList.filter(item => item.productLevel == level)
 				}
-				
+
 			},
 			showStatusWord(item) {
 				let str = '待处理';
@@ -243,16 +249,16 @@
 			getBoxProductList() {
 				get('wx/market/getBoxProductList?userId=' + this.userId).then(res => {
 					const result = res?.data?.data || [];
-					this.productList = result.map(item=>{
+					this.productList = result.map(item => {
 						return {
 							...item,
-							checked:false
+							checked: false
 						}
 					});
 					this.fiterProduct('all')
 				})
 			},
-			changeFilter(item,index) {
+			changeFilter(item, index) {
 				this.activeFilter = index;
 				const type = index === 0 ? 'all' : item;
 				this.fiterProduct(type)
@@ -266,26 +272,42 @@
 				}
 			},
 			toggleAll() {
-				this.filteredProducts = this.filteredProducts.map(item=>{
-					return{
+				this.filteredProducts = this.filteredProducts.map(item => {
+					return {
 						...item,
 						checked: true
 					}
 				})
 			},
-			cancelSel(){
-				this.filteredProducts = this.filteredProducts.map(item=>{
-					return{
+			cancelSel() {
+				this.filteredProducts = this.filteredProducts.map(item => {
+					return {
 						...item,
 						checked: false
 					}
 				})
 				this.$refs.detailPopup.close()
 			},
-			exchangeBox(){
+			exchangeBox() {
+				const chkItems = this.filteredProducts.filter(item => item.checked);
+				let totalProductBadge = 0;
+				const ids = chkItems.map(item => {
+					totalProductBadge = totalProductBadge + item.productBadge;
+					return item.id
+				})
 				const postData = {
-					
+					ids,
+					userId: this.userId,
+					productId: this.productId,
+					totalProductBadge
 				}
+				post('wx/market/redeemProduct', postData).then(json => {
+					if (json.data.errmsg === '成功') {
+						uni.switchTab({
+							url: '/pages/box/index'
+						});
+					}
+				})
 			}
 		}
 	}
@@ -437,7 +459,7 @@
 			color: #fff;
 			width: 70%;
 			margin: auto;
-			line-height: 60rpx;
+			line-height: 80rpx;
 
 			&.disabled {
 				background: #999;
@@ -452,6 +474,8 @@
 		flex-direction: column;
 		padding: 20rpx;
 		background-color: #fcf0f2;
+		border-top-right-radius: 20rpx;
+		border-top-left-radius: 20rpx;
 
 		.container-header {
 			width: 100%;
@@ -468,13 +492,13 @@
 		flex-wrap: wrap;
 		padding: 20rpx;
 		gap: 20rpx;
-	
+
 		.filter-btn {
 			padding: 8rpx 30rpx;
 			border-radius: 40rpx;
 			background: #d9d9d9;
 			color: #666;
-	
+
 			&.active {
 				background: #ed80a0;
 				color: #333;
@@ -485,6 +509,7 @@
 	.product-list {
 		padding: 20rpx 0rpx;
 		overflow-y: auto;
+
 		.product-item {
 			display: flex;
 			background: #fff;
@@ -493,7 +518,7 @@
 			margin: 0 20rpx;
 			padding: 20rpx;
 			padding-bottom: 0px;
-	
+
 			.product-img {
 				width: 180rpx;
 				height: 180rpx;
@@ -501,30 +526,36 @@
 				margin-right: 20rpx;
 				flex-shrink: 0;
 			}
-	
+
 			.product-info {
 				flex-shrink: 0;
-	
+
 				.top-section {
 					font-size: 32rpx;
 					width: 440rpx;
 					font-weight: bold;
-					white-space: nowrap; /* 禁止文本换行 */
-					overflow: hidden; /* 隐藏超出范围的内容 */
-					text-overflow: ellipsis; /* 使用省略号 */
-					display: -webkit-box; /* 将对象作为弹性伸缩盒子模型显示 */
-					-webkit-box-orient: vertical; /* 垂直排列子元素 */
-					-webkit-line-clamp: 2; /* 限制显示的行数为两行 */
+					white-space: nowrap;
+					/* 禁止文本换行 */
+					overflow: hidden;
+					/* 隐藏超出范围的内容 */
+					text-overflow: ellipsis;
+					/* 使用省略号 */
+					display: -webkit-box;
+					/* 将对象作为弹性伸缩盒子模型显示 */
+					-webkit-box-orient: vertical;
+					/* 垂直排列子元素 */
+					-webkit-line-clamp: 2;
+					/* 限制显示的行数为两行 */
 					margin-bottom: 15rpx;
 				}
-	
+
 				.meta-info {
 					display: flex;
 					gap: 20rpx;
 					font-size: 12px;
 					margin-bottom: 15rpx;
 					color: #666;
-	
+
 					text {
 						display: inline-block;
 						padding: 10rpx 25rpx;
@@ -533,18 +564,18 @@
 						border-radius: 25rpx;
 					}
 				}
-	
+
 				.medal-info {
 					display: flex;
 					justify-content: space-between;
 					align-items: center;
 					margin-bottom: 15rpx;
-	
+
 					text {
 						color: #ff91da;
 						font-size: 14px;
 					}
-	
+
 					.status-btn {
 						padding: 8rpx 20rpx;
 						border: 1rpx solid #D4B483;
@@ -557,11 +588,11 @@
 						font-weight: bold;
 					}
 				}
-	
-	
+
+
 			}
 		}
-	
+
 		.bottom-section {
 			display: flex;
 			justify-content: space-between;
@@ -574,11 +605,14 @@
 			padding-top: 10rpx;
 			border-bottom-left-radius: 16rpx;
 			border-bottom-right-radius: 16rpx;
-			.check-product{
+
+			.check-product {
 				padding-left: 20rpx;
-				.check-item{
+
+				.check-item {
 					display: flex;
 				}
+
 				.checkbox {
 					width: 40rpx;
 					height: 40rpx;
@@ -588,22 +622,22 @@
 					align-items: center;
 					justify-content: center;
 					margin-right: 10rpx;
-				
+
 					&.checked {
 						background: #ed80a0;
 						border-color: #ed80a0;
-				
+
 						.check-icon {
 							color: #fff;
 							font-size: 28rpx;
 							transform: translateY(-2rpx);
 						}
 					}
-				
+
 					&.disabled {
 						background: #f5f5f5 !important;
 						border-color: #ddd !important;
-				
+
 						.check-icon {
 							color: transparent !important;
 						}
@@ -611,7 +645,7 @@
 				}
 			}
 		}
-	
+
 		.bottom-section-position {
 			justify-content: flex-end;
 		}
@@ -624,12 +658,15 @@
 		padding: 15rpx 30rpx;
 		justify-content: space-between;
 		align-items: center;
+
 		.action-group {
 			flex: 1;
 			display: flex;
 			justify-content: space-between;
 			margin-right: 15rpx;
-			.sel-all,.cancel-sel{
+
+			.sel-all,
+			.cancel-sel {
 				width: 45%;
 				line-height: 80rpx;
 				text-align: center;
@@ -637,9 +674,10 @@
 				color: #fff;
 				background-color: #d9d9d9;
 			}
-			
+
 		}
-		.sel-btn{
+
+		.sel-btn {
 			width: 50%;
 			line-height: 80rpx;
 			text-align: center;

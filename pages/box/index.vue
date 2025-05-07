@@ -95,8 +95,7 @@
 			
 		},
 		onShow(){
-			this.loadPageData('pending');
-			this.loadLockData()
+			this.initPageData()
 		},
 		data() {
 			return {
@@ -117,6 +116,10 @@
 			
 		},
 		methods: {
+			initPageData(){
+				this.loadPageData('pending');
+				this.loadLockData()
+			},
 			showStatusWord(item) {
 				let str = '待处理';
 				if (item.status === 'shipped') {
@@ -140,7 +143,14 @@
 				
 			},
 			lockProduct(item){
-				
+				const postData = {
+					id:item.id,
+					status:'locked'
+				}
+				post('wx/boxproduct/locked',postData).then(json=>{
+					this.initPageData()
+					uni.showToast({ title: '产品已锁定' })
+				})
 			},
 			unLockProduct(item){
 				
@@ -208,7 +218,6 @@
 				get('wx/boxproduct/getProductsByUser?userId=U10001&status=locked').then(json => {
 					const result = json.data.data;
 					this.lockProductsLength = result.allProducts?.length || 0;
-					console.log(this.lockProductsLength)
 				})
 			}
 		}

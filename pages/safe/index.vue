@@ -57,7 +57,14 @@
 				})
 			},
 			unLockProduct(item) {
-
+				const postData = {
+					id:item.id,
+					status:'pending'
+				}
+				post('wx/boxproduct/locked',postData).then(json=>{
+					this.initData()
+					uni.showToast({ title: '产品已解锁' })
+				})
 			},
 			showStatusWord() {
 				return '锁定中'
