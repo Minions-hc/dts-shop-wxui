@@ -6,7 +6,7 @@
 			<view class="points-box">
 				<view class="points-left">
 					<text class="points-num">{{pointCount}}</text>
-					<image class="coin-icon" src="/static/coin.png"></image>
+					<image class="coin-icon" src="/static/coin.png" webp="true" lazy-load="true"></image>
 				</view>
 				<text class="points-label">积分</text>
 			</view>
@@ -21,13 +21,15 @@
 				<!-- 第一排 -->
 				<view class="calendar-row">
 					<view v-for="day in firstDay" :key="day.value" class="day-item">
-						<image class="heart-bg" :src="day.isActive ? day.activeBg : day.bg"></image>
+						<image class="heart-bg" :src="day.isActive ? day.activeBg : day.bg" webp="true"
+							lazy-load="true"></image>
 					</view>
 				</view>
 				<!-- 第二排 -->
 				<view class="calendar-row second-row">
 					<view v-for="day in seconedDay" :key="day.value" class="day-item">
-						<image class="heart-bg" :src="day.isActive ? day.activeBg : day.bg"></image>
+						<image class="heart-bg" :src="day.isActive ? day.activeBg : day.bg" webp="true"
+							lazy-load="true"></image>
 					</view>
 				</view>
 			</view>
@@ -51,12 +53,15 @@
 		get,
 		post
 	} from "@/utils/rest-util.js"
-	import {dateCompare,formatDate} from '@/utils/common.js'
+	import {
+		dateCompare,
+		formatDate
+	} from '@/utils/common.js'
 	export default {
 		onLoad() {
-			this.userId = 'U10001';			
+			this.userId = 'U10001';
 		},
-		
+
 		onShow() {
 			this.currentCheckInDay();
 			this.userConsumptionInFirday()
@@ -66,7 +71,7 @@
 				// 活动数据示例
 				activities: [{
 						bg: '/static/activity1.png',
-						path:'/pages/record/index'
+						path: '/pages/record/index'
 					},
 					{
 						bg: '/static/activity2.png',
@@ -74,59 +79,60 @@
 					},
 					{
 						bg: '/static/activity3.png',
-						path:'/pages/soulPower/index'
+						path: '/pages/soulPower/index'
 					},
-				{
+					{
 						bg: '/static/activity4.png',
-						path:'/pages/market/index'
+						path: '/pages/market/index'
 					}
 				],
-				firstDay:[{
-					bg:'/static/day1.png',
-					activeBg:'/static/day1-active.png',
+				firstDay: [{
+					bg: '/static/day1.png',
+					activeBg: '/static/day1-active.png',
 					isActive: false,
 					value: 'day1'
-				},{
-					bg:'/static/day2.png',
-					activeBg:'/static/day2-active.png',
+				}, {
+					bg: '/static/day2.png',
+					activeBg: '/static/day2-active.png',
 					isActive: false,
 					value: 'day2'
-				},{
-					bg:'/static/day3.png',
-					activeBg:'/static/day3-active.png',
+				}, {
+					bg: '/static/day3.png',
+					activeBg: '/static/day3-active.png',
 					isActive: false,
 					value: 'day3'
-				},{
-					bg:'/static/day4.png',
-					activeBg:'/static/day4-active.png',
+				}, {
+					bg: '/static/day4.png',
+					activeBg: '/static/day4-active.png',
 					isActive: false,
 					value: 'day4'
 				}],
-				seconedDay:[{
-					bg:'/static/day5.png',
-					activeBg:'/static/day5-active.png',
-					isActive: false,
-					value: 'day5'
-				},
-				{
-					bg:'/static/day6.png',
-					activeBg:'/static/day6-active.png',
-					isActive: false,
-					value: 'day6'
-				},{
-					bg:'/static/day7.png',
-					activeBg:'/static/day7-active.png',
-					isActive: false,
-					value: 'day7'
-				}],
+				seconedDay: [{
+						bg: '/static/day5.png',
+						activeBg: '/static/day5-active.png',
+						isActive: false,
+						value: 'day5'
+					},
+					{
+						bg: '/static/day6.png',
+						activeBg: '/static/day6-active.png',
+						isActive: false,
+						value: 'day6'
+					}, {
+						bg: '/static/day7.png',
+						activeBg: '/static/day7-active.png',
+						isActive: false,
+						value: 'day7'
+					}
+				],
 				userId: '',
 				currentDay: 0,
 				pointCount: 0,
-				lastCheckInDay:'',
-				userInFirday:true
+				lastCheckInDay: '',
+				userInFirday: true
 			}
 		},
-		
+
 		methods: {
 			toPage(item) {
 				uni.navigateTo({
@@ -135,31 +141,37 @@
 			},
 			async userCheckIn() {
 				const flag = await this.checkDate();
-				if(flag){
-					uni.showToast({ title: '您今日已签到' })
+				if (flag) {
+					uni.showToast({
+						title: '您今日已签到'
+					})
 					return
 				}
-				if(this.userInFirday){
-					uni.showToast({ title: '您最近五天没有消费，不允许签到' })
+				if (this.userInFirday) {
+					uni.showToast({
+						title: '您最近五天没有消费，不允许签到'
+					})
 					return
 				}
 				const day = this.currentDay >= 7 ? 1 : (this.currentDay === 0 ? 1 : this.currentDay + 1)
 				const postData = {
 					userId: this.userId,
-					checkInDay:  day,
+					checkInDay: day,
 					points: day < 3 ? day * 10 : 30
 				}
-				post('wx/checkin/userCheckIn',postData).then(res => {
+				post('wx/checkin/userCheckIn', postData).then(res => {
 					const result = res.data;
-					if(result.errmsg === '成功') {
-						uni.showToast({ title: '签到成功' })
+					if (result.errmsg === '成功') {
+						uni.showToast({
+							title: '签到成功'
+						})
 						this.currentCheckInDay()
 					}
 				})
 			},
-			userConsumptionInFirday(){
-				get('wx/checkin/userConsumptionInFirday?userId='+this.userId).then(res=>{
-					if(res.data.errmsg === '成功'){
+			userConsumptionInFirday() {
+				get('wx/checkin/userConsumptionInFirday?userId=' + this.userId).then(res => {
+					if (res.data.errmsg === '成功') {
 						const result = res.data.data
 						this.userInFirday = result.userConsumptionInFirday
 					}
@@ -174,27 +186,27 @@
 					this.resetSignDay(result.checkInDay);
 				})
 			},
-			checkDate(){
+			checkDate() {
 				const date = formatDate(new Date());
-				return dateCompare(this.lastCheckInDay,date)
+				return dateCompare(this.lastCheckInDay, date)
 			},
-			resetSignDay(day){
-				if(day > 4){
-					this.firstDay = this.firstDay.map(item=>{
+			resetSignDay(day) {
+				if (day > 4) {
+					this.firstDay = this.firstDay.map(item => {
 						return {
 							...item,
-							isActive:true
+							isActive: true
 						}
 					})
-					this.seconedDay = this.seconedDay.map((item,i) =>{
+					this.seconedDay = this.seconedDay.map((item, i) => {
 						const num = i + 5;
 						return {
 							...item,
-							isActive : day >= num
+							isActive: day >= num
 						}
 					})
 				} else {
-					this.firstDay = this.firstDay.map((item,i)=>{
+					this.firstDay = this.firstDay.map((item, i) => {
 						const num = i + 1;
 						return {
 							...item,

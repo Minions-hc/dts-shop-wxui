@@ -160,36 +160,6 @@
 			</view>
 		</view>
 		
-		<!-- 遮罩层 -->
-		    <view v-if="showMarkPopup" class="mask" @click="closeMask">
-		      <!-- 内容容器（阻止冒泡） -->
-		      <view class="popup-content" @click.stop>
-		        <!-- 第一部分：产品卡片 -->
-		        <view class="product-card">
-		          <image :src="productInfo.image" class="product-image"/>
-		          <view class="product-info">
-		            <text class="product-title">{{ productInfo.title }}</text>
-		            <text class="product-price">¥{{ productInfo.price }}</text>
-		          </view>
-		        </view>
-		
-		        <!-- 第四部分：悬浮GIF -->
-		        <image 
-		          src="/static/animation.gif" 
-		          class="float-gif"
-		          mode="widthFix"
-		        />
-		
-		        <!-- 第二部分：操作按钮 -->
-		        <view class="action-btns">
-		          <button class="btn cart-btn" @click="addToCart">加入购物车</button>
-		          <button class="btn buy-btn" @click="buyNow">立即购买</button>
-		        </view>
-		
-		        <!-- 第三部分：关闭按钮 -->
-		        <text class="close-icon" @click="showPopup = false">×</text>
-		      </view>
-		    </view>
 		<!-- 底部悬浮按钮 -->
 		<!-- 修改后的底部悬浮按钮部分 -->
 		<view class="footer-section">
@@ -284,6 +254,8 @@
 				</view>
 			</view>
 		</uni-popup>
+	<lucky-draw :dialogVisiable="dialogVisiable" :drawInfos="drawInfos" :dialogMoreVisible="dialogMoreVisible" @closeDialog="closeDialog"></lucky-draw>
+	
 	</view>
 </template>
 
@@ -293,6 +265,7 @@
 		post
 	} from "@/utils/rest-util.js"
 	import {getRandomElements} from "@/utils/common.js"
+	import luckyDraw from './components/luckyDraw.vue';
 	export default {
 		onLoad(param) {
 			const {userId,seriesId} = param;
@@ -303,8 +276,13 @@
 			this.getProductBoxBySeriesId(null)
 			this.getUserCurrentPoints()
 		},
+		components:{
+			luckyDraw
+		},
 		data() {
 			return {
+				dialogVisiable:false,
+				dialogMoreVisible:false,
 				isDeduction:true,
 				isLockBox:true,
 				isOpenAnimate:false,
@@ -328,7 +306,23 @@
 				dynamicHeight: "auto", // 初始值
 				boxeInfos: [],
 				productSeries: {},
-				currentPoints: 0
+				currentPoints: 0,
+				drawInfos:[
+					{
+						seriesName:'海贼王系列0001',
+						seriesImage:'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/j6jrbml9619zt9zz717d.jpg',
+						levelName:'A赏',
+						quantity: 1,
+						id: 1
+					},
+					{
+						seriesName:'海贼王系列0002',
+						seriesImage:'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/j6jrbml9619zt9zz717d.jpg',
+						levelName:'A赏',
+						quantity: 1,
+						id: 2
+					}
+				]
 			}
 		},
 		computed: {
@@ -342,6 +336,13 @@
 
 		},
 		methods: {
+			openRecord(){
+				this.closeDialog()
+			},
+			closeDialog(){
+				this.dialogVisiable = false;
+				this.dialogMoreVisible = false;
+			},
 			changChk() {
 				this.chkDesc = !this.chkDesc;
 			},
@@ -400,6 +401,13 @@
 					})
 				}
 				this.getProductBoxBySeriesId(callBack)
+			},
+			openDrawDialog(count){
+				if(count === 1){
+					this.dialogVisiable = true
+				} else {
+					this.dialogMoreVisible = true;
+				}
 			},
 			handleDraw(count) {
 				if (count != 0 && count > this.boxes[this.currentIndex].remaining) {
@@ -503,7 +511,9 @@
 				}
 				post('wx/blindbox/drawBlindBox',postData).then(res=>{
 					this.getProductBoxBySeriesId()
-					this.showMarkPopup = true;
+					this.drawInfos =[]
+					this.$refs.shopingPopup.close()
+					this.openDrawDialog(list.length)
 				})
 			},
 			showRecods(){

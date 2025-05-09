@@ -7,7 +7,8 @@
 
 		<!-- 下半部分操作区 -->
 		<view class="bottom-section">
-			<button class="login-btn" open-type="getUserInfo" @getuserinfo="onGetUserInfo" @click="handleLogin">
+			<button class="login-btn" open-type="getUserInfo" @getuserinfo="onGetUserInfo" 
+			@click="handleLogin">
 				授权登录
 			</button>
 
@@ -30,6 +31,11 @@
 </template>
 
 <script>
+	import {
+		get,
+		post
+	} from '../../utils/rest-util';
+
 	export default {
 		data() {
 			return {
@@ -38,48 +44,97 @@
 		},
 		onLoad() {
 			const userCode = uni.getStorageSync('userCode');
-			if(userCode){
-				uni.reLaunch({ url: '/pages/index/index' })
+			if (userCode) {
+				uni.reLaunch({
+					url: '/pages/index/index'
+				})
 			}
 		},
 		methods: {
+			async handleAuth(e) {
+				try {
+					// 处理用户信息
+					if (e.type === 'getuserinfo') {
+						if (e.detail.errMsg !== 'getUserInfo:ok') return
+						this.loginParams.userInfo = e.detail.userInfo
+						const loginRes = await uni.login({
+							provider: 'weixin'
+						})
+						this.loginParams.code = loginRes.code
+					}
+
+					// 处理手机号
+					if (e.type === 'getphonenumber') {
+						if (e.detail.errMsg !== 'getphonenumber:ok') return
+						this.loginParams.iv = e.detail.iv
+						this.loginParams.encryptedData = e.detail.encryptedData
+
+						// // 提交完整数据
+						// const res = await uni.request({
+						// 	url: 'https://your-domain.com/api/wechat/fullAuth',
+						// 	method: 'POST',
+						// 	data: this.loginParams
+						// })
+
+						// if (res.data.code === 0) {
+						// 	uni.setStorageSync('token', res.data.data.token)
+						// 	uni.reLaunch({
+						// 		url: '/pages/index/index'
+						// 	})
+						// }
+					}
+				} catch (error) {
+					uni.showToast({
+						title: '授权失败',
+						icon: 'none'
+					})
+				}
+			},
 			// 获取用户信息
-			    async onGetUserInfo(e) {
-			      if (e.detail.errMsg === 'getUserInfo:ok') {
-			        try {
-			          // 1. 获取code
-			          const loginRes = await uni.login({ provider: 'weixin' })
-					  console.log(loginRes)
-					   uni.setStorageSync('userCode', loginRes.code)
-					  uni.reLaunch({ url: '/pages/index/index' })
-					 
-			          
-			          // 2. 发送登录请求
-			          const res = await uni.request({
-			            url: 'https://your-domain.com/api/wechat/login',
-			            method: 'POST',
-			            data: {
-			              code: loginRes.code,
-			              rawData: e.detail.rawData,
-			              signature: e.detail.signature,
-			              encryptedData: e.detail.encryptedData,
-			              iv: e.detail.iv
-			            }
-			          })
-			
-			          // 3. 处理登录结果
-			          if (res.data.code === 0) {
-			            uni.setStorageSync('token', res.data.data.token)
-			            uni.setStorageSync('userInfo', res.data.data.userInfo)
-			            uni.showToast({ title: '登录成功' })
-			          }
-			        } catch (error) {
-			          uni.showToast({ title: '登录失败', icon: 'none' })
-			        }
-			      } else {
-			        uni.showToast({ title: '授权失败', icon: 'none' })
-			      }
-			    },
+			async onGetUserInfo(e) {
+				if (e.detail.errMsg === 'getUserInfo:ok') {
+					try {
+						// 1. 获取code
+						const loginRes = await uni.login({
+							provider: 'weixin'
+						})
+
+						uni.setStorageSync('userCode', loginRes.code)
+						const postData = {
+							code: loginRes.code,
+							rawData: e.detail.rawData,
+							signature: e.detail.signature,
+							encryptedData: e.detail.encryptedData,
+							iv: e.detail.iv
+						}
+						console.log(e, postData)
+						uni.reLaunch({
+							url: '/pages/index/index'
+						})
+						// 2. 发送登录请求
+						post('wx/auth/wxLogin', postData).then(res => {
+							// 3. 处理登录结果
+							if (res.data.code === 0) {
+								uni.setStorageSync('token', res.data.data.token)
+								uni.setStorageSync('userInfo', res.data.data.userInfo)
+								uni.showToast({
+									title: '登录成功'
+								})
+							}
+						})
+					} catch (error) {
+						uni.showToast({
+							title: '登录失败',
+							icon: 'none'
+						})
+					}
+				} else {
+					uni.showToast({
+						title: '授权失败',
+						icon: 'none'
+					})
+				}
+			},
 			handleSkip() {
 				uni.showModal({
 					title: '提示',
@@ -94,16 +149,16 @@
 				})
 			},
 			// 处理登录按钮点击
-			    handleLogin() {
-			      // 检查是否已同意隐私协议
-			      if (!this.agreed) {
-			        uni.showModal({
-			          title: '提示',
-			          content: '请先阅读并同意隐私协议',
-			          showCancel: false
-			        })
-			      }
-			    },
+			handleLogin() {
+				// 检查是否已同意隐私协议
+				if (!this.agreed) {
+					uni.showModal({
+						title: '提示',
+						content: '请先阅读并同意隐私协议',
+						showCancel: false
+					})
+				}
+			},
 			toggleAgreement() {
 				console.log(this.agreed)
 				this.agreed = true

@@ -5,6 +5,8 @@
       <view class="modal-header">
         <text class="title">确认购买</text>
         <image 
+			webp="true" 
+			lazy-load="true"
           class="close-icon" 
           src="/static/close.png" 
           @click="$emit('close')"

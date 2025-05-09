@@ -7,7 +7,7 @@
         <image 
           class="close-icon" 
           src="/static/close.png" 
-          @click="$emit('close')"
+          @click="$emit('close')" webp="true" lazy-load="true"
         />
       </view>
 

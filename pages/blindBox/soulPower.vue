@@ -2,7 +2,7 @@
 	<view class="container">
 		<!-- 图片部分 -->
 		<view class="image-section">
-			<image :src="currentBox.image" mode="scaleToFill" class="box-image" />
+			<image :src="currentBox.image" mode="scaleToFill" class="box-image" webp="true" lazy-load="true"/>
 		</view>
 
 		<!-- 轮播部分 -->
@@ -65,7 +65,7 @@
 								<view v-for="(product, pIndex) in currentBox.products" :key="product.productId"
 									class="product-card">
 									<image :src="product.productImage" mode="aspectFill" class="product-image"
-										lazy-load="" />
+										webp="true" lazy-load="true"/>
 									<view class="remain-qty">
 										{{product.quantity - product.soldQuantity}}/{{product.quantity}}
 									</view>
@@ -93,7 +93,7 @@
 				<!-- 弹窗标题 -->
 				<view class="popup-header">
 					<text class="title">开赏记录({{records.length}})</text>
-					<image src="/static/icons/close.png" class="close-icon" @tap="showPopup = false" />
+					<image src="/static/icons/close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
 				</view>
 
 				<!-- 筛选标签 -->
@@ -110,7 +110,7 @@
 						<!-- 条目头部 -->
 						<view class="item-header">
 							<view class="header-left">
-								<image :src="item.avatar" mode="aspectFit" lazy-load class="record-image"></image>
+								<image :src="item.avatar" mode="aspectFit" webp="true" lazy-load="true" class="record-image" ></image>
 								<text class="serial">【第{{ item.number }}张】{{ item.userId }}</text>
 							</view>
 
@@ -120,7 +120,7 @@
 						<!-- 奖品信息 -->
 						<view class="prize-info">
 							<view class="info-left">
-								<image :src="item.productImage" mode="aspectFit" lazy-load class="record-image"></image>
+								<image :src="item.productImage" mode="aspectFit" webp="true" lazy-load="true" class="record-image"></image>
 								<text class="prize-name">{{ item.productName }}</text>
 							</view>
 							<text class="award">{{ item.levelName }} x 1</text>
@@ -138,14 +138,14 @@
 				<!-- 弹窗标题 -->
 				<view class="popup-header">
 					<text class="title">切换房间</text>
-					<image src="/static/icons/close.png" class="close-icon" @tap="showPopup = false" />
+					<image src="/static/icons/close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
 				</view>
 
 				<!-- 记录列表 -->
 				<scroll-view class="box-list" scroll-y>
 					<view v-for="(item, index) in boxeInfos" :key="item.id" class="box-item" @tap="changeBox(index)">
 						<view class="box-img">
-							<image src="/static/box.png" mode="aspectFill" class="box-image"></image>
+							<image src="/static/box.png" mode="aspectFill" class="box-image" webp="true" lazy-load="true"></image>
 							<text>第{{index + 1}}箱</text>
 						</view>
 						<view class="box-type-list-content">
@@ -168,10 +168,10 @@
 		<view class="footer-section">
 			<view class="button-container">
 				<!-- 四个图片按钮 -->
-				<image src="/static/all-in.png" class="button-image" mode="aspectFit" @click="handleDraw(0)" />
-				<image src="/static/pick-one.png" class="button-image" mode="aspectFit" @click="handleDraw(1)" />
-				<image src="/static/pick-three.png" class="button-image" mode="aspectFit" @click="handleDraw(3)" />
-				<image src="/static/pick-ten.png" class="button-image" mode="aspectFit" @click="handleDraw(10)" />
+				<image src="/static/all-in.png" class="button-image" mode="aspectFit" @click="handleDraw(0)" webp="true" lazy-load="true"/>
+				<image src="/static/pick-one.png" class="button-image" mode="aspectFit" @click="handleDraw(1)" webp="true" lazy-load="true"/>
+				<image src="/static/pick-three.png" class="button-image" mode="aspectFit" @click="handleDraw(3)" webp="true" lazy-load="true"/>
+				<image src="/static/pick-ten.png" class="button-image" mode="aspectFit" @click="handleDraw(10)" webp="true" lazy-load="true"/>
 			</view>
 			<view class="soulPower"><text>我的魂力值:{{spiritPower}}</text></view>
 			<view class="soulPowerDescribe"><text>在一番赏中获取小赏将增加魂力值</text></view>
