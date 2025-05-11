@@ -76,9 +76,6 @@
 		get,
 		post
 	} from "@/utils/rest-util.js"
-	const defaultImg = require('@/static/serice1.jpg');
-	const defaltHotImg = require('@/static/serice2.jpg');
-	const defaultAovidImg = require('@/static/serice3.jpg');
 	export default {
 		data() {
 			return {
@@ -158,14 +155,7 @@
 				})
 			},
 			getImgUrl(series, index) {
-				let img = defaultImg;
-				if (index === 2) {
-					img = defaltHotImg
-				}
-				if (index === 3) {
-					img = defaultAovidImg
-				}
-				return series.seriesImage ? series.seriesImage : img
+				return series.seriesImage
 			},
 			// 跳转页面
 			    navigateToGroup() {
