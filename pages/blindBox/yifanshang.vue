@@ -254,6 +254,20 @@
 				</view>
 			</view>
 		</uni-popup>
+		<uni-popup ref="couponPopup" background-color="#fff"  type="bottom"
+			border-radius="10px 10px 0 0">
+			<view class="coupon-popup-content" :class="{ 'popup-height': type === 'left' || type === 'right' }">
+				<view class="coupon-header">
+					<view class="coupon-haeder-title">
+						可用优惠券
+					</view>
+					<view class="close-icon">
+						<uni-icons type="closeempty" size="30" @tap="closeCoupon"></uni-icons>
+					</view>
+				</view>
+				<coupon-dialog :userId="userId"></coupon-dialog>
+			</view>
+		</uni-popup>
 	<lucky-draw :dialogVisiable="dialogVisiable" :drawInfos="drawInfos" :dialogMoreVisible="dialogMoreVisible" @closeDialog="closeDialog"></lucky-draw>
 	
 	</view>
@@ -266,6 +280,7 @@
 	} from "@/utils/rest-util.js"
 	import {getRandomElements} from "@/utils/common.js"
 	import luckyDraw from './components/luckyDraw.vue';
+	import couponDialog from './components/couponDialog.vue';
 	export default {
 		onLoad(param) {
 			const {userId,seriesId} = param;
@@ -277,7 +292,8 @@
 			this.getUserCurrentPoints()
 		},
 		components:{
-			luckyDraw
+			luckyDraw,
+			couponDialog
 		},
 		data() {
 			return {
@@ -388,6 +404,9 @@
 			onSwiperChange(e) {
 				this.currentIndex = e.detail.current
 			},
+			closeCoupon(){
+				this.$refs.couponPopup.close()
+			},
 			handleRefresh() {
 				uni.showLoading({
 					title: '刷新中...'
@@ -410,6 +429,7 @@
 				}
 			},
 			handleDraw(count) {
+				this.$refs.couponPopup.open('bottom');
 				if (count != 0 && count > this.boxes[this.currentIndex].remaining) {
 					uni.showToast({
 						title: '库存不足~'
@@ -1249,6 +1269,17 @@
 					transform: translateY(-2rpx);
 				}
 			}
+		}
+	}
+	.coupon-popup-content{
+		padding: 20rpx;
+		.coupon-header{
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+			line-height: 80rpx;
+			font-weight: bold;
+			
 		}
 	}
 

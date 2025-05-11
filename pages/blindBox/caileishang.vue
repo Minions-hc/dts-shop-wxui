@@ -307,6 +307,16 @@
 				</view>
 			</view>
 		</uni-popup>
+		<uni-popup ref="couponPopup" background-color="#fff"  type="bottom"
+			border-radius="10px 10px 0 0">
+			<view class="coupon-popup-content" :class="{ 'popup-height': type === 'left' || type === 'right' }">
+				<view class="coupon-header">
+					
+				</view>
+				<coupon-dialog :userId="userId"></coupon-dialog>
+			</view>
+		</uni-popup>
+		
 		<lucky-draw :dialogVisiable="dialogVisiable" :drawInfos="drawInfos" @openRecord="openRecord" :dialogMoreVisible="dialogMoreVisible" @closeDialog="closeDialog"></lucky-draw>
 	</view>
 </template>
@@ -314,6 +324,7 @@
 <script>
 	import priceProgress from './components/priceProgress.vue';
 	import luckyDraw from './components/luckyDraw.vue';
+	import couponDialog from './components/couponDialog.vue';
 	import {
 		get,
 		post
@@ -324,7 +335,8 @@
 	export default {
 		components: {
 			priceProgress,
-			luckyDraw
+			luckyDraw,
+			couponDialog
 		},
 		onLoad(param) {
 			const {
@@ -370,7 +382,22 @@
 				productSeries: {},
 				currentValue: 0,
 				isLockBox:true,
-				drawInfos:[]
+				drawInfos:[
+					{
+						seriesName:'海贼王系列0001',
+						seriesImage:'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/j6jrbml9619zt9zz717d.jpg',
+						levelName:'A赏',
+						quantity: 1,
+						id: 1
+					},
+					{
+						seriesName:'海贼王系列0002',
+						seriesImage:'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/j6jrbml9619zt9zz717d.jpg',
+						levelName:'A赏',
+						quantity: 1,
+						id: 2
+					}
+				]
 			}
 		},
 		computed: {
@@ -523,6 +550,7 @@
 					});
 					return;
 				}
+				this.openDrawDialog(count)
 				this.prizeDraw(count)
 			},
 			navigatorToRule() {

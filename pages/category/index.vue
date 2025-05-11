@@ -105,6 +105,7 @@ export default {
 	  this.currentProducts = this.allItems.filter(obj=>obj.categoryId === item.id);
     },
 	toBindBoxPage(product){
+		console.log()
 		if(product?.isAvoid){
 			uni.navigateTo({
 				url:'/pages/blindBox/caileishang?userId='+ this.userId + '&seriesId='+ product.seriesId

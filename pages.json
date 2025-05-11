@@ -268,8 +268,8 @@
 	},
 	"uniIdRouter": {},
 	"tabBar": {
-		"color": "ed80a0",
-		"selectedColor": "#000",
+		"color": "#999",
+		"selectedColor": "#FF4081",
 		"borderStyle": "white",
 		"backgroundColor": "#ffffff",
 		"list": [{
