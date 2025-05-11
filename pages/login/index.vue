@@ -7,8 +7,7 @@
 
 		<!-- 下半部分操作区 -->
 		<view class="bottom-section">
-			<button class="login-btn" open-type="getUserInfo" @getuserinfo="onGetUserInfo" 
-			@click="handleLogin">
+			<button class="login-btn" open-type="getUserInfo" @getuserinfo="onGetUserInfo" @click="handleLogin">
 				授权登录
 			</button>
 
@@ -107,10 +106,8 @@
 							encryptedData: e.detail.encryptedData,
 							iv: e.detail.iv
 						}
-						console.log(e, postData)
-						uni.reLaunch({
-							url: '/pages/index/index'
-						})
+
+						this.toPage()
 						// 2. 发送登录请求
 						post('wx/auth/wxLogin', postData).then(res => {
 							// 3. 处理登录结果
@@ -134,6 +131,25 @@
 						icon: 'none'
 					})
 				}
+			},
+			toPage() {
+				// 登录成功后处理跳转
+				const shareParams = JSON.parse(uni.getStorageSync('shareParams'));
+				if (shareParams) {
+					uni.reLaunch({
+						url: `/${shareParams.path}?${this.objToQuery(shareParams.query)}`
+					});
+					uni.removeStorageSync('shareParams');
+				} else {
+					uni.switchTab({
+						url: '/pages/index/index'
+					});
+				}
+			},
+			objToQuery(obj) {
+				return Object.keys(obj)
+					.map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`)
+					.join('&');
 			},
 			handleSkip() {
 				uni.showModal({

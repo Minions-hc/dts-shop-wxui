@@ -139,9 +139,9 @@
 				        >
 				          参与抽奖
 				        </view>
-						<view class="participate-btn" v-else @click="handHelpCode">
+						<button class="participate-btn" v-else  open-type="share">
 							转发助力
-						</view>
+						</button>
 				      </view>
 				
 				      <!-- 第三部分：提示文字 -->
@@ -164,7 +164,7 @@
 				<view class="share-lucky-tips">
 					好友抽奖码{{codeNum}}个/总抽奖码{{allCodeNum}}个
 				</view>
-				<view class="help-btn">
+				<view class="help-btn" @click="handHelpCode">
 					帮他/她助力一次
 				</view>
 				<view class="help-bottom-tips">
@@ -185,14 +185,24 @@
 			const {userId,shareUserId} = param;
 			this.shareUserId = shareUserId;
 			this.userId = 'U10001'
+			const shareParams = {
+			    path: this.$mp.page.route,
+			    query: param // 包含shareUserId等参数
+			}
+			uni.setStorageSync('shareParams', JSON.stringify(shareParams));
+			// 检查登录状态
+			if (!uni.getStorageSync('userCode')) {
+			    uni.redirectTo({
+					url: '/pages/login/index'
+			    });
+			    return;
+			}
 			if(this.shareUserId){
 				this.$refs.helppopup.open('bottom');
 			}
 		},
 		onShow(){
 			this.activityInfo();
-			
-			
 		},
 		data() {
 			return {
@@ -240,16 +250,34 @@
 		mounted() {
 			this.calculateLayout()
 		},
+		 onShareAppMessage() {
+		    return {
+		      title: '自定义分享标题',   // 分享标题
+		      path: '/pages/lucky/index?shareId='+ this.userId,  // 分享路径（默认当前页面路径）
+		      imageUrl: this.imageList[0], // 分享图片
+			  forwardChatType:0,
+		      success: (res) => {
+		        console.log('分享成功', res);
+		      },
+		      fail: (err) => {
+		        console.log('分享失败', err);
+		      }
+		    }
+		  },
 		methods: {
+			forwarTohelp(){
+				
+			},
 			closeHelppupop(){
 				this.$refs.helppopup.close();
 			},
 			handHelpCode(){
 				const postData = {
-					userId:this.userId,
+					userId:this.shareUserId,
 					activityId:this.activeInfo.activityId,
 					activityName:this.activeInfo.activityName,
-					periodNumber:this.activeInfo.periodNumber
+					periodNumber:this.activeInfo.periodNumber,
+					helperId: this.userId
 				}
 				post(`wx/luckyDraw/help`,postData).then(json=>{
 					
