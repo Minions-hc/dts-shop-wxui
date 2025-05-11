@@ -69,7 +69,7 @@
 		methods: {
 			navigatorToDetail(item) {
 				uni.navigateTo({
-					url : `/pages/order/detail?userId=${this.userId}&orderId=${item.orderId}&orderStatus=${item.orderStatus}`
+					url : `/subUser/order/detail?userId=${this.userId}&orderId=${item.orderId}&orderStatus=${item.orderStatus}`
 				})
 			},
 			initData(userId){

@@ -2,7 +2,7 @@
 	<view class="container">
 		<!-- 用户信息区域 -->
 		<view class="user-section">
-			<view class="user-info">
+			<view class="user-info" @click="navigateToUserInfo()">
 				<image src="/static/avatar.png" class="avatar" mode="aspectFit" lazy-load/>
 				<text class="username">我的名字</text>
 			</view>
@@ -18,7 +18,7 @@
 
 		<!-- 订单状态 -->
 		<view class="order-section">
-			<view class="order-header" @click="navigateTo('/pages/order/list')">
+			<view class="order-header" @click="navigateTo('/subUser/order/list')">
 				<text class="title">我的订单</text>
 				<view class="more">
 					<text>全部订单</text>
@@ -104,19 +104,19 @@
 				services: [{
 						icon: 'wallet',
 						name: '优惠券',
-						path: '/pages/coupon/index',
+						path: '/subUser/coupon/index',
 						image: '/static/icon5.png'
 					},
 					{
 						icon: 'compose',
 						name: '道具卡',
-						path: '/pages/card/index',
+						path: '/subUser/card/index',
 						image: '/static/icon6.png'
 					},
 					{
 						icon: 'gift',
 						name: '兑换码',
-						path: '/pages/code/index',
+						path: '/subUser/code/index',
 						image: '/static/icon7.png'
 					},
 					{
@@ -129,19 +129,19 @@
 				functions: [{
 						icon: 'cart',
 						label: '购物车',
-						path: '/pages/cart/index',
+						path: '/subHome/cart/index',
 						image: '/static/icon9.png'
 					},
 					{
 						icon: 'location',
 						label: '收货地址',
-						path: '/pages/address/index',
+						path: '/subUser/address/index',
 						image: '/static/icon10.png'
 					},
 					{
 						icon: 'paperclip',
 						label: '规则与协议',
-						path: '/pages/agreement/index',
+						path: '/subBox/agreement/index',
 						image: '/static/icon11.png'
 					}
 				],
@@ -177,7 +177,7 @@
 				this.activeOrderTab = index
 				const userId = 'U10001'
 				// 实际应跳转对应订单列表页
-				this.navigateTo(`/pages/order/list?type=${index}&userId=${userId}`)
+				this.navigateTo(`/subUser/order/list?type=${index}&userId=${userId}`)
 			},
 			handleService(item) {
 				this.navigateTo(item.path)
@@ -185,8 +185,8 @@
 			handleAssetClick(type) {
 				const userId = 'U10001'
 				const routeMap = {
-					points: '/pages/points/index?userId='+userId,
-					invites: '/pages/invite/index?userId='+userId
+					points: '/subUser/points/index?userId='+userId,
+					invites: '/subUser/invite/index?userId='+userId
 				}
 				uni.navigateTo({
 					url: routeMap[type]
@@ -217,6 +217,12 @@
 					})
 					this.userAssets = userAssets;
 					
+				})
+			},
+			navigateToUserInfo() {
+				const userId = 'U10001'
+				uni.navigateTo({
+					url: '/subUser/profile/index?userId='+userId
 				})
 			}
 		}

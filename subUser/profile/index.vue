@@ -75,7 +75,7 @@ export default {
   methods: {
     // 跳转编辑页
     navigateToEdit() {
-      uni.navigateTo({ url: '/pages/profile/edit' })
+      uni.navigateTo({ url: '/subUser/profile/edit' })
     },
 
    // 通用复制方法

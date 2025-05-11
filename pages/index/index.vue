@@ -3,7 +3,7 @@
 		<!-- 顶部搜索栏 -->
 		<view class="header">
 			<view class="logo"></view>
-			<view class="search-box" @click="navigateTo('/pages/category/index')">
+			<view class="search-box" @click="navigateTo('/subHome/category/index')">
 			</view>
 		</view>
 
@@ -21,7 +21,7 @@
 		<view class="thunder-section">
 			<view class="section-header">
 				<view class="section-title"></view>
-				<view class="more-btn" @click="navigateTo('/pages/category/index')">
+				<view class="more-btn" @click="navigateTo('/subHome/category/index')">
 				</view>
 			</view>
 			<swiper class="thunder-swiper" :indicator-dots="false" :autoplay="true" :interval="3000" :duration="500"
@@ -117,7 +117,7 @@
 			},
 			toSeriesPage(item){
 				const seriesId = item.seriesId;
-				const url = '/pages/blindBox/yifanshang?seriesId='+seriesId;
+				const url = '/subHome/blindBox/yifanshang?seriesId='+seriesId;
 				this.navigateTo(url)
 			},
 			initPage() {
@@ -170,7 +170,7 @@
 			// 跳转页面
 			    navigateToGroup() {
 			      uni.navigateTo({
-			        url: '/pages/group/index'
+			        url: '/subActivity/group/index'
 			      })
 			    },
 			    

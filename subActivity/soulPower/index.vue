@@ -45,7 +45,7 @@ import {
 		},
 		methods: {
 			navigatorToBlindBox(item) {
-				let blindBoxurl = '/pages/blindBox/soulPower?userId='+this.userId+'&&seriesId=' + item.seriesId;
+				let blindBoxurl = '/subHome/blindBox/soulPower?userId='+this.userId+'&&seriesId=' + item.seriesId;
 				uni.navigateTo({
 					url: blindBoxurl
 				})

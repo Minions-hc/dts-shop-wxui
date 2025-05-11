@@ -1,6 +1,5 @@
 {
-	"pages": [
-		{
+	"pages": [{
 			"path": "pages/login/index",
 			"style": {
 				"navigationBarTitleText": "登录",
@@ -13,7 +12,6 @@
 				"navigationBarTitleText": "潮赏士多"
 			}
 		},
-		
 		{
 			"path": "pages/activity/index",
 			"style": {
@@ -36,229 +34,234 @@
 				"enablePullDownRefresh": true
 			}
 		},
-		
-		{
-			"path": "pages/box/detail",
-			"style": {
-				"navigationBarTitleText": "物品详情"
-			}
-		},
-		{
-			"path": "pages/safe/index",
-			"style": {
-				"navigationBarTitleText": "保险箱"
-			}
-		},
-		{
-			"path": "pages/market/index",
-			"style": {
-				"navigationBarTitleText": ""
-			}
-		},
 		{
 			"path": "pages/user/index",
 			"style": {
 				"navigationBarTitleText": "我的",
 				"enablePullDownRefresh": false
 			}
-		},
-		{
-			"path": "pages/profile/index",
-			"style": {
-				"navigationBarTitleText": "编辑个人资料"
-			}
-		},
-		{
-			"path": "pages/profile/edit",
-			"style": {
-				"navigationBarTitleText": "更新个人信息"
-			}
-		},
-		{
-			"path": "pages/points/index",
-			"style": {
-				"navigationBarTitleText": "我的积分"
-			}
-		},
-		{
-			"path": "pages/redpacket/index",
-			"style": {
-				"navigationBarTitleText": "我的红包"
-			}
-		},
-		{
-			"path": "pages/order/list",
-			"style": {
-				"navigationBarTitleText": "订单列表"
-			}
-		},
-		{
-			"path": "pages/coupon/index",
-			"style": {
-				"navigationBarTitleText": "优惠券"
-			}
-		},
-		{
-			"path": "pages/card/index",
-			"style": {
-				"navigationBarTitleText": "道具卡"
-			}
-		},
-		{
-			"path": "pages/code/index",
-			"style": {
-				"navigationBarTitleText": "兑换码"
-			}
-		},
-		{
-			"path": "pages/category/index",
-			"style": {
-				"navigationBarTitleText": ""
-			}
-		},
-		{
-			"path": "pages/cart/index",
-			"style": {
-				"navigationBarTitleText": "我的购物车"
-			}
-		},
-		{
-			"path": "pages/address/index",
-			"style": {
-				"navigationBarTitleText": "我的收货地址"
-			}
-		},
-		{
-			"path": "pages/agreement/index",
-			"style": {
-				"navigationBarTitleText": "规则与协议"
-			}
-		},
-		{
-			"path": "pages/blindBox/yifanshang",
-			"style": {
-				"navigationBarTitleText": ""
-			}
-		},
-		{
-			"path": "pages/blindBox/caileishang",
-			"style": {
-				"navigationBarTitleText": ""
-			}
-		},
-		{
-			"path": "pages/soulPower/index",
-			"style": {
-				"navigationBarTitleText": "魂力一番赏"
-			}
-		},
-		{
-			"path": "pages/address/detail",
-			"style": {
-				"navigationBarTitleText": "收货地址"
-			}
-		},
-		{
-			"path": "pages/lucky/index",
-			"style": {
-				"navigationBarTitleText": "抽奖活动详情"
-				}
-		},
-		{
-			"path": "pages/invite/index",
-			"style": {
-				"navigationBarTitleText": "邀请与分销记录"
-			}
-		},
-		{
-			"path": "pages/code/detail",
-			"style": {
-				"navigationBarTitleText": "兑换记录"
-			}
-		},
-		{
-			"path": "pages/order/detail",
-			"style": {
-				"navigationBarTitleText": "订单详情"
-			}
-		},
-		{
-			"path": "pages/record/index",
-			"style": {
-				"navigationBarTitleText": ""
-			}
-		},
-		{
-			"path" : "pages/record/rule",
-			"style" : 
-			{
-				"navigationBarTitleText" : "排行奖励规则"
-			}
-		},
-		{
-			"path" : "pages/lottery/history",
-			"style" : 
-			{
-				"navigationBarTitleText" : "参与记录"
-			}
-		},
-		{
-			"path" : "pages/lucky/luckyCode",
-			"style" : 
-			{
-				"navigationBarTitleText" : "我的抽奖码"
-			}
-		},
-		{
-			"path" : "pages/lucky/luckyActivity",
-			"style" : 
-			{
-				"navigationBarTitleText" : "我参与的活动"
-			}
-		},
-		{
-			"path" : "pages/market/detail",
-			"style" : 
-			{
-				"navigationBarTitleText" : "商品详情"
-			}
-		},
-		{
-			"path" : "pages/blindBox/soulPower",
-			"style" : 
-			{
-				"navigationBarTitleText" : ""
-			}
-		},
-		{
-			"path" : "pages/blindBox/soulPowerRule",
-			"style" : 
-			{
-				"navigationBarTitleText" : "魂力赏规则说明"
-			}
-		},
-		{
-			"path" : "pages/blindBox/yifanshangRule",
-			"style" : 
-			{
-				"navigationBarTitleText" : "一番赏规则说明"
-			}
-		},
-		{
-			"path" : "pages/blindBox/caileishangRule",
-			"style" : 
-			{
-				"navigationBarTitleText" : "踩雷赏规则说明"
-			}
-		},
-		{
-			"path" : "pages/group/index",
-			"style" : 
-			{
-				"navigationBarTitleText" : ""
-			}
 		}
-		
+	],
+	"subPackages": [{
+			"root": "subHome",
+			"pages": [{
+					"path": "market/index",
+					"style": {
+						"navigationBarTitleText": ""
+					}
+				},
+				{
+					"path": "category/index",
+					"style": {
+						"navigationBarTitleText": ""
+					}
+				},
+				{
+					"path": "cart/index",
+					"style": {
+						"navigationBarTitleText": "我的购物车"
+					}
+				},
+				{
+					"path": "market/detail",
+					"style": {
+						"navigationBarTitleText": "商品详情"
+					}
+				},
+				{
+					"path": "blindBox/yifanshang",
+					"style": {
+						"navigationBarTitleText": ""
+					}
+				},
+				{
+					"path": "blindBox/caileishang",
+					"style": {
+						"navigationBarTitleText": ""
+					}
+				},
+				{
+					"path": "blindBox/soulPower",
+					"style": {
+						"navigationBarTitleText": ""
+					}
+				},
+				{
+					"path": "blindBox/soulPowerRule",
+					"style": {
+						"navigationBarTitleText": "魂力赏规则说明"
+					}
+				},
+				{
+					"path": "blindBox/yifanshangRule",
+					"style": {
+						"navigationBarTitleText": "一番赏规则说明"
+					}
+				},
+				{
+					"path": "blindBox/caileishangRule",
+					"style": {
+						"navigationBarTitleText": "踩雷赏规则说明"
+					}
+				}
+			]
+		},
+		{
+			"root": "subActivity",
+			"pages": [{
+					"path": "soulPower/index",
+					"style": {
+						"navigationBarTitleText": "魂力一番赏"
+					}
+				},
+				{
+					"path": "lucky/index",
+					"style": {
+						"navigationBarTitleText": "抽奖活动详情"
+					}
+				},
+				{
+					"path": "record/index",
+					"style": {
+						"navigationBarTitleText": ""
+					}
+				},
+				{
+					"path": "record/rule",
+					"style": {
+						"navigationBarTitleText": "排行奖励规则"
+					}
+				},
+				{
+					"path": "lottery/history",
+					"style": {
+						"navigationBarTitleText": "参与记录"
+					}
+				},
+				{
+					"path": "lucky/luckyCode",
+					"style": {
+						"navigationBarTitleText": "我的抽奖码"
+					}
+				},
+				{
+					"path": "lucky/luckyActivity",
+					"style": {
+						"navigationBarTitleText": "我参与的活动"
+					}
+				},
+				{
+					"path": "group/index",
+					"style": {
+						"navigationBarTitleText": ""
+					}
+				}
+			]
+		},
+		{
+			"root": "subBox",
+			"pages": [{
+					"path": "box/detail",
+					"style": {
+						"navigationBarTitleText": "物品详情"
+					}
+				},
+				{
+					"path": "safe/index",
+					"style": {
+						"navigationBarTitleText": "保险箱"
+					}
+				},
+				{
+					"path": "agreement/index",
+					"style": {
+						"navigationBarTitleText": "规则与协议"
+					}
+				}
+			]
+		},
+		{
+			"root": "subUser",
+			"pages": [{
+					"path": "profile/index",
+					"style": {
+						"navigationBarTitleText": "编辑个人资料"
+					}
+				},
+				{
+					"path": "profile/edit",
+					"style": {
+						"navigationBarTitleText": "更新个人信息"
+					}
+				},
+				{
+					"path": "points/index",
+					"style": {
+						"navigationBarTitleText": "我的积分"
+					}
+				},
+				{
+					"path": "redpacket/index",
+					"style": {
+						"navigationBarTitleText": "我的红包"
+					}
+				},
+				{
+					"path": "order/list",
+					"style": {
+						"navigationBarTitleText": "订单列表"
+					}
+				},
+				{
+					"path": "coupon/index",
+					"style": {
+						"navigationBarTitleText": "优惠券"
+					}
+				},
+				{
+					"path": "card/index",
+					"style": {
+						"navigationBarTitleText": "道具卡"
+					}
+				},
+				{
+					"path": "code/index",
+					"style": {
+						"navigationBarTitleText": "兑换码"
+					}
+				},
+				{
+					"path": "address/index",
+					"style": {
+						"navigationBarTitleText": "我的收货地址"
+					}
+				},
+				{
+					"path": "address/detail",
+					"style": {
+						"navigationBarTitleText": "收货地址"
+					}
+				},
+				{
+					"path": "invite/index",
+					"style": {
+						"navigationBarTitleText": "邀请与分销记录"
+					}
+				},
+				{
+					"path": "code/detail",
+					"style": {
+						"navigationBarTitleText": "兑换记录"
+					}
+				},
+				{
+					"path": "order/detail",
+					"style": {
+						"navigationBarTitleText": "订单详情"
+					}
+				}
+			]
+		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
@@ -298,5 +301,4 @@
 			}
 		]
 	}
-
 }

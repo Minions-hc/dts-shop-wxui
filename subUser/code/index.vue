@@ -61,7 +61,7 @@ export default {
     },
 	navigatorToCodeDatail() {
 		uni.navigateTo({
-			url: '/pages/code/detail'
+			url: '/subUser/code/detail'
 		})
 	},
 	

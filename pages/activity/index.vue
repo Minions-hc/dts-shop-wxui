@@ -71,19 +71,19 @@
 				// 活动数据示例
 				activities: [{
 						bg: '/static/activity1.png',
-						path: '/pages/record/index'
+						path:'/subActivity/record/index'
 					},
 					{
 						bg: '/static/activity2.png',
-						path: '/pages/lucky/index'
+						path: '/subActivity/lucky/index'
 					},
 					{
 						bg: '/static/activity3.png',
-						path: '/pages/soulPower/index'
+						path:'/subActivity/soulPower/index'
 					},
 					{
 						bg: '/static/activity4.png',
-						path: '/pages/market/index'
+						path:'//subHome/market/index'
 					}
 				],
 				firstDay: [{

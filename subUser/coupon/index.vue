@@ -77,7 +77,7 @@ export default {
     },
 	navigatorToCode() {
 		uni.navigateTo({
-			url : '/pages/code/index?userId='+ this.userId
+			url : '/subUser/code/index?userId='+ this.userId
 		})
 	},
 	queryCouPonList(){
@@ -96,7 +96,7 @@ export default {
 	useCoupon(item){
 		if(item.status == 1){
 			uni.navigateTo({
-				url : '/pages/category/index'
+				url : '/subHome/category/index'
 			})
 		}
 	}

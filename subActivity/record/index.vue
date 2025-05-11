@@ -128,7 +128,7 @@
 			},
 			navigateToRule() {
 				uni.navigateTo({
-					url: '/pages/record/rule'
+					url: '/subActivity/record/rule'
 				})
 			},
 			queryLuckyKing() {

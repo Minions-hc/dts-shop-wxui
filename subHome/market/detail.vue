@@ -179,6 +179,12 @@
 				chkItems.forEach(item => {
 					count = count + item.productBadge
 				})
+				
+				if (!!this.product && count > this.product.productBadge + 3) {
+					uni.showToast({ title: '您选中的勋章远大于当前产品所需勋章！！！' })
+					return 0
+				}
+				
 				if (!!this.product && count > this.product.productBadge) {
 					return 0
 				}

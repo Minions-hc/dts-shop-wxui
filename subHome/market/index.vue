@@ -67,7 +67,7 @@
 				// 这里请求对应系列的商品数据
 			},
 			toProductPage(item) {
-				let str = '/pages/market/detail?productId=' + item.productId + '&userId=U10001';
+				let str = '/subHome/market/detail?productId=' + item.productId + '&userId=U10001';
 				uni.navigateTo({
 					url: str
 				})

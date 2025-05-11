@@ -184,12 +184,12 @@
 			},
 			navigateToSafeBox() {
 				uni.navigateTo({
-					url: '/pages/safe/index'
+					url: '/subBox/safe/index'
 				})
 			},
 			navigateToMarket() {
 				uni.navigateTo({
-					url: '/pages/market/index'
+					url: '//subHome/market/index'
 				})
 			},
 			handleShip() {
@@ -199,7 +199,7 @@
 			},
 			toDetailPage(item){
 				uni.navigateTo({
-					url: '/pages/box/detail'
+					url: '/subBox/box/detail'
 				})
 			},
 			loadPageData(status){
