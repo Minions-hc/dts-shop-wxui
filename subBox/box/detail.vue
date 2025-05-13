@@ -4,14 +4,14 @@
 		<!-- 基础信息 -->
 		<view class="info-card">
 			<view class="header">
-				<image class="product-img" :src="'/static/serice2.jpg'" />
+				<image class="product-img" :src="productInfo.productImage" lazy-load="true" webp/>
 				<view class="medal">
 					<view class="name">
-						【自制款】拉布布帆布袋
+						{{productInfo.productName}}
 					</view>
 					<view class="discount-info">
-						可抵扣4勋章
-						<span>x{{num}}</span>
+						可抵扣{{productInfo.productBadge}}勋章
+						<span>x1</span>
 					</view>
 				</view>
 			</view>
@@ -21,34 +21,34 @@
 				<view class="detail-item">
 					<text class="label">物品SID</text>
 					<view class="value-box">
-						<text class="value">S79167</text>
+						<text class="value">{{productInfo.productId}}</text>
 						<text class="copy-btn" @click="copySID">复制</text>
 					</view>
 				</view>
 
 				<view class="detail-item">
 					<text class="label">活动类型</text>
-					<text class="value">一番赏</text>
+					<text class="value">{{productInfo.activityType}}</text>
 				</view>
 
 				<view class="detail-item">
 					<text class="label">赏类型</text>
-					<text class="value">D赏</text>
+					<text class="value">{{productInfo.productLevel}}</text>
 				</view>
 
 				<view class="detail-item">
 					<text class="label">房间号</text>
-					<text class="value">第1房间</text>
+					<text class="value">第{{productInfo.boxNumber}}房间</text>
 				</view>
 
 				<view class="detail-item">
 					<text class="label">物品状态</text>
-					<text class="value status">{{detail.status}}</text>
+					<text class="value status">{{statusWord()}}</text>
 				</view>
 
 				<view class="detail-item">
 					<text class="label">获得时间</text>
-					<text class="value">2025-01-16 02:47:01</text>
+					<text class="value">{{productInfo.createdTime}}</text>
 				</view>
 			</view>
 		</view>
@@ -57,6 +57,10 @@
 </template>
 
 <script>
+	import {
+		get,
+		post
+	} from "@/utils/rest-util.js"
 	export default {
 		data() {
 			return {
@@ -65,17 +69,46 @@
 				},
 				isInSafeBox: false,
 				safeCount: 4,
-				num: 1
+				num: 1,
+				userId: '',
+				id: '',
+				productInfo: {}
 			}
+		},
+		onShow(param) {
+			console.log(param);
+			this.loadProductData()
+		},
+		onLoad(param) {
+			const {userId,id} = param;
+			this.userId = userId;
+			this.id = id;
 		},
 		methods: {
 			navigateBack() {
 				uni.navigateBack()
 			},
+			loadProductData(){
+				get(`wx/boxproduct/boxProductInfo?userId=${this.userId}&id=${this.id}`).then(json=>{
+					const result = json.data;
+					this.productInfo = result?.data || {};
+				})
+			},
+			statusWord(){
+				const json = {
+					"pending":"待处理",
+					"locked":"锁定中",
+					"shipped":"已提货"
+				}
+				const status = this.productInfo.status
+				return json[status] || ''
+			},
 
 			copySID() {
+				const productId = this.productInfo?.productId || '';
+				console.log(productId)
 				uni.setClipboardData({
-					data: 'S79167',
+					data:  String(productId),
 					success: () => {
 						uni.showToast({
 							title: '复制成功'

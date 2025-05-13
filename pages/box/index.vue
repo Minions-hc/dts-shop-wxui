@@ -28,7 +28,7 @@
 
 		<!-- 产品列表 -->
 		<scroll-view class="product-list" scroll-y>
-			<view v-for="(item, index) in filteredProducts" :key="item.productId" class="product-info">
+			<view v-for="(item, index) in filteredProducts" :key="item.id" class="product-info">
 				<view class="product-item" @tap="toDetailPage(item)">
 					<image class="product-img" :src="item.productImage" lazy-load/>
 
@@ -49,11 +49,12 @@
 				</view>
 				<view class="bottom-section" :class="!showShipStatus || activeMenu !== 0 ? 'bottom-section-position' : ''">
 					<view class="check-product" v-if="showShipStatus && activeMenu === 0">
-						<checkbox-group @change="handleChange($event,item)">
-							<label>
-								<checkbox :value="item.checked" :checked="item.checked" />选择
-							</label>
-						</checkbox-group>
+						<view class="check-item" @tap="handleChange(item)">
+							<view :class="['checkbox', item.checked && 'checked']">
+								<view v-if="item.checked" class="check-icon">✓</view>
+							</view>
+							<text>选择</text>
+						</view>
 					</view>
 					<view class="right-bottom-wrapper" v-if="!showShipStatus ||  activeMenu !== 0">
 						<view class="lock-icon" v-if="item.status === 'pending'" @tap="lockProduct(item)"></view>
@@ -78,7 +79,7 @@
 			<view class="default-btn" @tap="handleCancel">
 				取消
 			</view>
-			<view class="default-btn select-product">
+			<view class="default-btn select-product" @tap="handleSubmit">
 				提交发货(已选择{{selectedCount}}件)
 			</view>
 		</view>
@@ -96,6 +97,7 @@
 		},
 		onShow(){
 			this.initPageData()
+			this.userId = 'U10001'
 		},
 		data() {
 			return {
@@ -106,7 +108,8 @@
 				showShipStatus: false,
 				allProduct: [],
 				filteredProducts: [],
-				lockProductsLength: 0
+				lockProductsLength: 0,
+				userId:''
 			}
 		},
 		computed: {
@@ -116,6 +119,25 @@
 			
 		},
 		methods: {
+			handleSubmit(){
+				
+				const ids = this.filteredProducts.filter(item => item.checked).map(item=>{return item.id})
+
+				const postData = {
+					ids,
+					userId:'U10001'
+				}
+				post('wx/boxproduct/submitDelivery',postData).then(json=>{
+					const result = json.data;
+					if(result.errno === 0){
+						this.loadPageData('pending');
+						uni.showToast({
+							icon:"none",
+							title:"提货成功"
+						})
+					}
+				})
+			},
 			initPageData(){
 				this.loadPageData('pending');
 				this.loadLockData()
@@ -168,10 +190,8 @@
 					return item
 				})
 			},
-			handleChange(value,item) {
-				const {detail} = value;
-				const flag = detail.value[0] || false;
-				item.checked = flag;
+			handleChange(item) {
+				item.checked = !item.checked;
 			},
 			changeMenu(index,status) {
 				this.activeMenu = index;
@@ -189,7 +209,7 @@
 			},
 			navigateToMarket() {
 				uni.navigateTo({
-					url: '//subHome/market/index'
+					url: '/subHome/market/index'
 				})
 			},
 			handleShip() {
@@ -199,7 +219,7 @@
 			},
 			toDetailPage(item){
 				uni.navigateTo({
-					url: '/subBox/box/detail'
+					url: '/subBox/box/detail?userId='+this.userId + '&id=' + item.id
 				})
 			},
 			loadPageData(status){
@@ -443,6 +463,41 @@
 			}
 			.right-bottom-wrapper{
 				display: inline-flex;
+			}
+			.check-item {
+				display: flex;
+				align-items: center;
+				gap: 8rpx;
+				margin-top: 10rpx;
+			}
+			.checkbox {
+				width: 40rpx;
+				height: 40rpx;
+				border: 2rpx solid #ed80a0;
+				border-radius: 50%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			
+				&.checked {
+					background: #ed80a0;
+					border-color: #ed80a0;
+			
+					.check-icon {
+						color: #fff;
+						font-size: 28rpx;
+						transform: translateY(-2rpx);
+					}
+				}
+			
+				&.disabled {
+					background: #f5f5f5 !important;
+					border-color: #ddd !important;
+			
+					.check-icon {
+						color: transparent !important;
+					}
+				}
 			}
 		}
 
