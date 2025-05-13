@@ -5,7 +5,7 @@
           <view class="points-header">
             <image 
               class="user-avatar"
-              src="/static/points-bg.png"
+              src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/points-bg.png"
               mode="aspectFill"
             />
             <view class="points-info">
@@ -49,7 +49,7 @@
 	  <view v-else class="empty-state">
 		<image 
 		  class="empty-image"
-		  src="/static/empty.png"
+		  src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/empty.png"
 		  mode="aspectFit"/>
 	  </view>
       

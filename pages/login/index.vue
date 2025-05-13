@@ -2,7 +2,7 @@
 	<view class="container">
 		<!-- 上半部分背景图 -->
 		<view class="top-section">
-			<image class="background-image" src="/static/login.png" mode="aspectFill"></image>
+			<image class="background-image" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/login.png" mode="aspectFill"></image>
 		</view>
 
 		<!-- 下半部分操作区 -->

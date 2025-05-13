@@ -2,7 +2,7 @@
 	<view class="container">
 		<!-- 顶部背景图 -->
 		<view class="header-banner">
-			<image src="/static/market-bg.png" mode="widthFix" class="banner-img" />
+			<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/market-bg.png" mode="widthFix" class="banner-img" />
 			<view class="medal-count">总勋章：{{totalMedal}}</view>
 		</view>
 

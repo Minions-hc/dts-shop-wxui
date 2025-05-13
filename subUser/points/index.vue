@@ -4,7 +4,7 @@
     <view class="header-bg">
       <image 
         class="user-avatar"
-        src="/static/points-bg.png"
+        src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/points-bg.png"
         mode="aspectFill"
       />
       <view class="points-header">

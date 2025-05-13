@@ -1,5 +1,5 @@
 <template>
-	<view class="activity-page" :style="{ backgroundImage: `url(${imageUrl})` }">
+	<view class="activity-page">
 		<!-- 顶部区域 -->
 		<view class="top-section">
 			<text class="title">活动中心</text>
@@ -11,7 +11,7 @@
 				<text class="points-label">积分</text>
 			</view>
 			<text class="tips">连续签到即可获得奖励~</text>
-			<view class="right-back" style="background-image: url('/static/right-top-image.png');"></view>
+			<view class="right-back"></view>
 		</view>
 
 		<!-- 签到区域 -->
@@ -69,60 +69,59 @@
 		},
 		data() {
 			return {
-				imageUrl: require('@/assets/image/heart-bg.jpg'),
 				// 活动数据示例
 				activities: [{
-						bg: '/static/activity1.png',
+						bg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/activity1.png',
 						path:'/subActivity/record/index'
 					},
 					{
-						bg: '/static/activity2.png',
+						bg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/activity2.png',
 						path: '/subActivity/lucky/index'
 					},
 					{
-						bg: '/static/activity3.png',
+						bg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/activity3.png',
 						path:'/subActivity/soulPower/index'
 					},
 					{
-						bg: '/static/activity4.png',
+						bg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/activity4.png',
 						path:'//subHome/market/index'
 					}
 				],
 				firstDay: [{
-					bg: '/static/day1.png',
-					activeBg: '/static/day1-active.png',
+					bg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/day1.png',
+					activeBg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/day1-active.png',
 					isActive: false,
 					value: 'day1'
 				}, {
-					bg: '/static/day2.png',
-					activeBg: '/static/day2-active.png',
+					bg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/day2.png',
+					activeBg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/day2-active.png',
 					isActive: false,
 					value: 'day2'
 				}, {
-					bg: '/static/day3.png',
-					activeBg: '/static/day3-active.png',
+					bg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/day3.png',
+					activeBg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/day3-active.png',
 					isActive: false,
 					value: 'day3'
 				}, {
-					bg: '/static/day4.png',
-					activeBg: '/static/day4-active.png',
+					bg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/day4.png',
+					activeBg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/day4-active.png',
 					isActive: false,
 					value: 'day4'
 				}],
 				seconedDay: [{
-						bg: '/static/day5.png',
-						activeBg: '/static/day5-active.png',
+						bg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/day5.png',
+						activeBg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/day5-active.png',
 						isActive: false,
 						value: 'day5'
 					},
 					{
-						bg: '/static/day6.png',
-						activeBg: '/static/day6-active.png',
+						bg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/day6.png',
+						activeBg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/day6-active.png',
 						isActive: false,
 						value: 'day6'
 					}, {
-						bg: '/static/day7.png',
-						activeBg: '/static/day7-active.png',
+						bg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/day7.png',
+						activeBg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/day7-active.png',
 						isActive: false,
 						value: 'day7'
 					}
@@ -151,7 +150,8 @@
 				}
 				if (this.userInFirday) {
 					uni.showToast({
-						title: '您最近五天没有消费，不允许签到'
+						title: '您最近五天没有消费，不允许签到',
+						icon: 'none'
 					})
 					return
 				}
@@ -232,6 +232,7 @@
 		background-position: center;
 		background-repeat: no-repeat;
 		transition: all 0.3s ease;
+		background-image: url('https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/heart-bg.jpg');
 	}
 
 	.top-section {
@@ -294,6 +295,7 @@
 			/* 或使用 contain 根据需求 */
 			background-position: center;
 			background-repeat: no-repeat;
+			background-image: url('https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/right-top-image.png');
 		}
 	}
 

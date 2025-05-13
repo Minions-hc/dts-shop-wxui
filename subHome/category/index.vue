@@ -25,8 +25,8 @@
           @click="switchCategory(item,index)"
         >
           {{ item.name }}
-		  <image v-if="item.isHot" class="hot-serice" src="/static/hot.gif"></image>
-		  <image v-if="item.isNew" class="new-serice" src="/static/new-product.gif"></image>
+		  <image v-if="item.isHot" class="hot-serice" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/hot.gif"></image>
+		  <image v-if="item.isNew" class="new-serice" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/new-product.gif"></image>
         </view>
       </scroll-view>
 
@@ -105,14 +105,15 @@ export default {
 	  this.currentProducts = this.allItems.filter(obj=>obj.categoryId === item.id);
     },
 	toBindBoxPage(product){
+		console.log()
 		if(product?.isAvoid){
 			uni.navigateTo({
-				url:'/subHome/blindBox/caileishang?userId='+ this.userId + '&seriesId='+ product.seriesId
+				url:'/pages/blindBox/caileishang?userId='+ this.userId + '&seriesId='+ product.seriesId
 			})
 			return
 		}
 		uni.navigateTo({
-			url:'/subHome/blindBox/yifanshang?userId='+ this.userId + '&seriesId='+ product.seriesId
+			url:'/pages/blindBox/yifanshang?userId='+ this.userId + '&seriesId='+ product.seriesId
 		})
 	},
 	queryPopularNew(){

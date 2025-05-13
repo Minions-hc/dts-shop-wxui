@@ -4,7 +4,7 @@
     <view class="top-bg">
       <!-- 余额卡片 -->
       <view class="balance-card">
-        <image class="avatar" src="/static/points-bg.png"/>
+        <image class="avatar" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/points-bg.png"/>
         <view class="balance-info">
           <text class="amount">0.00</text>
           <text class="label">可用余额</text>

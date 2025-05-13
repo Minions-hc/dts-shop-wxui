@@ -139,9 +139,9 @@
 				        >
 				          参与抽奖
 				        </view>
-						<view class="participate-btn" v-else @click="handHelpCode">
+						<button class="participate-btn" v-else  open-type="share">
 							转发助力
-						</view>
+						</button>
 				      </view>
 				
 				      <!-- 第三部分：提示文字 -->
@@ -149,6 +149,27 @@
 				        <text class="tip-text" v-if="activeInfo.active">运气不够未中奖不要气馁,去下一个活动试试吧 ~</text>
 				      </view>
 				    </view>	 
+			</view>
+		</uni-popup>
+		<uni-popup ref="helppopup" background-color="#fff"  type="bottom"  border-radius="10px 10px 0 0">
+			<view class="help-container">
+				<view class="close-icon">
+					<uni-icons type="closeempty" size="26" @tap="closeHelppupop"></uni-icons>
+				</view>
+				<view class="header-share-user-content">
+					<image src="/static/serice3.jpg" mode="aspectFit" lazy-load="true" class="share-user-image"></image>
+					<text class="share-user-name">{{shareUserName}}</text>
+					<text class="share-tips">邀你助力</text>
+				</view>
+				<view class="share-lucky-tips">
+					好友抽奖码{{codeNum}}个/总抽奖码{{allCodeNum}}个
+				</view>
+				<view class="help-btn" @click="handHelpCode">
+					帮他/她助力一次
+				</view>
+				<view class="help-bottom-tips">
+					老用户助力增加1个抽奖码，新用户助力增加2个抽奖码
+				</view>
 			</view>
 		</uni-popup>
 	</view>
@@ -164,13 +185,30 @@
 			const {userId,shareUserId} = param;
 			this.shareUserId = shareUserId;
 			this.userId = 'U10001'
-			
+			const shareParams = {
+			    path: this.$mp.page.route,
+			    query: param // 包含shareUserId等参数
+			}
+			uni.setStorageSync('shareParams', JSON.stringify(shareParams));
+			// 检查登录状态
+			if (!uni.getStorageSync('userCode')) {
+			    uni.redirectTo({
+					url: '/pages/login/index'
+			    });
+			    return;
+			}
+			if(this.shareUserId){
+				this.$refs.helppopup.open('bottom');
+			}
 		},
 		onShow(){
-			this.activityInfo()
+			this.activityInfo();
 		},
 		data() {
 			return {
+				shareUserName:'xx',
+				codeNum:1,
+				allCodeNum:1,
 				shareUserId: '',
 				countdownTime: '20天05时58分44秒',
 				rules: [],
@@ -212,13 +250,34 @@
 		mounted() {
 			this.calculateLayout()
 		},
+		 onShareAppMessage() {
+		    return {
+		      title: '自定义分享标题',   // 分享标题
+		      path: '/pages/lucky/index?shareId='+ this.userId,  // 分享路径（默认当前页面路径）
+		      imageUrl: this.imageList[0], // 分享图片
+			  forwardChatType:0,
+		      success: (res) => {
+		        console.log('分享成功', res);
+		      },
+		      fail: (err) => {
+		        console.log('分享失败', err);
+		      }
+		    }
+		  },
 		methods: {
+			forwarTohelp(){
+				
+			},
+			closeHelppupop(){
+				this.$refs.helppopup.close();
+			},
 			handHelpCode(){
 				const postData = {
-					userId:this.userId,
+					userId:this.shareUserId,
 					activityId:this.activeInfo.activityId,
 					activityName:this.activeInfo.activityName,
-					periodNumber:this.activeInfo.periodNumber
+					periodNumber:this.activeInfo.periodNumber,
+					helperId: this.userId
 				}
 				post(`wx/luckyDraw/help`,postData).then(json=>{
 					
@@ -229,17 +288,17 @@
 			},
 			navToHistory(tab) {
 				uni.navigateTo({
-					url: `/subActivity/lottery/history?userId=${this.userId}&activityId=${this.activeInfo.activityId}&periodNumber=${this.activeInfo.periodNumber}&tab=${tab}`
+					url: `/pages/lottery/history?userId=${this.userId}&activityId=${this.activeInfo.activityId}&periodNumber=${this.activeInfo.periodNumber}&tab=${tab}`
 				})
 			},
 			handleMyCodes() {
 				uni.navigateTo({
-					url: '/subActivity/lucky/luckyCode?userId='+ this.userId
+					url: '/pages/lucky/luckyCode?userId='+ this.userId
 				})
 			},
 			handleActivity(){
 				uni.navigateTo({
-					url: '/subActivity/lucky/luckyActivity'
+					url: '/pages/lucky/luckyActivity'
 				})
 			},
 			scrollToRules() {
@@ -789,6 +848,52 @@
 		    color: #999;
 		    line-height: 1.6;
 		  }
+		}
+	}
+	.help-container{
+		padding: 30rpx;
+		text-align: center;
+		font-size: 30rpx;
+		min-height: 25vh;
+		.close-icon{
+			text-align: right;
+			margin-bottom: 10rpx;
+		}
+		.header-share-user-content{
+			display: flex;
+			justify-content: center;
+			margin-bottom: 15rpx;
+			line-height: 60rpx;
+			font-size: 32rpx;
+			.share-user-image{
+				width: 60rpx;
+				height: 60rpx;
+				border-radius: 50%;
+				flex-shrink: 0;
+			}
+		}
+		.share-lucky-tips{
+			font-size: 24rpx;
+			color: #999;
+			margin-bottom: 15rpx;
+		}
+		.help-btn{
+			width: 80%;
+			margin: 0 auto;
+			line-height: 80rpx;
+			background-color: #ef6e32;
+			color: #fff;
+			font-weight: bold;
+			font-size: 34rpx;
+			text-align: center;
+			border-radius: 40rpx;
+			margin-top: 20rpx;
+			margin-bottom: 20rpx;
+		}
+		.help-bottom-tips{
+			font-size: 24rpx;
+			color: #999;
+			margin-top: 15rpx;
 		}
 	}
 </style>

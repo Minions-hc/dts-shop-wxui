@@ -4,7 +4,7 @@
     <scroll-view scroll-y class="cart-content">
       <!-- 空状态 -->
       <view v-if="cartList.length === 0" class="empty-cart">
-        <image class="empty-icon" src="/static/empty.png"/>
+        <image class="empty-icon" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/empty.png"/>
       </view>
 
       <!-- 商品列表 -->

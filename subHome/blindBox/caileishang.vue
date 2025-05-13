@@ -3,7 +3,7 @@
 		<!-- 产品详情区域 -->
 		<view class="product-detail">
 			<view class="product-image">
-				<image :src="productSeries.seriesImage" mode="aspectFill" class="img" lazy-load />
+				<image :src="productSeries.seriesImage" mode="aspectFill" class="img" webp="true" lazy-load="true" />
 			</view>
 			<view class="product-info">
 				<text class="product-name">{{productSeries.seriesName}}</text>
@@ -31,13 +31,13 @@
 			<view class="lock-header">
 				<!-- 左侧状态 -->
 				<view class="left-section">
-					<image src="/static/unlock.png" class="status-icon" />
+					<image src="/static/unlock.png" class="status-icon" webp="true" lazy-load="true"/>
 					<text class="status-text">目前还没有人锁箱</text>
 				</view>
 
 				<!-- 右侧记录 -->
 				<view class="right-section" @tap="showPopup = true">
-					<image src="/static/recode-img.png" class="record-icon" />
+					<image src="/static/recode-img.png" class="record-icon" webp="true" lazy-load="true"/>
 					<text class="record-text" @tap="showRecods()">选号记录</text>
 				</view>
 			</view>
@@ -47,7 +47,7 @@
 					<!-- 弹窗标题 -->
 					<view class="popup-header">
 						<text class="title">开赏记录(88)</text>
-						<image src="/static/icons/close.png" class="close-icon" @tap="showPopup = false" />
+						<image src="/static/icons/close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
 					</view>
 
 					<!-- 筛选标签 -->
@@ -64,7 +64,7 @@
 							<!-- 条目头部 -->
 							<view class="item-header">
 								<view class="header-left">
-									<image :src="item.avatar" mode="aspectFit" lazy-load class="record-image"></image>
+									<image :src="item.avatar" mode="aspectFit" webp="true" lazy-load="true" class="record-image"></image>
 									<text class="serial">【第{{ item.number }}张】{{ item.userId }}</text>
 								</view>
 
@@ -74,7 +74,7 @@
 							<!-- 奖品信息 -->
 							<view class="prize-info">
 								<view class="info-left">
-									<image :src="item.productImage" mode="aspectFit" lazy-load class="record-image">
+									<image :src="item.productImage" mode="aspectFit" webp="true" lazy-load="true" class="record-image">
 									</image>
 									<text class="prize-name">{{ item.productName }}</text>
 								</view>
@@ -89,8 +89,8 @@
 			</view>
 			<view class="product-grid">
 				<view v-for="(item, index) in productImages" :key="item.productId" class="grid-item">
-					<image v-if="index < 7" :src="item.productImage" mode="aspectFill" class="grid-img" />
-					<image v-else src="/static/more-btn.png" mode="aspectFill" class="grid-img" />
+					<image v-if="index < 7" :src="item.productImage" mode="aspectFill" class="grid-img" webp="true" lazy-load="true"/>
+					<image v-else src="/static/more-btn.png" mode="aspectFill" class="grid-img" webp="true" lazy-load="true"/>
 				</view>
 			</view>
 			<view class="box-controls">
@@ -106,7 +106,7 @@
 						<!-- 弹窗标题 -->
 						<view class="popup-header">
 							<text class="title">切换房间</text>
-							<image src="/static/icons/close.png" class="close-icon" @tap="showPopup = false" />
+							<image src="/static/icons/close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
 						</view>
 
 						<!-- 记录列表 -->
@@ -114,7 +114,7 @@
 							<view v-for="(item, index) in boxeInfos" :key="item.id" class="box-item"
 								@tap="changeBox(index)">
 								<view class="box-img">
-									<image src="/static/box.png" mode="aspectFill" class="box-image"></image>
+									<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/box.png" mode="aspectFill" class="box-image" webp="true" lazy-load="true"></image>
 									<text>第{{index + 1}}箱</text>
 								</view>
 								<view class="box-type-list-content">
@@ -171,8 +171,8 @@
 						<text class="serial-number">{{ index + 1 }}</text>
 					</view>
 
-					<image :src="item.image" v-if="item.soldOut" mode="aspectFill" class="product-image" />
-					<image src="/static/default-image.png" v-if="!item.soldOut" mode="aspectFill"
+					<image :src="item.image" v-if="item.soldOut" mode="aspectFill" class="product-image" webp="true" lazy-load="true"/>
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/default-image.png" v-if="!item.soldOut" mode="aspectFill"  webp="true" lazy-load="true"
 						class="product-image" />
 
 					<!-- 选中标记 -->
@@ -307,11 +307,24 @@
 				</view>
 			</view>
 		</uni-popup>
+		<uni-popup ref="couponPopup" background-color="#fff"  type="bottom"
+			border-radius="10px 10px 0 0">
+			<view class="coupon-popup-content" :class="{ 'popup-height': type === 'left' || type === 'right' }">
+				<view class="coupon-header">
+					
+				</view>
+				<coupon-dialog :userId="userId"></coupon-dialog>
+			</view>
+		</uni-popup>
+		
+		<lucky-draw :dialogVisiable="dialogVisiable" :drawInfos="drawInfos" @openRecord="openRecord" :dialogMoreVisible="dialogMoreVisible" @closeDialog="closeDialog"></lucky-draw>
 	</view>
 </template>
 
 <script>
 	import priceProgress from './components/priceProgress.vue';
+	import luckyDraw from './components/luckyDraw.vue';
+	import couponDialog from './components/couponDialog.vue';
 	import {
 		get,
 		post
@@ -321,7 +334,9 @@
 	} from "@/utils/common.js"
 	export default {
 		components: {
-			priceProgress
+			priceProgress,
+			luckyDraw,
+			couponDialog
 		},
 		onLoad(param) {
 			const {
@@ -338,6 +353,8 @@
 		data() {
 			return {
 				chkDesc: true,
+				dialogVisiable:false,
+				dialogMoreVisible:false,
 				segments: [],
 				seriesId: '',
 				userId: '',
@@ -364,7 +381,23 @@
 				filteredItems: [],
 				productSeries: {},
 				currentValue: 0,
-				isLockBox:true
+				isLockBox:true,
+				drawInfos:[
+					{
+						seriesName:'海贼王系列0001',
+						seriesImage:'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/j6jrbml9619zt9zz717d.jpg',
+						levelName:'A赏',
+						quantity: 1,
+						id: 1
+					},
+					{
+						seriesName:'海贼王系列0002',
+						seriesImage:'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/j6jrbml9619zt9zz717d.jpg',
+						levelName:'A赏',
+						quantity: 1,
+						id: 2
+					}
+				]
 			}
 		},
 		computed: {
@@ -399,6 +432,14 @@
 			}
 		},
 		methods: {
+			openRecord(){
+				this.closeDialog()
+				this.showRecods()
+			},
+			closeDialog(data){
+				this.dialogVisiable = false;
+				this.dialogMoreVisible = false;
+			},
 			changePopup(e) {
 				console.log('当前模式：' + e.type + ',状态：' + e.show);
 			},
@@ -416,7 +457,7 @@
 				return item.quantity - item.soldQuantity
 			},
 			toggleSelect(item, index) {
-				if (item.sold) return
+				if (item.soldOut) return
 				this.$set(item, 'checked', !item.checked)
 				if (item.checked) {
 					this.selectedCount.push(index + 1);
@@ -441,7 +482,10 @@
 				if (!this.chkDesc) {
 					return
 				}
-
+				const list = this.selectedCount;
+				const boxNumber = this.boxes[this.currentIndex - 1].id;
+				this.drawBlindBox(list,boxNumber)
+				
 			},
 			// 切换箱子
 			async switchBox(direction) {
@@ -492,18 +536,26 @@
 				
 				this.getProductBoxBySeriesId(callBack)
 			},
+			openDrawDialog(count){
+				if(count === 1){
+					this.dialogVisiable = true
+				} else {
+					this.dialogMoreVisible = true;
+				}
+			},
 			handleDraw(count) {
-				if (count > this.boxes[this.currentIndex].remaining) {
+				if (count > this.boxes[this.currentIndex]?.remaining) {
 					uni.showToast({
 						title: '库存不足~'
 					});
 					return;
 				}
+				this.openDrawDialog(count)
 				this.prizeDraw(count)
 			},
 			navigatorToRule() {
 				uni.navigateTo({
-					url: '/subHome/blindBox/caileishangRule'
+					url: '/pages/blindBox/caileishangRule'
 				})
 			},
 			toShopping() {
@@ -613,7 +665,7 @@
 				})
 			},
 			prizeDraw(count) {
-				const boxNumber = this.boxes[this.currentIndex].id;
+				const boxNumber = this.boxes[this.currentIndex]?.id;
 				const filteredItems = this.filteredItems.filter(item => !item.soldOut).map(item => {
 					return item.number
 				})
@@ -625,14 +677,11 @@
 						checked
 					}
 				})
-				
 				this.selectedCount = this.filteredItems.map((item, i) => {
 					if (item.checked) {
 						return i + 1
 					}
 				}).filter(item => item);
-
-
 			},
 			drawBlindBox(list, boxNumber) {
 				const postData = {
@@ -644,7 +693,8 @@
 				}
 				post('wx/blindbox/drawBlindBox', postData).then(res => {
 					this.getProductBoxBySeriesId()
-					// this.showMarkPopup = true;
+					this.$refs.shopingPopup.close()
+					this.openDrawDialog(list.length)
 				})
 			},
 			changeBox(index) {

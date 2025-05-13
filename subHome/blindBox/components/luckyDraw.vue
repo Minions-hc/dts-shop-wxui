@@ -5,12 +5,12 @@
       <view class="popup-container" @tap.stop>
         <!-- 头部标题 -->
         <view class="popup-header">
-		  <image src="/static/logo2.png" class="popup-header-image" />
+		  <image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/logo2.png" class="popup-header-image" />
         </view>
 
         <!-- 奖品主体 -->
         <view class="prize-body">
-			 <image src="/static/product-default.png" class="prize-body-image" mode="aspectFit" />
+			 <image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/product-default.png" class="prize-body-image" mode="aspectFit" />
 			 <view class="product-img">
 			 	<image src="/static/1.png" mode="aspectFit" lazy-load="true" class="product-iamge"></image>
 			 </view>

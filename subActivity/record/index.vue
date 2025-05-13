@@ -3,7 +3,7 @@
 		<!-- 头部背景图区域 -->
 		<view class="header-banner">
 			<!-- 背景图 -->
-			<image class="banner-bg" src="/static/record-bg.png" mode="scaleToFill" />
+			<image class="banner-bg" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/record-bg.png" mode="scaleToFill" />
 
 			<!-- 内容容器 -->
 			<view class="banner-content">
@@ -61,7 +61,7 @@
 		<!-- 固定在底部的用户信息栏 -->
 		<view class="user-footer">
 			<!-- 背景图 -->
-			<image class="footer-bg" src="/static/record-footer-bg.png" mode="scaleToFill" />
+			<image class="footer-bg" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/record-footer-bg.png" mode="scaleToFill" />
 
 			<view class="user-info-container">
 				<!-- 左侧头像 -->
@@ -120,9 +120,9 @@
 		methods: {
 			getMedalImage(rank) {
 				const medals = {
-					1: '/static/record-first.png',
-					2: '/static/record-second.png',
-					3: '/static/record-third.png'
+					1: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/record-first.png',
+					2: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/record-second.png',
+					3: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/record-third.png'
 				}
 				return medals[rank]
 			},
