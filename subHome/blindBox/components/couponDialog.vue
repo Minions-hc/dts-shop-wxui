@@ -91,7 +91,7 @@
 			},
 			navigatorToCode() {
 				uni.navigateTo({
-					url: '/pages/code/index?userId=' + this.userId
+					url: '/subUser/code/index?userId=' + this.userId
 				})
 			},
 			queryCouPonList() {

@@ -35,7 +35,7 @@
 export default {
 	onLoad(param) {
 		const {userId} = param;
-		this.userId = userId;
+		this.userId = uni.getStorageSync('userId');
 	},
   data() {
     return {

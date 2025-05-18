@@ -77,7 +77,7 @@ import {get} from "@/utils/rest-util.js"
 export default {
 	onLoad(param){
 		const {orderId,userId,orderStatus} = param;
-		this.userId = userId;
+		this.userId = uni.getStorageSync('userId');
 		this.orderId = orderId;
 		this.orderStatus = orderStatus;
 	},

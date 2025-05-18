@@ -42,50 +42,14 @@
 			}
 		},
 		onLoad() {
-			const userCode = uni.getStorageSync('userCode');
-			if (userCode) {
-				uni.reLaunch({
-					url: '/pages/index/index'
-				})
-			}
+			this.initPage()
 		},
 		methods: {
-			async handleAuth(e) {
-				try {
-					// 处理用户信息
-					if (e.type === 'getuserinfo') {
-						if (e.detail.errMsg !== 'getUserInfo:ok') return
-						this.loginParams.userInfo = e.detail.userInfo
-						const loginRes = await uni.login({
-							provider: 'weixin'
-						})
-						this.loginParams.code = loginRes.code
-					}
-
-					// 处理手机号
-					if (e.type === 'getphonenumber') {
-						if (e.detail.errMsg !== 'getphonenumber:ok') return
-						this.loginParams.iv = e.detail.iv
-						this.loginParams.encryptedData = e.detail.encryptedData
-
-						// // 提交完整数据
-						// const res = await uni.request({
-						// 	url: 'https://your-domain.com/api/wechat/fullAuth',
-						// 	method: 'POST',
-						// 	data: this.loginParams
-						// })
-
-						// if (res.data.code === 0) {
-						// 	uni.setStorageSync('token', res.data.data.token)
-						// 	uni.reLaunch({
-						// 		url: '/pages/index/index'
-						// 	})
-						// }
-					}
-				} catch (error) {
-					uni.showToast({
-						title: '授权失败',
-						icon: 'none'
+			initPage(){
+				const userId = uni.getStorageSync('userId');
+				if (userId) {
+					uni.switchTab({
+						url: '/pages/index/index'
 					})
 				}
 			},
@@ -97,8 +61,6 @@
 						const loginRes = await uni.login({
 							provider: 'weixin'
 						})
-
-						uni.setStorageSync('userCode', loginRes.code)
 						const postData = {
 							code: loginRes.code,
 							rawData: e.detail.rawData,
@@ -106,14 +68,15 @@
 							encryptedData: e.detail.encryptedData,
 							iv: e.detail.iv
 						}
-
-						this.toPage()
 						// 2. 发送登录请求
-						post('wx/auth/wxLogin', postData).then(res => {
+						post('wx/auth/wxLogin', postData).then(res => {							
+							// 
 							// 3. 处理登录结果
-							if (res.data.code === 0) {
-								uni.setStorageSync('token', res.data.data.token)
-								uni.setStorageSync('userInfo', res.data.data.userInfo)
+							if (res.data.code === 200) {
+								uni.setStorageSync('token', res.data.token)
+								uni.setStorageSync('userInfo', res.data.userInfo)
+								uni.setStorageSync("userId",res.data.userInfo.userId);
+								this.toPage()
 								uni.showToast({
 									title: '登录成功'
 								})
@@ -134,10 +97,11 @@
 			},
 			toPage() {
 				// 登录成功后处理跳转
-				const shareParams = JSON.parse(uni.getStorageSync('shareParams'));
+				const shareParams = uni.getStorageSync('shareParams');
 				if (shareParams) {
+					const param =  JSON.parse(shareParams)
 					uni.reLaunch({
-						url: `/${shareParams.path}?${this.objToQuery(shareParams.query)}`
+						url: `/${param.path}?${this.objToQuery(param.query)}`
 					});
 					uni.removeStorageSync('shareParams');
 				} else {

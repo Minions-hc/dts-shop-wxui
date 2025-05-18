@@ -27,7 +27,7 @@ import {
 
 	export default {
 		onLoad() {
-			this.userId = 'U10001'
+			this.userId = uni.getStorageSync('userId');
 		},
 		onShow() {
 			this.getSpiritPowerSeries ()

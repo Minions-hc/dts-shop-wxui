@@ -69,7 +69,7 @@
 export default {
 	onLoad(){
 		
-		this.userId = 'U10001';
+		this.userId = uni.getStorageSync('userId');
 	},
 	onShow() {
 		this.loadAllData()
@@ -105,15 +105,14 @@ export default {
 	  this.currentProducts = this.allItems.filter(obj=>obj.categoryId === item.id);
     },
 	toBindBoxPage(product){
-		console.log()
 		if(product?.isAvoid){
 			uni.navigateTo({
-				url:'/pages/blindBox/caileishang?userId='+ this.userId + '&seriesId='+ product.seriesId
+				url:'/subHome/blindBox/caileishang?userId='+ this.userId + '&seriesId='+ product.seriesId
 			})
 			return
 		}
 		uni.navigateTo({
-			url:'/pages/blindBox/yifanshang?userId='+ this.userId + '&seriesId='+ product.seriesId
+			url:'/subHome/blindBox/yifanshang?userId='+ this.userId + '&seriesId='+ product.seriesId
 		})
 	},
 	queryPopularNew(){

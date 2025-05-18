@@ -50,7 +50,7 @@
 	export default {
 		onLoad(param){
 			const {type,userId} = param;
-			this.userId = userId;
+			this.userId = uni.getStorageSync('userId');
 			this.activeTab = Number(type) || 0;
 			
 		},

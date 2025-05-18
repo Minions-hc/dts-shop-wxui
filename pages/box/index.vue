@@ -97,7 +97,7 @@
 		},
 		onShow(){
 			this.initPageData()
-			this.userId = 'U10001'
+			this.userId = uni.getStorageSync('userId');
 		},
 		data() {
 			return {
@@ -125,7 +125,7 @@
 
 				const postData = {
 					ids,
-					userId:'U10001'
+					userId: this.userId
 				}
 				post('wx/boxproduct/submitDelivery',postData).then(json=>{
 					const result = json.data;
@@ -223,7 +223,7 @@
 				})
 			},
 			loadPageData(status){
-				get('wx/boxproduct/getProductsByUser?userId=U10001&status='+status).then(json => {
+				get('wx/boxproduct/getProductsByUser?userId='+this.userId+'&status='+status).then(json => {
 					const result = json.data.data;
 					this.allProduct = result.allProducts.map(item=>{
 						return {
@@ -235,7 +235,7 @@
 				})
 			},
 			loadLockData(){
-				get('wx/boxproduct/getProductsByUser?userId=U10001&status=locked').then(json => {
+				get('wx/boxproduct/getProductsByUser?userId='+this.userId+'&status=locked').then(json => {
 					const result = json.data.data;
 					this.lockProductsLength = result.allProducts?.length || 0;
 				})

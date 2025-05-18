@@ -184,14 +184,17 @@
 		onLoad(param){
 			const {userId,shareUserId} = param;
 			this.shareUserId = shareUserId;
-			this.userId = 'U10001'
-			const shareParams = {
-			    path: this.$mp.page.route,
-			    query: param // 包含shareUserId等参数
+			this.userId = uni.getStorageSync('userId');
+			if(shareUserId){
+				const shareParams = {
+				    path: this.$mp.page.route,
+				    query: param // 包含shareUserId等参数
+				}
+				uni.setStorageSync('shareParams', JSON.stringify(shareParams));
 			}
-			uni.setStorageSync('shareParams', JSON.stringify(shareParams));
+			
 			// 检查登录状态
-			if (!uni.getStorageSync('userCode')) {
+			if (!uni.getStorageSync('userId')) {
 			    uni.redirectTo({
 					url: '/pages/login/index'
 			    });
@@ -253,7 +256,7 @@
 		 onShareAppMessage() {
 		    return {
 		      title: '自定义分享标题',   // 分享标题
-		      path: '/pages/lucky/index?shareId='+ this.userId,  // 分享路径（默认当前页面路径）
+		      path: '/subActivity/lucky/index?shareId='+ this.userId,  // 分享路径（默认当前页面路径）
 		      imageUrl: this.imageList[0], // 分享图片
 			  forwardChatType:0,
 		      success: (res) => {
@@ -288,17 +291,17 @@
 			},
 			navToHistory(tab) {
 				uni.navigateTo({
-					url: `/pages/lottery/history?userId=${this.userId}&activityId=${this.activeInfo.activityId}&periodNumber=${this.activeInfo.periodNumber}&tab=${tab}`
+					url: `/subActivity/lottery/history?userId=${this.userId}&activityId=${this.activeInfo.activityId}&periodNumber=${this.activeInfo.periodNumber}&tab=${tab}`
 				})
 			},
 			handleMyCodes() {
 				uni.navigateTo({
-					url: '/pages/lucky/luckyCode?userId='+ this.userId
+					url: '/subActivity/lucky/luckyCode?userId='+ this.userId
 				})
 			},
 			handleActivity(){
 				uni.navigateTo({
-					url: '/pages/lucky/luckyActivity'
+					url: '/subActivity/lucky/luckyActivity'
 				})
 			},
 			scrollToRules() {

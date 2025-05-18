@@ -60,10 +60,11 @@
 	// import img from "../"
 	export default {
 		onLoad() {
-			this.userId = 'U10001';
+			
 		},
 
 		onShow() {
+			this.userId = uni.getStorageSync('userId');
 			this.currentCheckInDay();
 			this.userConsumptionInFirday()
 		},
@@ -84,7 +85,7 @@
 					},
 					{
 						bg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/activity4.png',
-						path:'//subHome/market/index'
+						path:'/subHome/market/index'
 					}
 				],
 				firstDay: [{
@@ -136,6 +137,7 @@
 
 		methods: {
 			toPage(item) {
+				console.log(item.path)
 				uni.navigateTo({
 					url: item.path + '?userId=' + this.userId
 				})

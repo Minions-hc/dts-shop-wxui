@@ -366,7 +366,7 @@
 			},
 			navigatorToRule() {
 				uni.navigateTo({
-					url: '/pages/blindBox/yifanshangRule'
+					url: '/subHome/blindBox/yifanshangRule'
 				})
 			},
 			getProductBoxBySeriesId(callBack) {

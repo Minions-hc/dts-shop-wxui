@@ -555,7 +555,7 @@
 			},
 			navigatorToRule() {
 				uni.navigateTo({
-					url: '/pages/blindBox/caileishangRule'
+					url: '/subHome/blindBox/caileishangRule'
 				})
 			},
 			toShopping() {

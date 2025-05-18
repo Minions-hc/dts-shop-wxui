@@ -60,7 +60,7 @@
 			navigateToDetail(item) {
 				const addressUrl = item ? '&addressId='+item.addressId : ''
 				uni.navigateTo({
-					url: '/pages/address/detail?userId='+this.userId+addressUrl
+					url: '/subUser/address/detail?userId='+this.userId+addressUrl
 				})
 			},
 			initAddressList(){

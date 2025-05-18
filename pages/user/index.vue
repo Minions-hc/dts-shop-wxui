@@ -3,8 +3,8 @@
 		<!-- 用户信息区域 -->
 		<view class="user-section">
 			<view class="user-info" @click="navigateToUserInfo()">
-				<image src="/static/avatar.png" class="avatar" mode="aspectFit" lazy-load/>
-				<text class="username">我的名字</text>
+				<image :src="userInfo.avatar" class="avatar" mode="aspectFit" lazy-load/>
+				<text class="username">{{userInfo.nickName}}</text>
 			</view>
 			<!-- 新增资产信息区域 -->
 			<view class="assets-section">
@@ -73,12 +73,16 @@
 			
 		},
 		onShow(){
-			this.getUserCurrentPoints('U10001');
-			this.getInvitationRecords('U10001')
+			this.getUserCurrentPoints(this.userId);
+			this.getInvitationRecords(this.userId);
+			const userInfo = uni.getStorageSync("userInfo") || {};
+			this.userInfo = userInfo
 		},
 		data() {
 			
 			return {
+				userId: uni.getStorageSync('userId'),
+				
 				activeOrderTab: 0,
 				orderStatus: [{
 						icon: 'shop',
@@ -158,11 +162,12 @@
 						label: '邀请记录'
 					}
 				],
+				userInfo:{}
 			}
 		},
 		methods: {
 			navigateTo(path) {
-				const userId = 'U10001'
+				const userId = this.userId;
 				uni.navigateTo({
 					url: path + '?userId=' + userId
 				})
@@ -175,7 +180,7 @@
 					return
 				}
 				this.activeOrderTab = index
-				const userId = 'U10001'
+				const userId = this.userId
 				// 实际应跳转对应订单列表页
 				this.navigateTo(`/subUser/order/list?type=${index}&userId=${userId}`)
 			},
@@ -183,7 +188,7 @@
 				this.navigateTo(item.path)
 			},
 			handleAssetClick(type) {
-				const userId = 'U10001'
+				const userId = this.userId
 				const routeMap = {
 					points: '/subUser/points/index?userId='+userId,
 					invites: '/subUser/invite/index?userId='+userId
@@ -220,9 +225,8 @@
 				})
 			},
 			navigateToUserInfo() {
-				const userId = 'U10001'
 				uni.navigateTo({
-					url: '/subUser/profile/index?userId='+userId
+					url: '/subUser/profile/index?userId='+this.userId
 				})
 			}
 		}

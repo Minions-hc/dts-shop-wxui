@@ -2,7 +2,7 @@
   <view class="profile-page">
     <!-- 头像区域 -->
     <view class="avatar-section" @click="navigateToEdit">
-      <image class="avatar" :src="userInfo.avatar" mode="aspectFill"/>
+      <image class="avatar" :src="userInfo.avatar" mode="aspectFill" lazy-load="true"/>
       <text class="tip">点击修改头像</text>
     </view>
 
@@ -11,7 +11,7 @@
       <view class="list-item" @click="navigateToEdit">
         <text class="label">姓名</text>
         <view class="right-box">
-          <text class="value">{{userInfo.name}}</text>
+          <text class="value">{{userInfo.nickName}}</text>
           <image class="arrow" src="/static/arrow-right.png"/>
         </view>
       </view>
@@ -19,14 +19,14 @@
       <view class="list-item">
         <text class="label">用户ID</text>
         <view class="right-box">
-          <text class="value">{{userInfo.uid}}</text>
+          <text class="value">{{userInfo.userId}}</text>
           <text class="copy-btn" @click="copyText(userInfo.uid)">复制</text>
         </view>
       </view>
 	   <view class="list-item">
 	          <text class="label">邀请码</text>
 	          <view class="right-box">
-	            <text class="value">{{userInfo.inviteCode}}</text>
+	            <text class="value">{{userInfo.inviterId}}</text>
 	            <text class="copy-btn" @click="copyText(userInfo.inviteCode)">复制</text>
 	          </view>
 	        </view>
@@ -34,16 +34,8 @@
 	        <view class="list-item">
 	          <text class="label">我的上级</text>
 	          <view class="right-box">
-	            <text class="value">{{userInfo.superior}}</text>
-	            <text class="copy-btn" @click="copyText(userInfo.superior)">复制</text>
-	          </view>
-	        </view>
-	  
-	        <view class="list-item">
-	          <text class="label">全域链接</text>
-	          <view class="right-box">
-	            <text class="value">{{userInfo.shareLink}}</text>
-	            <text class="copy-btn" @click="copyText(userInfo.shareLink)">复制</text>
+	            <text class="value">{{userInfo.superior || ''}}</text>
+	            <text class="copy-btn" @click="copyText(userInfo.superior || '')">复制</text>
 	          </view>
 	        </view>
     </view>
@@ -57,20 +49,17 @@
 </template>
 
 <script>
+	import {
+		get,post
+	} from "@/utils/rest-util.js"
 export default {
   data() {
     return {
-      userInfo: {
-        avatar: '/static/avatar.png',
-        name: '泡泡玛特玩家',
-        uid: 'UID_123456789',
-		 // 新增字段
-		mobile: '138****5678',
-		inviteCode: 'CS2024VIP',
-		superior: '泡泡玛特官方',
-		shareLink: ''
-      }
+      userInfo: { }
     }
+  },
+  onShow() {
+  	this.userInfo = uni.getStorageSync("userInfo") || {};
   },
   methods: {
     // 跳转编辑页
@@ -122,14 +111,16 @@ export default {
     // 注销账号
     async deleteAccount() {
       try {
-        await uni.request({
-          url: '/api/user/delete',
-          method: 'POST'
-        })
-        uni.showToast({ title: '账号已注销' })
-        // 清理本地数据
-        uni.removeStorageSync('token')
-        uni.reLaunch({ url: '/pages/login/index' })
+		const userId = uni.getStorageSync('userId')
+		// 调用后端接口
+		post('wx/auth/delete/'+userId,{}).then(json=>{
+			uni.showToast({ title: '账号已注销' })
+			// 清理本地数据
+			uni.removeStorageSync('token')
+			uni.removeStorageSync('userInfo')
+			uni.removeStorageSync('userId')
+			uni.reLaunch({ url: '/pages/login/index' })
+		})
       } catch (error) {
         uni.showToast({ title: '操作失败', icon: 'none' })
       }
@@ -139,15 +130,19 @@ export default {
     async logout() {
       try {
         // 调用微信取消授权
-        await uni.authorize({ scope: 'scope.userInfo' })
+        // await uni.authorize({ scope: 'scope.userInfo' })
+		const postData = {
+			userId:uni.getStorageSync('userId')
+		}
         // 调用后端接口
-        await uni.request({
-          url: '/api/user/logout',
-          method: 'POST'
-        })
-        // 清理本地数据
-        uni.removeStorageSync('token')
-        uni.reLaunch({ url: '/pages/login/index' })
+        post('wx/auth/logout',postData).then(json=>{
+			// 清理本地数据
+			uni.removeStorageSync('token')
+			uni.removeStorageSync('userInfo')
+			uni.removeStorageSync('userId')
+			uni.reLaunch({ url: '/pages/login/index' })
+		})
+        
       } catch (error) {
         uni.showToast({ title: '退出失败', icon: 'none' })
       }
