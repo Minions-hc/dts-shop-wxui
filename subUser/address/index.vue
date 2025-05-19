@@ -2,21 +2,21 @@
   <view class="address-container">
     <!-- 提示区域 -->
     <view class="notice-box">
-      <image class="notice-icon" src="/static/notice.png" mode="aspectFit" webp="true" lazy-load="true"/>
+      <image class="notice-icon" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/notice.png" mode="aspectFit" webp="true" lazy-load="true"/>
       <text class="notice-text">请设置自动提货地址，盒框中的A页只经预存放时间超过30天后\n将会发往该地址</text>
     </view>
 
     <!-- 地址卡片 -->
     <view class="address-card" v-for="item in addressList" :key="item.addressId">
       <!-- 操作图标 -->
-      <image class="icon-delete" webp="true" lazy-load="true" src="/static/icon-delete.png" mode="aspectFit" @tap="delAddress(item)"/>
-	  <image class="icon-edit" webp="true" lazy-load="true" src="/static/icon-edit.png" mode="aspectFit" @click="navigateToDetail(item)"/>
+      <image class="icon-delete" webp="true" lazy-load="true" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon-delete.png" mode="aspectFit" @tap="delAddress(item)"/>
+	  <image class="icon-edit" webp="true" lazy-load="true" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon-edit.png" mode="aspectFit" @click="navigateToDetail(item)"/>
       
       <!-- 地址头 -->
       <view class="address-header">
         <view class="icon-group">
-          <image class="icon-default" src="/static/default-address.png" webp="true" lazy-load="true"/>
-          <image class="icon-pickup" src="/static/send-address.png" webp="true" lazy-load="true"/>
+          <image class="icon-default" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/default-address.png" webp="true" lazy-load="true"/>
+          <image class="icon-pickup" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/send-address.png" webp="true" lazy-load="true"/>
         </view>
         <text class="user-name">{{item.receiverName}}</text>
 		 <text class="phone">{{getShowNumber(item.phone)}}</text>
@@ -31,8 +31,8 @@
 
     <!-- 图片按钮 -->
     <view class="action-buttons">
-      <image class="btn-image" src="/static/new-address.png" mode="aspectFit" @click="navigateToDetail(null)" webp="true" lazy-load="true"/>
-      <image class="btn-image" src="/static/import.png" mode="aspectFit" @tap="importAddress" webp="true" lazy-load="true"/>
+      <image class="btn-image" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/new-address.png" mode="aspectFit" @click="navigateToDetail(null)" webp="true" lazy-load="true"/>
+      <image class="btn-image" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/import.png" mode="aspectFit" @tap="importAddress" webp="true" lazy-load="true"/>
     </view>
   </view>
 </template>

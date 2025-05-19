@@ -9,7 +9,7 @@
 		<!-- 消息滚动条 -->
 		<view class="notice-container">
 			<view class="notice-bar">
-				<image class="notice-icon" src="/static/record-notice.png" mode="widthFix" />
+				<image class="notice-icon" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/record-notice.png" mode="widthFix" />
 				<view class="notice-content">
 					<view class="notice-text" :class="{ scrollable: true }">
 						<text v-for="(text, index) in noticeList" :key="index">{{ text }}</text>
@@ -238,7 +238,7 @@
 					position: absolute;
 					width: 90rpx;
 					height: 50rpx;
-					background-image: url('~@/static/circe.png');
+					background-image: url('https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/circe.png');
 					background-size: cover;
 					/* 或使用 contain 根据需求 */
 					background-position: 100% 100%;

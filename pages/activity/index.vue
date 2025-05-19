@@ -6,7 +6,7 @@
 			<view class="points-box">
 				<view class="points-left">
 					<text class="points-num">{{pointCount}}</text>
-					<image class="coin-icon" src="/static/coin.png" webp="true" lazy-load="true"></image>
+					<image class="coin-icon" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/coin.png" webp="true" lazy-load="true"></image>
 				</view>
 				<text class="points-label">积分</text>
 			</view>

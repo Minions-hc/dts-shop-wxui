@@ -30,7 +30,7 @@
 		</view>
 
         <!-- 隐藏彩蛋区域 -->
-        <image src="/static/fire.gif" mode="aspectFit" class="fire-gif"></image>
+        <image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/fire.gif" mode="aspectFit" class="fire-gif"></image>
       </view>
     </view>
 	<!-- 购买成功弹窗 -->
@@ -363,7 +363,7 @@ export default {
   	  margin: 0 auto;
   	  width: 60rpx;
   	  height: 60rpx;
-  	  background-image: url('/static/close-btn.png');
+  	  background-image: url('https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/close-btn.png');
   	  background-size: 100%;
   	  background-repeat: no-repeat;
   	  background-position: 50% 50%;
@@ -513,7 +513,7 @@ export default {
 		  margin: 0 auto;
 		  width: 60rpx;
 		  height: 60rpx;
-		  background-image: url('/static/close-btn.png');
+		  background-image: url('https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/close-btn.png');
 		  background-size: 100%;
 		  background-repeat: no-repeat;
 		  background-position: 50% 50%;

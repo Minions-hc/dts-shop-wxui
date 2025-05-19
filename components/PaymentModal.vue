@@ -8,7 +8,7 @@
 			webp="true" 
 			lazy-load="true"
           class="close-icon" 
-          src="/static/close.png" 
+          src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/close.png" 
           @click="$emit('close')"
         />
       </view>

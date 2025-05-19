@@ -12,7 +12,6 @@
         <text class="label">姓名</text>
         <view class="right-box">
           <text class="value">{{userInfo.nickName}}</text>
-          <image class="arrow" src="/static/arrow-right.png"/>
         </view>
       </view>
       

@@ -166,25 +166,25 @@
 		  <view class="button-container">
 		    <!-- 四个图片按钮 -->
 		    <image 
-		      src="/static/all-in.png" 
+		      src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/all-in.png" 
 		      class="button-image" 
 		      mode="aspectFit"
 		      @click="handleDraw(0)"
 		    />
 		    <image 
-		      src="/static/pick-one.png" 
+		      src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/pick-one.png" 
 		      class="button-image" 
 		      mode="aspectFit"
 		      @click="handleDraw(1)" 
 		    />
 		    <image 
-		      src="/static/pick-three.png" 
+		      src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/pick-three.png" 
 		      class="button-image" 
 		      mode="aspectFit"
 		      @click="handleDraw(3)"
 		    />
 		    <image 
-		      src="/static/pick-ten.png" 
+		      src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/pick-ten.png" 
 		      class="button-image" 
 		      mode="aspectFit"
 		      @click="handleDraw(10)"
@@ -314,7 +314,7 @@
 				tabs: [],
 				records: [],
 				productInfo: {
-				        image: "/static/product.jpg",
+				        image: "https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/product.jpg",
 				        title: "高端无线蓝牙耳机",
 				        price: 399.00
 				      },

@@ -31,13 +31,13 @@
 			<view class="lock-header">
 				<!-- 左侧状态 -->
 				<view class="left-section">
-					<image src="/static/unlock.png" class="status-icon" webp="true" lazy-load="true"/>
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/unlock.png" class="status-icon" webp="true" lazy-load="true"/>
 					<text class="status-text">目前还没有人锁箱</text>
 				</view>
 
 				<!-- 右侧记录 -->
 				<view class="right-section" @tap="showPopup = true">
-					<image src="/static/recode-img.png" class="record-icon" webp="true" lazy-load="true"/>
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/recode-img.png" class="record-icon" webp="true" lazy-load="true"/>
 					<text class="record-text" @tap="showRecods()">选号记录</text>
 				</view>
 			</view>
@@ -90,7 +90,7 @@
 			<view class="product-grid">
 				<view v-for="(item, index) in productImages" :key="item.productId" class="grid-item">
 					<image v-if="index < 7" :src="item.productImage" mode="aspectFill" class="grid-img" webp="true" lazy-load="true"/>
-					<image v-else src="/static/more-btn.png" mode="aspectFill" class="grid-img" webp="true" lazy-load="true"/>
+					<image v-else src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/more-btn.png" mode="aspectFill" class="grid-img" webp="true" lazy-load="true"/>
 				</view>
 			</view>
 			<view class="box-controls">

@@ -77,7 +77,7 @@ export default {
           this.backgroundImage = imageUrl
         } else {
           // 使用本地默认图片
-          this.backgroundImage = '/static/default-group-bg.png'
+          this.backgroundImage = 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/default-group-bg.png'
         }
         
         // 确保图片URL不为空
@@ -91,7 +91,7 @@ export default {
         this.error = true
         this.loading = false
         // 使用默认图片
-        this.backgroundImage = '/static/default-group-bg.png'
+        this.backgroundImage = 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/default-group-bg.png'
       }
     },
 
@@ -103,7 +103,7 @@ export default {
     // 图片加载失败
     handleImageError() {
       console.error('背景图片加载失败，使用默认图片')
-      this.backgroundImage = '/static/default-group-bg.png'
+      this.backgroundImage = 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/default-group-bg.png'
     }
   }
 }

@@ -4,7 +4,7 @@
     <view class="section">
        <view class="product-info-block">
             <!-- 左边：产品图片 -->
-            <image class="product-cover" src="/static/product1.jpg" mode="aspectFill" />
+            <image class="product-cover" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/product1.jpg" mode="aspectFill" />
       
             <!-- 中间：商品信息 -->
             <view class="product-middle">

@@ -27,7 +27,7 @@
 				<text class="product-name">{{product.productName}}</text>
 				<!-- 修改分享按钮布局 -->
 				<view class="share-wrapper">
-					<image src="/static/icon-share.png" class="share-btn" @click="handleShare" />
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon-share.png" class="share-btn" @click="handleShare" />
 					<text class="share-text">分享</text>
 				</view>
 			</view>
@@ -47,7 +47,7 @@
 		<view class="footer-bar">
 			<!-- 修改客服按钮布局 -->
 			<view class="service-btn">
-				<image src="/static/icon8.png" class="icon" />
+				<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon8.png" class="icon" />
 				<text>客服</text>
 			</view>
 			<view class="exchange-btn" @tap="openGood">

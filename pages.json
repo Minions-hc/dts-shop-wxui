@@ -271,33 +271,33 @@
 	},
 	"uniIdRouter": {},
 	"tabBar": {
-		"color": "#999",
-		"selectedColor": "#FF4081",
+		"color": "#FF4081",
+		"selectedColor": "#999",
 		"borderStyle": "white",
 		"backgroundColor": "#ffffff",
 		"list": [{
 				"pagePath": "pages/index/index",
 				"text": "首页",
-				"iconPath": "static/tabbar1.png",
-				"selectedIconPath": "static/tabbar1-1.png"
+				"iconPath": "/static/tabbar1.png",
+				"selectedIconPath": "/static/tabbar1-1.png"
 			},
 			{
 				"pagePath": "pages/activity/index",
 				"text": "活动",
-				"iconPath": "static/tabbar2.png",
-				"selectedIconPath": "static/tabbar2-1.png"
+				"iconPath": "/static/tabbar2.png",
+				"selectedIconPath": "/static/tabbar2-1.png"
 			},
 			{
 				"pagePath": "pages/box/index",
 				"text": "盒柜",
-				"iconPath": "static/tabbar3.png",
-				"selectedIconPath": "static/tabbar3-1.png"
+				"iconPath": "/static/tabbar3.png",
+				"selectedIconPath": "/static/tabbar3-1.png"
 			},
 			{
 				"pagePath": "pages/user/index",
 				"text": "我的",
-				"iconPath": "static/tabbar5.png",
-				"selectedIconPath": "static/tabbar5-1.png"
+				"iconPath": "/static/tabbar5.png",
+				"selectedIconPath": "/static/tabbar5-1.png"
 			}
 		]
 	}

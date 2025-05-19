@@ -17,12 +17,12 @@
 		<view class="rank-tabs">
 			<view class="tab-item active" @click="activeTab = 0">
 				<text>月榜</text>
-				<image class="tab-underline" src="/static/record-underline.png" />
+				<image class="tab-underline" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/record-underline.png" />
 			</view>
 		</view>
 		<!-- 在rank-tabs下方添加 -->
 		<view class="notice-bar">
-			<image class="notice-icon" src="/static/record-notice.png" mode="widthFix" />
+			<image class="notice-icon" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/record-notice.png" mode="widthFix" />
 			<view class="notice-content">
 				<view class="notice-text" :class="{ scrollable: true }">
 					<text v-for="(text, index) in noticeList" :key="index">{{ text }}</text>

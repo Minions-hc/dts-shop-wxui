@@ -64,7 +64,7 @@
 							<!-- 前5个用户显示头像+名称 -->
 							<view class="participant-item" v-for="(participant, index) in firstFiveParticipants"
 								:key="index">
-								<image :src="participant.avatar || '/static/default-avatar.png'" mode="aspectFill"
+								<image :src="participant.avatar || 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/default-avatar.png'" mode="aspectFill"
 									class="participant-avatar" lazy-load />
 								<view class="participation-badge" v-if="participant.codeCount > 0">
 									{{ participant.codeCount }}
@@ -88,7 +88,7 @@
 							<text class="total-person">{{ luckyUser }}</text>位幸运用户</view>
 						</view>
 					</view>
-					<image src="/static/active-detail.png" mode="scaleToFill" class="detail-image" />
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/active-detail.png" mode="scaleToFill" class="detail-image" />
 					<!-- 活动详情 -->
 					<view class="activity-detail-image" v-for="item in imageList">
 						<image :src="item" mode="scaleToFill" class="iamge-class" lazy-load/>
@@ -157,7 +157,7 @@
 					<uni-icons type="closeempty" size="26" @tap="closeHelppupop"></uni-icons>
 				</view>
 				<view class="header-share-user-content">
-					<image src="/static/serice3.jpg" mode="aspectFit" lazy-load="true" class="share-user-image"></image>
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/serice3.jpg" mode="aspectFit" lazy-load="true" class="share-user-image"></image>
 					<text class="share-user-name">{{shareUserName}}</text>
 					<text class="share-tips">邀你助力</text>
 				</view>
@@ -510,7 +510,7 @@
 					position: absolute;
 					width: 120rpx;
 					height: 70rpx;
-					background-image: url('~@/static/circe.png');
+					background-image: url('https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/circe.png');
 					background-size: cover;
 					/* 或使用 contain 根据需求 */
 					background-position: 100% 100%;
@@ -745,7 +745,7 @@
 				position: absolute;
 				width: 120rpx;
 				height: 70rpx;
-				background-image: url('~@/static/circe.png');
+				background-image: url('https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/circe.png');
 				background-size: cover;
 				/* 或使用 contain 根据需求 */
 				background-position: 100% 100%;

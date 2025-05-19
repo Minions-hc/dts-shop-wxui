@@ -199,7 +199,7 @@
 				.lock-icon {
 					width: 100rpx;
 					height: 50rpx;
-					background-image: url('/static/lock.png');
+					background-image: url('https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/lock.png');
 					background-size: cover;
 					/* 或使用 contain 根据需求 */
 					background-position: center;

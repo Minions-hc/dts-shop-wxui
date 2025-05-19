@@ -6,7 +6,7 @@
         <text class="title">确认购买</text>
         <image 
           class="close-icon" 
-          src="/static/close.png" 
+          src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/close.png" 
           @click="$emit('close')" webp="true" lazy-load="true"
         />
       </view>

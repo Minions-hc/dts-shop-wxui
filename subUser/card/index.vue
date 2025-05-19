@@ -15,7 +15,7 @@
                   <text class="value">20</text>
                   <image 
                     class="arrow-icon"
-                    src="/static/enter.png"
+                    src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/enter.png"
                     mode="aspectFit"
                   />
                 </view>
@@ -34,7 +34,7 @@
 		  :key="index"
 		>
 		  <!-- 保持原有卡片结构 -->
-		  <image class="card-icon" src="/static/card1.png"/>
+		  <image class="card-icon" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/card1.png"/>
 		  <view class="card-info">
 			<text class="card-name">双倍积分卡</text>
 			<text class="card-count">剩余：3张</text>

@@ -2,7 +2,7 @@
   <view class="container">
     <!-- 顶部图片区 -->
     <image 
-      src="/static/category-back.png" 
+      src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/category-back.png" 
       mode="widthFix"
       class="top-banner"
       lazy-load

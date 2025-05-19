@@ -93,7 +93,7 @@
 				<!-- 弹窗标题 -->
 				<view class="popup-header">
 					<text class="title">开赏记录({{records.length}})</text>
-					<image src="/static/icons/close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
 				</view>
 
 				<!-- 筛选标签 -->
@@ -138,7 +138,7 @@
 				<!-- 弹窗标题 -->
 				<view class="popup-header">
 					<text class="title">切换房间</text>
-					<image src="/static/icons/close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
 				</view>
 
 				<!-- 记录列表 -->
@@ -168,10 +168,10 @@
 		<view class="footer-section">
 			<view class="button-container">
 				<!-- 四个图片按钮 -->
-				<image src="/static/all-in.png" class="button-image" mode="aspectFit" @click="handleDraw(0)" webp="true" lazy-load="true"/>
-				<image src="/static/pick-one.png" class="button-image" mode="aspectFit" @click="handleDraw(1)" webp="true" lazy-load="true"/>
-				<image src="/static/pick-three.png" class="button-image" mode="aspectFit" @click="handleDraw(3)" webp="true" lazy-load="true"/>
-				<image src="/static/pick-ten.png" class="button-image" mode="aspectFit" @click="handleDraw(10)" webp="true" lazy-load="true"/>
+				<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/all-in.png" class="button-image" mode="aspectFit" @click="handleDraw(0)" webp="true" lazy-load="true"/>
+				<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/pick-one.png" class="button-image" mode="aspectFit" @click="handleDraw(1)" webp="true" lazy-load="true"/>
+				<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/pick-three.png" class="button-image" mode="aspectFit" @click="handleDraw(3)" webp="true" lazy-load="true"/>
+				<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/pick-ten.png" class="button-image" mode="aspectFit" @click="handleDraw(10)" webp="true" lazy-load="true"/>
 			</view>
 			<view class="soulPower"><text>我的魂力值:{{spiritPower}}</text></view>
 			<view class="soulPowerDescribe"><text>在一番赏中获取小赏将增加魂力值</text></view>
@@ -252,7 +252,7 @@
 				tabs: [],
 				records: [],
 				productInfo: {
-					image: "/static/product.jpg",
+					image: "https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/product.jpg",
 					title: "高端无线蓝牙耳机",
 					price: 399.00
 				},
