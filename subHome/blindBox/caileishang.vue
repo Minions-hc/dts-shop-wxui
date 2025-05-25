@@ -471,7 +471,7 @@
 					return
 				}
 				const totalPrice = this.getTotalPrice();
-				this.handleWechatPay(totalPrice)
+				this.handleWechatPay(totalPrice,this.productSeries.seriesName)
 			},
 			prizeDraw(){
 				const list = this.selectedCount;

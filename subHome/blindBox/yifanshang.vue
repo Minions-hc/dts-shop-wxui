@@ -548,8 +548,8 @@
 				})
 			},
 			handleConfirm(){
-				const amount = this.boxes[this.currentIndex].pricePerDraw * this.drawCount
-				this.handleWechatPay(amount)
+				const amount = this.boxes[this.currentIndex].pricePerDraw * this.drawCount;
+				this.handleWechatPay(amount,this.productSeries.seriesName)
 			},
 			getUserCurrentPoints(){
 				get('wx/points/getUserCurrentPoints?userId='+this.userId).then(json => {

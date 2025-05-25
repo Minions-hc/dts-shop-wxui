@@ -5,13 +5,13 @@ import {
 
 export const commonMixns = {
 	methods:{
-		async handleWechatPay(amount) {
+		async handleWechatPay(amount,seriesName) {
 		      try {
 		        // 1. 获取用户code
 		        const loginRes = await this.getWxCode()
 		        
 		        // 2. 获取支付参数
-		        const paymentParams = await this.getPaymentParams(loginRes.code,amount)
+		        const paymentParams = await this.getPaymentParams(loginRes.code,amount,seriesName)
 		        
 		        // 3. 发起支付请求
 		        const res = await this.requestPayment(paymentParams)
@@ -41,14 +41,15 @@ export const commonMixns = {
 		    },
 		
 		    // 获取支付参数
-		    async getPaymentParams(code,amount) {
+		    async getPaymentParams(code,amount,seriesName) {
 		      try {
 				const postData = {
-					code: code,
+					openId: code,
 					amount: amount, // 金额（单位：分）
-					description: '商品购买'
+					description: seriesName
 				}
-				return post('',postData).then(res=>{
+				return post('wx/wxpay/create',postData).then(res=>{
+					console.log(res)
 					if (res.statusCode === 200) {
 					  return res.data.data
 					}
