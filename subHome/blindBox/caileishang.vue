@@ -332,7 +332,9 @@
 	import {
 		getRandomElements
 	} from "@/utils/common.js"
+	import { commonMixns } from "./index.js"
 	export default {
+		mixins:[commonMixns],
 		components: {
 			priceProgress,
 			luckyDraw,
@@ -464,13 +466,17 @@
 				}).filter(item => item);
 			},
 			handleConfirm() {
+				
 				if (!this.chkDesc) {
 					return
 				}
+				const totalPrice = this.getTotalPrice();
+				this.handleWechatPay(totalPrice)
+			},
+			prizeDraw(){
 				const list = this.selectedCount;
 				const boxNumber = this.boxes[this.currentIndex - 1].id;
 				this.drawBlindBox(list,boxNumber)
-				
 			},
 			// 切换箱子
 			async switchBox(direction) {
@@ -536,7 +542,7 @@
 					return;
 				}
 				
-				this.prizeDraw(count)
+				this.prizeDraws(count)
 			},
 			navigatorToRule() {
 				uni.navigateTo({
@@ -649,7 +655,7 @@
 					this.showPopup = true
 				})
 			},
-			prizeDraw(count) {
+			prizeDraws(count) {
 				const boxNumber = this.boxes[this.currentIndex]?.id;
 				const filteredItems = this.filteredItems.filter(item => !item.soldOut).map(item => {
 					return item.number
@@ -674,7 +680,8 @@
 					numbers: list,
 					boxNumber: boxNumber,
 					seriesId: this.seriesId,
-					activityType: '踩雷赏'
+					activityType: '踩雷赏',
+					
 				}
 				post('wx/blindbox/drawBlindBox', postData).then(res => {
 					const result = res.data;

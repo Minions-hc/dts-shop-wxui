@@ -41,8 +41,8 @@
 	    <view class="prize-body">
 			<view class="product-cantent">
 				<view class="product-card" v-for="item in showDrawInfo" :key="item.productId">
-					<view class="series-qty">x{{item.quantity}}</view>
-					<image :src="item.seriesImage" mode="aspectFit" lazy-load="true" class="product-iamge"></image>
+					<view class="series-qty">x1</view>
+					<image :src="item.productImage" mode="aspectFit" lazy-load="true" class="product-iamge"></image>
 					<view class="soul-power-content">
 						+1魂力值
 					</view>
@@ -50,7 +50,7 @@
 						{{item.levelName}}
 					</view>
 					<view class="service-name">
-						{{item.seriesName}}
+						{{item.productName}}
 					</view>
 				</view>
 			</view>
@@ -420,6 +420,7 @@ export default {
 						top: 25%;
 						right: 15%;
 						color: #fff;
+						z-index: 2;
 					}
 					.soul-power-content{
 						position: absolute;

@@ -268,7 +268,7 @@
 				<coupon-dialog :userId="userId"></coupon-dialog>
 			</view>
 		</uni-popup>
-	<lucky-draw :dialogVisiable="dialogVisiable" :drawInfos="drawInfos" :dialogMoreVisible="dialogMoreVisible" @closeDialog="closeDialog"></lucky-draw>
+	<lucky-draw :dialogVisiable="dialogVisiable" :drawInfos="drawInfos" @openRecord="openRecord" :dialogMoreVisible="dialogMoreVisible" @closeDialog="closeDialog"></lucky-draw>
 	
 	</view>
 </template>
@@ -281,7 +281,9 @@
 	import {getRandomElements} from "@/utils/common.js"
 	import luckyDraw from './components/luckyDraw.vue';
 	import couponDialog from './components/couponDialog.vue';
+	import { commonMixns } from "./index.js"
 	export default {
+		mixins:[commonMixns],
 		onLoad(param) {
 			const {userId,seriesId} = param;
 			this.seriesId = seriesId;
@@ -338,7 +340,8 @@
 		},
 		methods: {
 			openRecord(){
-				this.closeDialog()
+				this.closeDialog();
+				this.showRecods()
 			},
 			closeDialog(){
 				this.dialogVisiable = false;
@@ -490,11 +493,17 @@
 				const penson = (product.quantity - product.soldQuantity) / currentBox.remain
 				return (penson * 100).toFixed(3) + '%'
 			},
-			prizeDraw(count){
+			prizeDraw(){
+				const  count = this.drawCount
 				const boxNumber = this.boxes[this.currentIndex].id;
 				get(`wx/blindbox/numbers?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res=>{
 					const result = res.data.data;
-					const arr = result.map(item=> {return item.number})
+					const listMap = result.map(item=>{
+						if(!item.soldOut){
+							return item
+						}
+					}).filter(item=>item)
+					const arr = listMap.map(item=> {return item.number})
 					let list = []
 					if(count !== 0){
 						list = getRandomElements(arr,count)
@@ -517,7 +526,6 @@
 				}
 				post('wx/blindbox/drawBlindBox',postData).then(res=>{
 					const result = res.data;
-					console.log()
 					if(result.errno === 0){
 						this.getProductBoxBySeriesId()
 						this.drawInfos =result.data
@@ -540,7 +548,8 @@
 				})
 			},
 			handleConfirm(){
-				this.prizeDraw(this.drawCount)
+				const amount = this.boxes[this.currentIndex].pricePerDraw * this.drawCount
+				this.handleWechatPay(amount)
 			},
 			getUserCurrentPoints(){
 				get('wx/points/getUserCurrentPoints?userId='+this.userId).then(json => {
@@ -756,7 +765,7 @@
 
 				.instruction,
 				.record {
-					font-size: 26rpx;
+					font-size: 24rpx;
 					color: #000;
 					margin-left: 30rpx;
 					border-radius: 30rpx;
