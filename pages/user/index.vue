@@ -4,7 +4,7 @@
 		<view class="user-section">
 			<view class="user-info" @click="navigateToUserInfo()">
 				<image :src="userInfo.avatar" class="avatar" mode="aspectFit" lazy-load/>
-				<text class="username">{{userInfo.nickName}}</text>
+				<text class="username">{{userInfo.userName}}</text>
 			</view>
 			<!-- 新增资产信息区域 -->
 			<view class="assets-section">
@@ -73,10 +73,11 @@
 			
 		},
 		onShow(){
+			this.getUserInfo()
 			this.getUserCurrentPoints(this.userId);
 			this.getInvitationRecords(this.userId);
-			const userInfo = uni.getStorageSync("userInfo") || {};
-			this.userInfo = userInfo
+			// const userInfo = uni.getStorageSync("userInfo") || {};
+			// this.userInfo = userInfo
 		},
 		data() {
 			
@@ -227,6 +228,15 @@
 			navigateToUserInfo() {
 				uni.navigateTo({
 					url: '/subUser/profile/index?userId='+this.userId
+				})
+			},
+			getUserInfo(){
+				get('wx/auth/userInfo/'+ this.userId).then(res=>{
+					if(res.statusCode === 200){
+						const result = res.data.data;
+						this.userInfo = result
+						uni.setStorageSync('userInfo', result)
+					}
 				})
 			}
 		}

@@ -30,19 +30,16 @@
 </template>
 
 <script>
-	import OSS from 'ali-oss';
 	import {
 		get,
 		post,
-		BaseUrl,
-		basic_env,
-		Bucket
+		BaseUrl
 	} from "@/utils/rest-util.js"
 	export default {
 		data() {
 			return {
-				avatarUrl: '/static/images/default_avatar.png',
-				nickname: 'JFUDVTlv',
+				avatarUrl: '',
+				nickname: '',
 				isEditing: false,
 				credentials: null,
 				expirationTime: null,
@@ -50,8 +47,16 @@
 				uploading: false, // 上传状态
 				maxCount: 9, // 最大上传数量
 				maxSize: 2 * 1024 * 1024, // 最大文件大小5MB
-				fileList: []
+				fileList: [],
+				userInfo: {},
+				userId:''
 			}
+		},
+		onShow() {
+			const userInfo = uni.getStorageSync("userInfo") || {};
+			this.nickname = userInfo.userName;
+			this.avatarUrl = userInfo.avatar;
+			this.userId = uni.getStorageSync('userId');
 		},
 		methods: {
 			// 头像编辑
@@ -85,7 +90,6 @@
 						if (validFiles) {
 							const file = res.tempFiles[0];
 							const fileUrl = res.tempFilePaths[0]
-							this.avatarUrl = fileUrl
 						}
 
 					}
@@ -106,7 +110,6 @@
 			uploadFile(index) {
 				return new Promise((resolve, reject) => {
 					const fileItem = this.fileList[index];
-					console.log(fileItem)
 					fileItem.status = 'uploading'
 
 					const uploadTask = uni.uploadFile({
@@ -119,6 +122,9 @@
 						success: res => {
 							if (res.statusCode === 200) {
 								fileItem.status = 'success'
+								const result = JSON.parse(res.data);
+								const data = result.data;
+								this.avatarUrl = data.url;
 								resolve()
 							} else {
 								fileItem.status = 'error'
@@ -141,17 +147,26 @@
 			// 保存昵称
 			saveNickname() {
 				this.isEditing = false
-				if (!this.nickname.trim()) {
-					this.nickname = 'JFUDVTlv'
-				}
+				// if (!this.nickname.trim()) {
+				// 	this.nickname = 'JFUDVTlv'
+				// }
 			},
 
 			// 确认更新
 			handleConfirm() {
-				uni.showToast({
-					title: '更新成功',
-					icon: 'success'
+				const postData = {
+					userId:this.userId,
+					userName:this.nickname,
+					phone:'',
+					avatar:this.avatarUrl
+				}
+				post('wx/auth/update',postData).then(json=>{
+					uni.showToast({
+						title: '更新成功',
+						icon: 'success'
+					})
 				})
+				
 			}
 		}
 	}

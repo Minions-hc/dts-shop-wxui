@@ -550,7 +550,7 @@
 					});
 					return;
 				}
-				this.openDrawDialog(count)
+				
 				this.prizeDraw(count)
 			},
 			navigatorToRule() {

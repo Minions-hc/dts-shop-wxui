@@ -11,7 +11,7 @@
       <view class="list-item" @click="navigateToEdit">
         <text class="label">姓名</text>
         <view class="right-box">
-          <text class="value">{{userInfo.nickName}}</text>
+          <text class="value">{{userInfo.userName}}</text>
         </view>
       </view>
       
@@ -54,11 +54,13 @@
 export default {
   data() {
     return {
-      userInfo: { }
+      userInfo: { },
+	  userId: uni.getStorageSync('userId'),
     }
   },
   onShow() {
-  	this.userInfo = uni.getStorageSync("userInfo") || {};
+  	// this.userInfo = uni.getStorageSync("userInfo") || {};
+	this.getUserInfo();
   },
   methods: {
     // 跳转编辑页
@@ -106,6 +108,15 @@ export default {
         }
       })
     },
+	getUserInfo(){
+		get('wx/auth/userInfo/'+ this.userId).then(res=>{
+			if(res.statusCode === 200){
+				const result = res.data.data;
+				this.userInfo = result;
+				uni.setStorageSync('userInfo', result)
+			}
+		})
+	},
 
     // 注销账号
     async deleteAccount() {
