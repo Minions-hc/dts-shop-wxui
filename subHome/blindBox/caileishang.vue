@@ -382,22 +382,7 @@
 				productSeries: {},
 				currentValue: 0,
 				isLockBox:true,
-				drawInfos:[
-					{
-						seriesName:'海贼王系列0001',
-						seriesImage:'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/j6jrbml9619zt9zz717d.jpg',
-						levelName:'A赏',
-						quantity: 1,
-						id: 1
-					},
-					{
-						seriesName:'海贼王系列0002',
-						seriesImage:'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/j6jrbml9619zt9zz717d.jpg',
-						levelName:'A赏',
-						quantity: 1,
-						id: 2
-					}
-				]
+				drawInfos:[]
 			}
 		},
 		computed: {
@@ -692,9 +677,13 @@
 					activityType: '踩雷赏'
 				}
 				post('wx/blindbox/drawBlindBox', postData).then(res => {
-					this.getProductBoxBySeriesId()
-					this.$refs.shopingPopup.close()
-					this.openDrawDialog(list.length)
+					const result = res.data;
+					if(result.errno === 0){
+						this.getProductBoxBySeriesId()
+						this.drawInfos =result.data
+						this.$refs.shopingPopup.close();
+						this.openDrawDialog(list.length)
+					}
 				})
 			},
 			changeBox(index) {

@@ -40,7 +40,7 @@
 	    <!-- 奖品主体 -->
 	    <view class="prize-body">
 			<view class="product-cantent">
-				<view class="product-card" v-for="item in drawInfos" :key="item.id">
+				<view class="product-card" v-for="item in showDrawInfo" :key="item.productId">
 					<view class="series-qty">x{{item.quantity}}</view>
 					<image :src="item.seriesImage" mode="aspectFit" lazy-load="true" class="product-iamge"></image>
 					<view class="soul-power-content">
@@ -84,22 +84,7 @@ export default {
 		drawInfos:{
 			type: Array,
 			default: ()=> {
-				return [
-					{
-						seriesName:'海贼王系列0001',
-						seriesImage:'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/j6jrbml9619zt9zz717d.jpg',
-						levelName:'A赏',
-						quantity: 1,
-						id: 1
-					},
-					{
-						seriesName:'海贼王系列0002',
-						seriesImage:'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/j6jrbml9619zt9zz717d.jpg',
-						levelName:'A赏',
-						quantity: 1,
-						id: 2
-					}
-				]
+				return []
 			}
 		}
 	},
@@ -115,6 +100,13 @@ export default {
 			handler(newVal) {
 				this.showMorePopup = newVal;
 			}
+		},
+		drawInfos:{
+			immediate: true,
+			handler(newVal) {
+				// this.showMorePopup = newVal;
+				this.showDrawInfo = this.drawInfos.slice(0,2)
+			}
 		}
 	},
   data() {
@@ -123,7 +115,8 @@ export default {
 	  showMorePopup:false,
       eggClickCount: 0,
       animationData: {},
-      isEggActivated: false
+      isEggActivated: false,
+	  showDrawInfo: []
     }
   },
   methods: {

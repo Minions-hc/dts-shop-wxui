@@ -323,22 +323,7 @@
 				boxeInfos: [],
 				productSeries: {},
 				currentPoints: 0,
-				drawInfos:[
-					{
-						seriesName:'海贼王系列0001',
-						seriesImage:'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/j6jrbml9619zt9zz717d.jpg',
-						levelName:'A赏',
-						quantity: 1,
-						id: 1
-					},
-					{
-						seriesName:'海贼王系列0002',
-						seriesImage:'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/j6jrbml9619zt9zz717d.jpg',
-						levelName:'A赏',
-						quantity: 1,
-						id: 2
-					}
-				]
+				drawInfos:[]
 			}
 		},
 		computed: {
@@ -429,7 +414,6 @@
 				}
 			},
 			handleDraw(count) {
-				this.$refs.couponPopup.open('bottom');
 				if (count != 0 && count > this.boxes[this.currentIndex].remaining) {
 					uni.showToast({
 						title: '库存不足~'
@@ -527,13 +511,19 @@
 					numbers:list,
 					boxNumber:boxNumber,
 					seriesId:this.seriesId,
-					activityType:'一番赏'
+					activityType:'一番赏',
+					orderAmount:this.boxes[this.currentIndex].pricePerDraw * this.drawCount,
+					paymentAmount: this.boxes[this.currentIndex].pricePerDraw * this.drawCount
 				}
 				post('wx/blindbox/drawBlindBox',postData).then(res=>{
-					this.getProductBoxBySeriesId()
-					this.drawInfos =[]
-					this.$refs.shopingPopup.close()
-					this.openDrawDialog(list.length)
+					const result = res.data;
+					console.log()
+					if(result.errno === 0){
+						this.getProductBoxBySeriesId()
+						this.drawInfos =result.data
+						this.$refs.shopingPopup.close();
+						this.openDrawDialog(list.length)
+					}
 				})
 			},
 			showRecods(){
@@ -550,7 +540,7 @@
 				})
 			},
 			handleConfirm(){
-				this.prizeDraw()
+				this.prizeDraw(this.drawCount)
 			},
 			getUserCurrentPoints(){
 				get('wx/points/getUserCurrentPoints?userId='+this.userId).then(json => {
