@@ -1,8 +1,8 @@
 const BaseUrl = 'http://huangcheng.chaoshangshiduo.com/';
 const OssUrl =  '';
 const WebUrl = '';
-const Bucket = '';
-const basic_env = '';
+const Bucket = 'chaoshangshiduo-public-static';
+const basic_env = 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/';
 
 function get(url, config){
 	let header = {}
