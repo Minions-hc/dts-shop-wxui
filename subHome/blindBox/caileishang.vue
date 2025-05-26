@@ -46,7 +46,7 @@
 				<view class="popup-content" @tap.stop>
 					<!-- 弹窗标题 -->
 					<view class="popup-header">
-						<text class="title">开赏记录(88)</text>
+						<text class="title">开赏记录({{filteredRecords.length}})</text>
 						<image src="/static/icons/close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
 					</view>
 
@@ -1470,7 +1470,7 @@
 
 	.record-list {
 		max-height: 50vh;
-
+		min-height: 30vh;
 		.record-item {
 			padding: 24rpx 15rpx;
 			border: 4rpx solid #424242;

@@ -53,10 +53,13 @@
         "appid" : "wx956fbcb39a50db00",
         "setting" : {
             "urlCheck" : false,
-            "minified" : true
+            "minified" : true,
+            "postcss" : true
         },
         "usingComponents" : true,
-        "permission" : {}
+        "permission" : {
+			"requestPayment": {} // 必须添加支付权限
+		}
     },
     "mp-alipay" : {
         "usingComponents" : true
