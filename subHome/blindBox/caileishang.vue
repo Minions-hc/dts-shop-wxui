@@ -465,8 +465,27 @@
 					}
 				}).filter(item => item);
 			},
-			handleConfirm() {
-				
+			async handleConfirm() {
+				const addressList =await this.initAddressList();
+				const pickupList = addressList.filter(item=>item.pickup);
+				if(pickupList.length === 0){
+					uni.showModal({
+					  title: '提示',       // 标题
+					  content: '还未设置自动提货地址，是否前往设置？', // 内容
+					  confirmText: '确定',     // 确认按钮文字
+					  cancelText: '取消',      // 取消按钮文字
+					  success: (res) => {
+					    if (res.confirm) {
+					      uni.navigateTo({
+					      	url: "/subUser/address/index"
+					      })
+					    } else if (res.cancel) {
+					      console.log('用户点击取消')
+					    }
+					  }
+					})
+					return
+				}
 				if (!this.chkDesc) {
 					return
 				}

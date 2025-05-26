@@ -5,6 +5,13 @@ import {
 
 export const commonMixns = {
 	methods:{
+		async initAddressList(){
+			const userId = uni.getStorageSync('userId');
+			return get(`wx/address/list?userId=${userId}`).then(json=>{
+				const result = json.data;
+				return result.data || []
+			})
+		},
 		async handleWechatPay(amount,seriesName) {
 		      try {
 		        // 1. 获取用户code

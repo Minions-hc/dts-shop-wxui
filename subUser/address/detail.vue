@@ -122,6 +122,55 @@
 				this.formData.isAutoPickup = e.detail.value
 			},
 			handleSave() {
+				console.log(this.formData)
+				if(!this.formData.receiverName){
+					uni.showModal({
+					  title: '',       // 标题
+					  content: '请输入用户名称', // 内容
+					  confirmText: '确定',     // 确认按钮文字
+					  cancelText: '取消',      // 取消按钮文字
+					  success: (res) => {
+					    if (res.confirm) {
+					      console.log('用户点击确定')
+					    } else if (res.cancel) {
+					      console.log('用户点击取消')
+					    }
+					  }
+					})
+					return
+				}
+				if(!this.formData.phone || this.formData.phone.length !== 11){
+					uni.showModal({
+					  title: '',       // 标题
+					  content: '请输入正确的手机号', // 内容
+					  confirmText: '确定',     // 确认按钮文字
+					  cancelText: '取消',      // 取消按钮文字
+					  success: (res) => {
+					    if (res.confirm) {
+					      console.log('用户点击确定')
+					    } else if (res.cancel) {
+					      console.log('用户点击取消')
+					    }
+					  }
+					})
+					return
+				}
+				if(!this.formData.detailAddress){
+					uni.showModal({
+					  title: '',       // 标题
+					  content: '请输入详细地址', // 内容
+					  confirmText: '确定',     // 确认按钮文字
+					  cancelText: '取消',      // 取消按钮文字
+					  success: (res) => {
+					    if (res.confirm) {
+					      console.log('用户点击确定')
+					    } else if (res.cancel) {
+					      console.log('用户点击取消')
+					    }
+					  }
+					})
+					return
+				}
 				const postData = {
 					addressId: this.addressId || '',
 					userId: this.userId,
