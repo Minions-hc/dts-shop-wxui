@@ -14,15 +14,14 @@ export const commonMixns = {
 		},
 		async handleWechatPay(amount,seriesName) {
 		      try {
-		        // 1. 获取用户code
-		        const loginRes = await this.getWxCode()
-		        
+
+		        const userInfo = uni.getStorageSync("userInfo") || {};
 		        // 2. 获取支付参数
-		        const paymentParams = await this.getPaymentParams(loginRes.code,amount,seriesName)
-		        
+		        const paymentParams = await this.getPaymentParams(userInfo.wxOpenId,amount,seriesName)
+
 		        // 3. 发起支付请求
 		        const res = await this.requestPayment(paymentParams)
-		        
+
 		        // 4. 处理支付结果
 		        if (res[0]) {
 		          await this.checkPaymentStatus(paymentParams.out_trade_no)
@@ -35,23 +34,12 @@ export const commonMixns = {
 		        uni.showToast({ title: error.message, icon: 'none' })
 		      }
 		    },
-		
-		    // 获取微信code
-		    getWxCode() {
-		      return new Promise((resolve, reject) => {
-		        uni.login({
-		          provider: 'weixin',
-		          success: resolve,
-		          fail: reject
-		        })
-		      })
-		    },
-		
+
 		    // 获取支付参数
-		    async getPaymentParams(code,amount,seriesName) {
+		    async getPaymentParams(wxOpenId,amount,seriesName) {
 		      try {
 				const postData = {
-					openId: code,
+					openId: wxOpenId,
 					amount: amount, // 金额（单位：分）
 					description: seriesName
 				}
@@ -62,13 +50,13 @@ export const commonMixns = {
 					}
 					throw new Error(res.data.message || '获取支付参数失败')
 				})
-		        
-		        
+
+
 		      } catch (error) {
 		        throw new Error('网络请求失败')
 		      }
 		    },
-		
+
 		    // 调用支付接口
 		    requestPayment(params) {
 		      return new Promise((resolve) => {
@@ -80,18 +68,18 @@ export const commonMixns = {
 		        })
 		      })
 		    },
-		
+
 		    // 检查支付状态
 		    async checkPaymentStatus(orderNo) {
 		      const res = await uni.request({
 		        url: `/api/checkPayment?orderNo=${orderNo}`
 		      })
-		      
+
 		      if (!res.data.paid) {
 		        throw new Error('支付结果验证失败')
 		      }
 		    },
-		
+
 		    // 错误处理
 		    handlePaymentError(err) {
 		      if (err.errMsg === 'requestPayment:fail cancel') {
