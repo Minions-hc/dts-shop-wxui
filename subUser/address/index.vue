@@ -15,8 +15,8 @@
       <!-- 地址头 -->
       <view class="address-header">
         <view class="icon-group">
-          <image class="icon-default" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/default-address.png" webp="true" lazy-load="true"/>
-          <image class="icon-pickup" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/send-address.png" webp="true" lazy-load="true"/>
+          <image class="icon-default" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/default-address.png" webp="true" lazy-load="true" v-if="item.default"/>
+          <image class="icon-pickup" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/send-address.png" webp="true" lazy-load="true" v-if="item.pickup"/>
         </view>
         <text class="user-name">{{item.receiverName}}</text>
 		 <text class="phone">{{getShowNumber(item.phone)}}</text>

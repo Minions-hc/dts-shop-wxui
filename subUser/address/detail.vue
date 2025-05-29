@@ -119,7 +119,7 @@
 				this.formData.isDefault = e.detail.value
 			},
 			toggleAutoPickup(e) {
-				this.formData.isAutoPickup = e.detail.value
+				this.formData.isPickup = e.detail.value
 			},
 			handleSave() {
 				console.log(this.formData)

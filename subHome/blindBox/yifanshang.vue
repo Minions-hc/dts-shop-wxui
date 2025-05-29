@@ -325,7 +325,8 @@
 				boxeInfos: [],
 				productSeries: {},
 				currentPoints: 0,
-				drawInfos:[]
+				drawInfos:[],
+				list: []
 			}
 		},
 		computed: {
@@ -494,25 +495,8 @@
 				return (penson * 100).toFixed(3) + '%'
 			},
 			prizeDraw(){
-				const  count = this.drawCount
 				const boxNumber = this.boxes[this.currentIndex].id;
-				get(`wx/blindbox/numbers?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res=>{
-					const result = res.data.data;
-					const listMap = result.map(item=>{
-						if(!item.soldOut){
-							return item
-						}
-					}).filter(item=>item)
-					const arr = listMap.map(item=> {return item.number})
-					let list = []
-					if(count !== 0){
-						list = getRandomElements(arr,count)
-					} else {
-						list = arr;
-					}
-					this.drawBlindBox(list,boxNumber)
-				})
-				
+				this.drawBlindBox(this.list,boxNumber)
 			},
 			drawBlindBox(list,boxNumber){
 				const postData = {
@@ -547,8 +531,8 @@
 					this.showPopup = true
 				})
 			},
-			handleConfirm(){
-				const addressList =await this.initAddressList();
+			async handleConfirm(){
+				const addressList = await this.initAddressList();
 				const pickupList = addressList.filter(item=>item.pickup);
 				if(pickupList.length === 0){
 					uni.showModal({
@@ -568,8 +552,39 @@
 					})
 					return
 				}
-				const amount = this.boxes[this.currentIndex].pricePerDraw * this.drawCount;
-				this.handleWechatPay(amount,this.productSeries.seriesName)
+				const  count = this.drawCount
+				const boxNumber = this.boxes[this.currentIndex].id;
+				get(`wx/blindbox/numbers?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res=>{
+					const result = res.data.data;
+					const listMap = result.map(item=>{
+						if(!item.soldOut){
+							return item
+						}
+					}).filter(item=>item)
+					const arr = listMap.map(item=> {return item.number})
+					if(count !== 0){
+						this.list = getRandomElements(arr,count)
+					} else {
+						this.list = arr;
+					}
+					// this.drawBlindBox(list,boxNumber)
+					const amount = this.boxes[this.currentIndex].pricePerDraw * this.drawCount;
+					const postData = {
+											userId:this.userId,
+											numbers:this.list,
+											boxNumber:boxNumber,
+											seriesId:this.seriesId,
+											activityType:'一番赏',
+											orderAmount:this.boxes[this.currentIndex].pricePerDraw * this.drawCount,
+											paymentAmount: this.boxes[this.currentIndex].pricePerDraw * this.drawCount,
+											amount: amount,
+											description: this.productSeries.seriesName,
+											businessType: 1
+										}
+					this.handleWechatPay(postData)
+				})
+				
+				
 			},
 			getUserCurrentPoints(){
 				get('wx/points/getUserCurrentPoints?userId='+this.userId).then(json => {

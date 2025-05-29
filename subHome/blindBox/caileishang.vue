@@ -490,7 +490,19 @@
 					return
 				}
 				const totalPrice = this.getTotalPrice();
-				this.handleWechatPay(totalPrice,this.productSeries.seriesName)
+				const list = this.selectedCount;
+				const boxNumber = this.boxes[this.currentIndex - 1].id;
+				const postData = {
+									userId: this.userId,
+									numbers: list,
+									boxNumber: boxNumber,
+									seriesId: this.seriesId,
+									activityType: '踩雷赏',
+									totalPrice: totalPrice,
+									description: this.productSeries.seriesName,
+									businessType: 1
+								}
+				this.handleWechatPay(postData)
 			},
 			prizeDraw(){
 				const list = this.selectedCount;

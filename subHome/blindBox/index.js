@@ -12,12 +12,12 @@ export const commonMixns = {
 				return result.data || []
 			})
 		},
-		async handleWechatPay(amount,seriesName) {
+		async handleWechatPay(postData) {
 		      try {
 
 		        const userInfo = uni.getStorageSync("userInfo") || {};
 		        // 2. 获取支付参数
-		        const paymentParams = await this.getPaymentParams(userInfo.wxOpenId,amount,seriesName)
+		        const paymentParams = await this.getPaymentParams(userInfo.wxOpenId,postData)
 
 		        // 3. 发起支付请求
 		        const res = await this.requestPayment(paymentParams)
@@ -36,17 +36,16 @@ export const commonMixns = {
 		    },
 
 		    // 获取支付参数
-		    async getPaymentParams(wxOpenId,amount,seriesName) {
+		    async getPaymentParams(wxOpenId,createData) {
 		      try {
 				const postData = {
 					openId: wxOpenId,
-					amount: amount, // 金额（单位：分）
-					description: seriesName
+					...createData
 				}
 				return post('wx/wxpay/create',postData).then(res=>{
-					console.log(res)
+					console.log(res.data)
 					if (res.statusCode === 200) {
-					  return res.data.data
+					  return res.data
 					}
 					throw new Error(res.data.message || '获取支付参数失败')
 				})
