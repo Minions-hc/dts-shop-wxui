@@ -5,6 +5,13 @@ import {
 
 export const commonMixns = {
 	methods:{
+		getCouponList(){
+			const userId = uni.getStorageSync('userId');
+			const orderAmount = this.getOrderAmount()
+			get("wx/coupon/available?userId="+userId+"&orderAmount="+orderAmount).then(json=>{
+				this.couponList = [];
+			})
+		},
 		async initAddressList(){
 			const userId = uni.getStorageSync('userId');
 			return get(`wx/address/list?userId=${userId}`).then(json=>{

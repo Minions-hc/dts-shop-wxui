@@ -89,7 +89,7 @@
 				<!-- 弹窗标题 -->
 				<view class="popup-header">
 					<text class="title">开赏记录({{records.length}})</text>
-					<image src="/static/icons/close.png" class="close-icon" @tap="showPopup = false" />
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png" class="close-icon" @tap="showPopup = false" />
 				</view>
 
 				<!-- 筛选标签 -->
@@ -134,7 +134,7 @@
 				<!-- 弹窗标题 -->
 				<view class="popup-header">
 					<text class="title">切换房间</text>
-					<image src="/static/icons/close.png" class="close-icon" @tap="showPopup = false" />
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png" class="close-icon" @tap="showPopup = false" />
 				</view>
 
 				<!-- 记录列表 -->
@@ -207,7 +207,9 @@
 						</view>
 						<view class="info-item">
 							<view>可用优惠券：</view>
-							<view :style="{display:'flex'}">暂无可用优惠券<uni-icons type="right" size="20"></uni-icons></view>
+							<view :style="{display:'flex'}" v-if="couponList.length === 0">暂无可用优惠券<uni-icons type="right" size="20"></uni-icons></view>
+							<view :style="{display:'flex'}" v-else @tap="openCouponList">可用优惠券<uni-icons type="right" size="20"></uni-icons></view>
+							
 						</view>
 						<view class="info-item">
 							<view>可用红包：</view>
@@ -237,7 +239,7 @@
 							<view>盒柜提货运费12元满三件包邮，不支持7天无理由退换货</view>
 						</view>
 						<view class="total-parice-content">
-							小计：￥{{currentBox.pricePerDraw * drawCount}}
+							小计：￥{{showOrderAmount}}
 						</view>
 						<view class="check-desc-item">
 							<view :class="['checkbox', chkDesc && 'checked']" @tap="changChk">
@@ -291,7 +293,7 @@
 		},
 		onShow() {
 			this.getProductBoxBySeriesId(null)
-			this.getUserCurrentPoints()
+			this.getUserCurrentPoints();
 		},
 		components:{
 			luckyDraw,
@@ -326,7 +328,9 @@
 				productSeries: {},
 				currentPoints: 0,
 				drawInfos:[],
-				list: []
+				list: [],
+				couponPrice: 0,
+				couponList:[]
 			}
 		},
 		computed: {
@@ -337,9 +341,20 @@
 				if (this.activeTab === '全部') return this.records
 				return this.records.filter(item => item.levelName === this.activeTab)
 			},
-
+			showOrderAmount(){
+				const orderAmount= this.getOrderAmount();
+				const price  = orderAmount - this.couponPrice - this.calcPointPrice();
+				return price <= 0 ? 0.01 ? price;
+			}
 		},
 		methods: {
+			openCouponList(){
+				this.$refs.couponPopup.open('bottom');
+			},
+			getOrderAmount(){
+				const currentBox = this.boxes[this.currentIndex];
+				return currentBox.pricePerDraw * this.drawCount;
+			},
 			openRecord(){
 				this.closeDialog();
 				this.showRecods()
@@ -425,7 +440,8 @@
 					return;
 				}
 				const callBack = (num)=>{
-					this.drawCount = num
+					this.drawCount = num;
+					this.getCouponList()
 					this.$refs.shopingPopup.open('bottom');
 				}
 				if(count === 0){
@@ -532,7 +548,7 @@
 				})
 			},
 			async handleConfirm(){
-				const addressList = await this.initAddressList();
+				const addressList =await this.initAddressList();
 				const pickupList = addressList.filter(item=>item.pickup);
 				if(pickupList.length === 0){
 					uni.showModal({

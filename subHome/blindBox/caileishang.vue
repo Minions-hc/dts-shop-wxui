@@ -47,7 +47,7 @@
 					<!-- 弹窗标题 -->
 					<view class="popup-header">
 						<text class="title">开赏记录({{filteredRecords.length}})</text>
-						<image src="/static/icons/close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
+						<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
 					</view>
 
 					<!-- 筛选标签 -->
@@ -106,7 +106,7 @@
 						<!-- 弹窗标题 -->
 						<view class="popup-header">
 							<text class="title">切换房间</text>
-							<image src="/static/icons/close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
+							<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
 						</view>
 
 						<!-- 记录列表 -->
@@ -273,7 +273,9 @@
 						</view>
 						<view class="info-item">
 							<view>可用优惠券：</view>
-							<view :style="{display:'flex'}">暂无可用优惠券<uni-icons type="right" size="20"></uni-icons></view>
+							<view :style="{display:'flex'}" v-if="couponList.length === 0">暂无可用优惠券<uni-icons type="right" size="20"></uni-icons></view>
+							<view :style="{display:'flex'}" v-else @tap="openCouponList">可用优惠券<uni-icons type="right" size="20"></uni-icons></view>
+							
 						</view>
 						<view class="info-item">
 							<view>可用红包：</view>
@@ -290,7 +292,7 @@
 							<view>盒柜提货运费12元满三件包邮，不支持7天无理由退换货</view>
 						</view>
 						<view class="total-parice-content">
-							小计：{{getTotalPrice()}}
+							小计：{{showOrderAmount}}
 						</view>
 						<view class="check-desc-item">
 							<view :class="['checkbox', chkDesc && 'checked']" @tap="changChk">
@@ -311,7 +313,12 @@
 			border-radius="10px 10px 0 0">
 			<view class="coupon-popup-content" :class="{ 'popup-height': type === 'left' || type === 'right' }">
 				<view class="coupon-header">
-					
+					<view class="coupon-haeder-title">
+						可用优惠券
+					</view>
+					<view class="close-icon">
+						<uni-icons type="closeempty" size="30" @tap="closeCoupon"></uni-icons>
+					</view>
 				</view>
 				<coupon-dialog :userId="userId"></coupon-dialog>
 			</view>
@@ -384,7 +391,9 @@
 				productSeries: {},
 				currentValue: 0,
 				isLockBox:true,
-				drawInfos:[]
+				drawInfos:[],
+				couponPrice: 0,
+				couponList:[]
 			}
 		},
 		computed: {
@@ -416,9 +425,20 @@
 			},
 			slectedNum() {
 				return this.selectedCount.join(',')
+			},
+			showOrderAmount(){
+				const orderAmount= this.getOrderAmount();
+				const price  = orderAmount - this.couponPrice ;
+				return price <= 0 ? 0.01 ? price;
 			}
 		},
 		methods: {
+			openCouponList(){
+				this.$refs.couponPopup.open('bottom');
+			},
+			getOrderAmount(){
+				return this.getTotalPrice()
+			},
 			openRecord(){
 				this.closeDialog()
 				this.showRecods()
@@ -589,6 +609,7 @@
 					})
 					return;
 				}
+				this.getCouponList();
 				this.$refs.shopingPopup.open('bottom');
 			},
 			getProductBoxBySeriesId(callBack) {

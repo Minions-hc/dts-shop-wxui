@@ -95,17 +95,17 @@
 				})
 			},
 			queryCouPonList() {
-				// get('wx/coupon/mylist?userId=' + this.userId).then(json => {
-				// 	const result = json.data.data
-				// 	this.unUseedCoupons = result.unUseedCoupons || [];
-				// 	this.useedCoupons = result.useedCoupons || [];
-				// 	this.expiredCoupons = result.expiredCoupons || [];
-				// 	this.allCouponList = {
-				// 		unUseedCoupons: this.unUseedCoupons,
-				// 		useedCoupons: this.useedCoupons,
-				// 		expiredCoupons: this.expiredCoupons
-				// 	}
-				// })
+				get('wx/coupon/mylist?userId=' + this.userId).then(json => {
+					const result = json.data.data
+					this.unUseedCoupons = result.unUseedCoupons || [];
+					this.useedCoupons = result.useedCoupons || [];
+					this.expiredCoupons = result.expiredCoupons || [];
+					this.allCouponList = {
+						unUseedCoupons: this.unUseedCoupons,
+						useedCoupons: this.useedCoupons,
+						expiredCoupons: this.expiredCoupons
+					}
+				})
 			},
 			useCoupon(item) {
 
