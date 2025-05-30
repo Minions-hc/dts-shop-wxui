@@ -58,7 +58,7 @@
 			  <view v-if="showGroup" class="group-container">
 			    <image 
 			      class="close-icon" 
-			      src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png" 
+			      src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/group-close.png" 
 			      @click.stop="closeGroup"
 			    />
 			    <image 
