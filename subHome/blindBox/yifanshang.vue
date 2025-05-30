@@ -344,7 +344,7 @@
 			showOrderAmount(){
 				const orderAmount= this.getOrderAmount();
 				const price  = orderAmount - this.couponPrice - this.calcPointPrice();
-				return price <= 0 ? 0.01 ? price;
+				return price <= 0 ? 0.01 : price;
 			}
 		},
 		methods: {
