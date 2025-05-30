@@ -329,7 +329,8 @@
 				drawInfos: [],
 				list: [],
 				couponPrice: 0,
-				couponList: []
+				couponList: [],
+				deductionPoints: 0
 			}
 		},
 		computed: {
@@ -630,7 +631,26 @@
 				})
 			},
 			calcPointPrice() {
-				return this.isDeduction ? this.currentPoints / 10 : 0;
+				// 如果不扣减积分，直接返回为0
+				if(!this.isDeduction) {
+					return 0;
+				}
+				
+				const orderAmount = this.getOrderAmount();
+				const currentPrice = orderAmount - this.couponPrice;
+				// 当当前已经使用优惠券后的价格小于1块钱，就不使用积分扣减
+				if (currentPrice < 1) {
+					return 0;
+				}
+				
+				// 如果积分大于等于当前订单价格，就只扣减当前的价格
+				if (this.currentPoints / 10 >= currentPrice) {
+					this.deductionPoints = currentPrice * 10;
+					return currentPrice;
+				}else {
+					// 否则就全扣
+					return this.currentPoints / 10
+				}
 			}
 
 
