@@ -385,11 +385,13 @@
 			},
 			changePopup(e) {
 				this.couponPrice = 0;
+				this.isDeduction = true;
+				this.isOpenAnimate = false;
+				this.isLockBox = true;
 			},
 			changeBox(index) {
 				this.currentIndex = index;
-				this.showBoxPopup = false
-
+				this.showBoxPopup = false;				
 			},
 			switch1Change(e) {
 				this.isDeduction = e.detail.value
