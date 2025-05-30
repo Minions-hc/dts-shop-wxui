@@ -529,21 +529,11 @@
 				const penson = (product.quantity - product.soldQuantity) / currentBox.remain
 				return (penson * 100).toFixed(3) + '%'
 			},
-			prizeDraw() {
-				const boxNumber = this.boxes[this.currentIndex].id;
-				this.drawBlindBox(this.list, boxNumber)
+			prizeDraw(paymentParams) {
+				this.drawBlindBox(paymentParams)
 			},
-			drawBlindBox(list, boxNumber) {
-				const postData = {
-					userId: this.userId,
-					numbers: list,
-					boxNumber: boxNumber,
-					seriesId: this.seriesId,
-					activityType: '一番赏',
-					orderAmount: this.getOrderAmount(),
-					paymentAmount: this.getShowOrderAmount()
-				}
-				post('wx/blindbox/drawBlindBox', postData).then(res => {
+			drawBlindBox(paymentParams) {
+				get('wx/blindbox/getBoxProductsByWxOrderNo?wxOrderNo='+paymentParams.wxOrderNo).then(res => {
 					const result = res.data;
 					if (result.errno === 0) {
 						this.getProductBoxBySeriesId()
@@ -616,7 +606,8 @@
 						paymentAmount: this.getShowOrderAmount(),
 						amount: this.getShowOrderAmount(),
 						description: this.productSeries.seriesName,
-						businessType: 1
+						businessType: 1,
+						deductionPoints: this.deductionPoints
 					}
 					this.handleWechatPay(postData)
 				})
@@ -633,6 +624,7 @@
 			calcPointPrice() {
 				// 如果不扣减积分，直接返回为0
 				if(!this.isDeduction) {
+					this.deductionPoints = 0;
 					return 0;
 				}
 				
@@ -640,14 +632,16 @@
 				const currentPrice = orderAmount - this.couponPrice;
 				// 当当前已经使用优惠券后的价格小于1块钱，就不使用积分扣减
 				if (currentPrice < 1) {
+					this.deductionPoints = 0;
 					return 0;
 				}
 				
 				// 如果积分大于等于当前订单价格，就只扣减当前的价格
 				if (this.currentPoints / 10 >= currentPrice) {
-					this.deductionPoints = currentPrice * 10;
+					this.deductionPoints = currentPrice;
 					return currentPrice;
 				}else {
+					this.deductionPoints = this.currentPoints / 10
 					// 否则就全扣
 					return this.currentPoints / 10
 				}

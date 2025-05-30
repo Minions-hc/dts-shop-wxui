@@ -33,9 +33,7 @@ export const commonMixns = {
 
 		        // 4. 处理支付结果
 		        if (res[0]) {
-		          await this.checkPaymentStatus(paymentParams.out_trade_no)
-				  this.prizeDraw()
-		          // uni.showToast({ title: '支付成功' })
+				  this.prizeDraw(paymentParams)
 		        } else {
 		          this.handlePaymentError(res[1])
 		        }
@@ -52,7 +50,6 @@ export const commonMixns = {
 					...createData
 				}
 				return post('wx/wxpay/create',postData).then(res=>{
-					console.log(res.data)
 					if (res.statusCode === 200) {
 					  return res.data
 					}

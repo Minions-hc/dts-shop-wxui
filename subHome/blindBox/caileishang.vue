@@ -555,10 +555,8 @@
 				}
 				this.handleWechatPay(postData)
 			},
-			prizeDraw() {
-				const list = this.selectedCount;
-				const boxNumber = this.boxes[this.currentIndex - 1].id;
-				this.drawBlindBox(list, boxNumber)
+			prizeDraw(paymentParams) {
+				this.drawBlindBox(paymentParams)
 			},
 			// 切换箱子
 			async switchBox(direction) {
@@ -756,18 +754,8 @@
 					}
 				}).filter(item => item);
 			},
-			drawBlindBox(list, boxNumber) {
-				const postData = {
-					userId: this.userId,
-					numbers: list,
-					boxNumber: boxNumber,
-					seriesId: this.seriesId,
-					activityType: '踩雷赏',
-					orderAmount: this.getOrderAmount(),
-					paymentAmount: this.getShowOrderAmount()
-
-				}
-				post('wx/blindbox/drawBlindBox', postData).then(res => {
+			drawBlindBox(paymentParams) {
+				get('wx/blindbox/getBoxProductsByWxOrderNo?wxOrderNo='+paymentParams.wxOrderNo).then(res => {
 					const result = res.data;
 					if (result.errno === 0) {
 						this.getProductBoxBySeriesId()

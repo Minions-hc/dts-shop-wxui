@@ -12,12 +12,12 @@
         <view class="prize-body">
 			 <image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/product-default.png" class="prize-body-image" mode="aspectFit" />
 			 <view class="product-img">
-			 	<image src="/static/1.png" mode="aspectFit" lazy-load="true" class="product-iamge"></image>
+			 	<image :src="showDrawInfo.productImage" mode="aspectFit" lazy-load="true" class="product-iamge"></image>
 			 </view>
 			 <view class="product-count">
 			 	x1
 			 </view>
-			 <view class="product-level">A赏</view>
+			 <view class="product-level">{{showDrawInfo.levelName}}</view>
         </view>
 
         <!-- 操作按钮组 -->
@@ -104,8 +104,13 @@ export default {
 		drawInfos:{
 			immediate: true,
 			handler(newVal) {
+				if(this.dialogMoreVisible){
+					this.showDrawInfo = this.drawInfos.slice(0,2)
+				} else {
+					this.showDrawInfo = this.drawInfos.slice(0,1)
+				}
 				// this.showMorePopup = newVal;
-				this.showDrawInfo = this.drawInfos.slice(0,2)
+				
 			}
 		}
 	},
