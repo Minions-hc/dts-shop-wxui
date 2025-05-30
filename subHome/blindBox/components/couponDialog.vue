@@ -1,18 +1,10 @@
 <template>
 	<view class="coupon-container">
-		<!-- 选项卡 -->
-		<!-- <view class="tab-bar">
-			<view class="tab-item" :class="{ active: currentTab === item.id }" v-for="item in currentTabs"
-				:key="item.id" @tap="switchTab(item.id)">
-				{{item.name}}
-			</view>
-		</view> -->
 
 		<!-- 优惠券列表 -->
 		<scroll-view scroll-y class="coupon-list">
 			<!-- 优惠券 -->
-			<view class="coupon-item" v-for="item in couponList" :key="item.couponId"
-				:class="{used:currentTab==='useedCoupons',expired:currentTab==='expiredCoupons'}">
+			<view class="coupon-item" v-for="item in couponList" :key="item.couponId" :class="item.couponId === currentCouponId ? 'active-coupon' :''">
 				<view class="left-panel">
 					<text class="amount">{{item.couponAmount}}</text>
 					<text class="type">优惠券</text>
@@ -47,68 +39,38 @@
 				default: () => {
 					return ''
 				}
+			},
+			couponList:{
+				type: Array,
+				default: () => {
+					return []
+				}
 			}
 		},
 		data() {
 			return {
-				currentTab: 'unUseedCoupons',
-				currentTabs: [{
-					id: 'unUseedCoupons',
-					name: '可用优惠券'
-				}, {
-					id: 'expiredCoupons',
-					name: '不可用优惠券'
-				}],
-				unUseedCoupons: [], // 未使用
-				useedCoupons: [], // 已使用
-				expiredCoupons: [], //已过期
-				allCouponList: {}
+				currentCouponId:''
 			}
 		},
 		watch:{
-			userId: {
+			couponList: {
 				immediate: true,
 				handler(newVal) {
-					this.allCouponList = {
-						unUseedCoupons:[
-							{
-								couponId:'1-0',
-								couponAmount:"xxxx",
-							}
-						]
-					}
+					console.log(this.couponList)
 				}
 			},
 		},
 		computed: {
-			couponList() {
-				return this.allCouponList[this.currentTab]
-			}
 		},
 		methods: {
-			switchTab(index) {
-				this.currentTab = index
-			},
 			navigatorToCode() {
 				uni.navigateTo({
 					url: '/subUser/code/index?userId=' + this.userId
 				})
 			},
-			queryCouPonList() {
-				get('wx/coupon/mylist?userId=' + this.userId).then(json => {
-					const result = json.data.data
-					this.unUseedCoupons = result.unUseedCoupons || [];
-					this.useedCoupons = result.useedCoupons || [];
-					this.expiredCoupons = result.expiredCoupons || [];
-					this.allCouponList = {
-						unUseedCoupons: this.unUseedCoupons,
-						useedCoupons: this.useedCoupons,
-						expiredCoupons: this.expiredCoupons
-					}
-				})
-			},
 			useCoupon(item) {
-
+				this.currentCouponId = item.couponId
+				this.$emit('setCoupon',item)
 			}
 		}
 	}

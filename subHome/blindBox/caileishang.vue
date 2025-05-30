@@ -320,7 +320,7 @@
 						<uni-icons type="closeempty" size="30" @tap="closeCoupon"></uni-icons>
 					</view>
 				</view>
-				<coupon-dialog :userId="userId"></coupon-dialog>
+				<coupon-dialog :userId="userId" :couponList="couponList" @setCoupon="setCoupon"></coupon-dialog>
 			</view>
 		</uni-popup>
 		
@@ -433,11 +433,19 @@
 			}
 		},
 		methods: {
+			setCoupon(item){
+				this.couponPrice = item.couponAmount;
+			},
 			openCouponList(){
 				this.$refs.couponPopup.open('bottom');
 			},
 			getOrderAmount(){
 				return this.getTotalPrice()
+			},
+			getShowOrderAmount(){
+				const orderAmount= this.getOrderAmount();
+				const price  = orderAmount - this.couponPrice ;
+				return price <= 0 ? 0.01 : price;
 			},
 			openRecord(){
 				this.closeDialog()
@@ -520,7 +528,9 @@
 									activityType: '踩雷赏',
 									totalPrice: totalPrice,
 									description: this.productSeries.seriesName,
-									businessType: 1
+									businessType: 1,
+									orderAmount:this.getOrderAmount(),
+									paymentAmount: this.getShowOrderAmount()
 								}
 				this.handleWechatPay(postData)
 			},
@@ -733,6 +743,8 @@
 					boxNumber: boxNumber,
 					seriesId: this.seriesId,
 					activityType: '踩雷赏',
+					orderAmount:this.getOrderAmount(),
+					paymentAmount: this.getShowOrderAmount()
 					
 				}
 				post('wx/blindbox/drawBlindBox', postData).then(res => {
