@@ -9,7 +9,9 @@ export const commonMixns = {
 			const userId = uni.getStorageSync('userId');
 			const orderAmount = this.getOrderAmount()
 			get("wx/coupon/available?userId="+userId+"&orderAmount="+orderAmount).then(json=>{
-				this.couponList = [];
+				
+				const result = json.data?.data || []
+				this.couponList = result;
 			})
 		},
 		async initAddressList(){

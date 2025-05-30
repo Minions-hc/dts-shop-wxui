@@ -24,17 +24,17 @@
 				<swiper-item v-for="(box, index) in boxes" :key="box.id">
 					<view class="box-swiper-item">
 						<!-- 换箱按钮 -->
-						
+
 						<!-- 切换按钮 -->
 						<view class="nav-buttons">
 							<!-- 上一箱按钮 -->
 							<view class="nav-btn prev-btn" :disabled="currentIndex === 0" @click="switchBox('prev')">
 							</view>
-						
+
 							<!-- 刷新按钮 -->
 							<view class="refresh-btn" @click="handleRefresh">
 							</view>
-						
+
 							<!-- 下一箱按钮 -->
 							<view class="nav-btn next-btn" :disabled="currentIndex === boxes.length - 1"
 								@click="switchBox('next')">
@@ -58,13 +58,16 @@
 									<view class="record" @tap="showRecods()">开赏记录</view>
 								</view>
 							</view>
-						
-						
+
+
 							<!-- 产品列表 -->
 							<view class="product-grid">
-								<view v-for="(product, pIndex) in currentBox.products" :key="product.productId" class="product-card">
-									<image :src="product.productImage" mode="aspectFill" class="product-image" lazy-load=""/>
-									<view class="remain-qty">{{product.quantity - product.soldQuantity}}/{{product.quantity}}</view>
+								<view v-for="(product, pIndex) in currentBox.products" :key="product.productId"
+									class="product-card">
+									<image :src="product.productImage" mode="aspectFill" class="product-image"
+										lazy-load="" />
+									<view class="remain-qty">
+										{{product.quantity - product.soldQuantity}}/{{product.quantity}}</view>
 									<view class="product-info">
 										<view class="title-row">
 											<!-- 产品类型标签 -->
@@ -79,7 +82,7 @@
 							</view>
 						</view>
 					</view>
-					
+
 				</swiper-item>
 			</swiper>
 		</view>
@@ -89,7 +92,8 @@
 				<!-- 弹窗标题 -->
 				<view class="popup-header">
 					<text class="title">开赏记录({{records.length}})</text>
-					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png" class="close-icon" @tap="showPopup = false" />
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png"
+						class="close-icon" @tap="showPopup = false" />
 				</view>
 
 				<!-- 筛选标签 -->
@@ -109,7 +113,7 @@
 								<image :src="item.avatar" mode="aspectFit" lazy-load class="record-image"></image>
 								<text class="serial">【第{{ item.number }}张】{{ item.userId }}</text>
 							</view>
-							
+
 							<text class="time">{{ item.createdAt }}</text>
 						</view>
 
@@ -118,7 +122,7 @@
 							<view class="info-left">
 								<image :src="item.productImage" mode="aspectFit" lazy-load class="record-image"></image>
 								<text class="prize-name">{{ item.productName }}</text>
-							</view>							
+							</view>
 							<text class="award">{{ item.levelName }} x 1</text>
 						</view>
 
@@ -134,14 +138,16 @@
 				<!-- 弹窗标题 -->
 				<view class="popup-header">
 					<text class="title">切换房间</text>
-					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png" class="close-icon" @tap="showPopup = false" />
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png"
+						class="close-icon" @tap="showPopup = false" />
 				</view>
 
 				<!-- 记录列表 -->
 				<scroll-view class="box-list" scroll-y>
 					<view v-for="(item, index) in boxeInfos" :key="item.id" class="box-item" @tap="changeBox(index)">
 						<view class="box-img">
-							<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/box.png" mode="aspectFill" class="box-image"></image>
+							<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/box.png"
+								mode="aspectFill" class="box-image"></image>
 							<text>第{{index + 1}}箱</text>
 						</view>
 						<view class="box-type-list-content">
@@ -159,37 +165,21 @@
 				</scroll-view>
 			</view>
 		</view>
-		
+
 		<!-- 底部悬浮按钮 -->
 		<!-- 修改后的底部悬浮按钮部分 -->
 		<view class="footer-section">
-		  <view class="button-container">
-		    <!-- 四个图片按钮 -->
-		    <image 
-		      src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/all-in.png" 
-		      class="button-image" 
-		      mode="aspectFit"
-		      @click="handleDraw(0)"
-		    />
-		    <image 
-		      src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/pick-one.png" 
-		      class="button-image" 
-		      mode="aspectFit"
-		      @click="handleDraw(1)" 
-		    />
-		    <image 
-		      src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/pick-three.png" 
-		      class="button-image" 
-		      mode="aspectFit"
-		      @click="handleDraw(3)"
-		    />
-		    <image 
-		      src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/pick-ten.png" 
-		      class="button-image" 
-		      mode="aspectFit"
-		      @click="handleDraw(10)"
-		    />
-		  </view>
+			<view class="button-container">
+				<!-- 四个图片按钮 -->
+				<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/all-in.png"
+					class="button-image" mode="aspectFit" @click="handleDraw(0)" />
+				<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/pick-one.png"
+					class="button-image" mode="aspectFit" @click="handleDraw(1)" />
+				<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/pick-three.png"
+					class="button-image" mode="aspectFit" @click="handleDraw(3)" />
+				<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/pick-ten.png"
+					class="button-image" mode="aspectFit" @click="handleDraw(10)" />
+			</view>
 		</view>
 		<uni-popup ref="shopingPopup" background-color="#fff" @change="changePopup" type="bottom"
 			border-radius="10px 10px 0 0">
@@ -197,7 +187,7 @@
 				<view class="modal-container">
 					<!-- 标题 -->
 					<view class="modal-title">{{productSeries.seriesName}}</view>
-		
+
 					<!-- 内容区域 -->
 					<view class="modal-content">
 						<!-- 价格信息 -->
@@ -207,9 +197,11 @@
 						</view>
 						<view class="info-item">
 							<view>可用优惠券：</view>
-							<view :style="{display:'flex'}" v-if="couponList.length === 0">暂无可用优惠券<uni-icons type="right" size="20"></uni-icons></view>
-							<view :style="{display:'flex'}" v-else @tap="openCouponList">可用优惠券<uni-icons type="right" size="20"></uni-icons></view>
-							
+							<view :style="{display:'flex'}" v-if="couponList.length === 0">暂无可用优惠券<uni-icons
+									type="right" size="20"></uni-icons></view>
+							<view :style="{display:'flex'}" v-else @tap="openCouponList">{{getCounpontContent}}<uni-icons type="right"
+									size="20"></uni-icons></view>
+
 						</view>
 						<view class="info-item">
 							<view>可用红包：</view>
@@ -219,20 +211,20 @@
 							<view>积分抵扣 </view>
 							<view class="">
 								<text>{{currentPoints}}积分</text>
-								<text  class="point-class">-￥{{calcPointPrice()}}</text>
-								<switch :checked="isDeduction" @change="switch1Change" class="uni-swaitch"/>
+								<text class="point-class">-￥{{calcPointPrice()}}</text>
+								<switch :checked="isDeduction" @change="switch1Change" class="uni-swaitch" />
 							</view>
-							
+
 						</view>
 						<view class="info-item">
 							<view>是否锁箱 </view>
-							<switch :checked="isLockBox" @change="switchLockBox" class="uni-swaitch"/>
+							<switch :checked="isLockBox" @change="switchLockBox" class="uni-swaitch" />
 						</view>
 						<view class="info-item">
 							<view>是否开启动画 </view>
-							<switch  @change="switchAnimate" class="uni-swaitch"/>
+							<switch @change="switchAnimate" class="uni-swaitch" />
 						</view>
-		
+
 						<!-- 提货说明 -->
 						<view class="delivery-info">
 							<view>盒柜选择提货后7天内发货</view>
@@ -248,16 +240,15 @@
 							<text>我已满18岁，已阅读并同意《用户使用协议》</text>
 						</view>
 					</view>
-		
-		
+
+
 					<!-- 操作按钮 -->
 					<view class="confirm-btn" @click="handleConfirm" :class="[!chkDesc && 'disabled-confirm']">确认购买
 					</view>
 				</view>
 			</view>
 		</uni-popup>
-		<uni-popup ref="couponPopup" background-color="#fff"  type="bottom"
-			border-radius="10px 10px 0 0">
+		<uni-popup ref="couponPopup" background-color="#fff" type="bottom" border-radius="10px 10px 0 0">
 			<view class="coupon-popup-content" :class="{ 'popup-height': type === 'left' || type === 'right' }">
 				<view class="coupon-header">
 					<view class="coupon-haeder-title">
@@ -270,8 +261,9 @@
 				<coupon-dialog :userId="userId" :couponList="couponList" @setCoupon="setCoupon"></coupon-dialog>
 			</view>
 		</uni-popup>
-	<lucky-draw :dialogVisiable="dialogVisiable" :drawInfos="drawInfos" @openRecord="openRecord" :dialogMoreVisible="dialogMoreVisible" @closeDialog="closeDialog"></lucky-draw>
-	
+		<lucky-draw :dialogVisiable="dialogVisiable" :drawInfos="drawInfos" @openRecord="openRecord"
+			:dialogMoreVisible="dialogMoreVisible" @closeDialog="closeDialog"></lucky-draw>
+
 	</view>
 </template>
 
@@ -280,14 +272,21 @@
 		get,
 		post
 	} from "@/utils/rest-util.js"
-	import {getRandomElements} from "@/utils/common.js"
+	import {
+		getRandomElements
+	} from "@/utils/common.js"
 	import luckyDraw from './components/luckyDraw.vue';
 	import couponDialog from './components/couponDialog.vue';
-	import { commonMixns } from "./index.js"
+	import {
+		commonMixns
+	} from "./index.js"
 	export default {
-		mixins:[commonMixns],
+		mixins: [commonMixns],
 		onLoad(param) {
-			const {userId,seriesId} = param;
+			const {
+				userId,
+				seriesId
+			} = param;
 			this.seriesId = seriesId;
 			this.userId = userId;
 		},
@@ -295,42 +294,42 @@
 			this.getProductBoxBySeriesId(null)
 			this.getUserCurrentPoints();
 		},
-		components:{
+		components: {
 			luckyDraw,
 			couponDialog
 		},
 		data() {
 			return {
-				dialogVisiable:false,
-				dialogMoreVisible:false,
-				isDeduction:true,
-				isLockBox:true,
-				isOpenAnimate:false,
+				dialogVisiable: false,
+				dialogMoreVisible: false,
+				isDeduction: true,
+				isLockBox: true,
+				isOpenAnimate: false,
 				chkDesc: true,
 				currentIndex: 0,
-				showMarkPopup:false,
-				userId:'',
-				seriesId:'',
-				drawCount: 1,
+				showMarkPopup: false,
+				userId: '',
+				seriesId: '',
+				drawCount: 0,
 				showPopup: false,
 				showBoxPopup: false,
 				activeTab: '全部',
 				tabs: [],
 				records: [],
 				productInfo: {
-				        image: "https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/product.jpg",
-				        title: "高端无线蓝牙耳机",
-				        price: 399.00
-				      },
+					image: "https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/product.jpg",
+					title: "高端无线蓝牙耳机",
+					price: 399.00
+				},
 				boxes: [],
 				dynamicHeight: "auto", // 初始值
 				boxeInfos: [],
 				productSeries: {},
 				currentPoints: 0,
-				drawInfos:[],
+				drawInfos: [],
 				list: [],
 				couponPrice: 0,
-				couponList:[]
+				couponList: []
 			}
 		},
 		computed: {
@@ -341,66 +340,73 @@
 				if (this.activeTab === '全部') return this.records
 				return this.records.filter(item => item.levelName === this.activeTab)
 			},
-			showOrderAmount(){
-				const orderAmount= this.getOrderAmount();
-				const price  = orderAmount - this.couponPrice - this.calcPointPrice();
+			showOrderAmount() {
+				const orderAmount = this.getOrderAmount();
+				const price = orderAmount - this.couponPrice - this.calcPointPrice();
 				return price <= 0 ? 0.01 : price;
+			},
+			getCounpontContent(){
+				return this.couponPrice != 0 ? '-￥'+ this.couponPrice :'可用优惠券';
 			}
 		},
 		methods: {
-			getShowOrderAmount(){
-				const orderAmount= this.getOrderAmount();
-				const price  = orderAmount - this.couponPrice - this.calcPointPrice();
+			closeCoupon(){
+				this.$refs.couponPopup.close();
+			},
+			getShowOrderAmount() {
+				const orderAmount = this.getOrderAmount();
+				const price = orderAmount - this.couponPrice - this.calcPointPrice();
 				return price <= 0 ? 0.01 : price;
 			},
-			setCoupon(item){
+			setCoupon(item) {
 				this.couponPrice = item.couponAmount;
+				this.$refs.couponPopup.close();
 			},
-			openCouponList(){
+			openCouponList() {
 				this.$refs.couponPopup.open('bottom');
 			},
-			getOrderAmount(){
-				const currentBox = this.boxes[this.currentIndex];
-				return currentBox.pricePerDraw * this.drawCount;
+			getOrderAmount() {
+				const currentBox = this.boxes[this.currentIndex] || {};
+				return currentBox?.pricePerDraw * this.drawCount;
 			},
-			openRecord(){
+			openRecord() {
 				this.closeDialog();
 				this.showRecods()
 			},
-			closeDialog(){
+			closeDialog() {
 				this.dialogVisiable = false;
 				this.dialogMoreVisible = false;
 			},
 			changChk() {
 				this.chkDesc = !this.chkDesc;
 			},
-			closeMask(){
+			closeMask() {
 				this.showMarkPopup = false;
 			},
-			changePopup(){
-				
+			changePopup(e) {
+				this.couponPrice = 0;
 			},
-			changeBox(index){
+			changeBox(index) {
 				this.currentIndex = index;
 				this.showBoxPopup = false
-				
+
 			},
 			switch1Change(e) {
 				this.isDeduction = e.detail.value
 			},
-			switchAnimate(e){
+			switchAnimate(e) {
 				this.isOpenAnimate = e.detail.value;
 			},
-			switchLockBox(e){
+			switchLockBox(e) {
 				this.isLockBox = e.detail.value;
 			},
 			switchBox(direction) {
-				if(direction === 'next' && this.currentIndex === this.boxes.length - 1){
+				if (direction === 'next' && this.currentIndex === this.boxes.length - 1) {
 					uni.showToast({
 						title: '没有下一箱了',
 						icon: 'none'
 					})
-				} else if(direction === 'prev' && this.currentIndex === 0){
+				} else if (direction === 'prev' && this.currentIndex === 0) {
 					uni.showToast({
 						title: '没有上一箱了',
 						icon: 'none'
@@ -411,12 +417,12 @@
 				} else if (direction === 'next' && this.currentIndex < this.boxes.length - 1) {
 					this.currentIndex++
 				}
-				
+
 			},
 			onSwiperChange(e) {
 				this.currentIndex = e.detail.current
 			},
-			closeCoupon(){
+			closeCoupon() {
 				this.$refs.couponPopup.close()
 			},
 			handleRefresh() {
@@ -424,7 +430,7 @@
 					title: '刷新中...'
 				})
 				// 实际刷新逻辑
-				const callBack = ()=>{
+				const callBack = () => {
 					uni.hideLoading()
 					uni.showToast({
 						title: '刷新成功',
@@ -433,8 +439,8 @@
 				}
 				this.getProductBoxBySeriesId(callBack)
 			},
-			openDrawDialog(count){
-				if(count === 1){
+			openDrawDialog(count) {
+				if (count === 1) {
 					this.dialogVisiable = true
 				} else {
 					this.dialogMoreVisible = true;
@@ -447,29 +453,31 @@
 					});
 					return;
 				}
-				const callBack = (num)=>{
+				const callBack = (num) => {
 					this.drawCount = num;
 					this.getCouponList()
 					this.$refs.shopingPopup.open('bottom');
 				}
-				if(count === 0){
+				if (count === 0) {
 					const boxNumber = this.boxes[this.currentIndex].id;
-					get(`wx/blindbox/numbers?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res=>{
+					get(`wx/blindbox/numbers?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res => {
 						const result = res.data.data;
-						const arr = result.map(item=> {return item.number})
+						const arr = result.map(item => {
+							return item.number
+						})
 						callBack(arr.length)
 					})
 				} else {
 					callBack(count)
 				}
-			  },
+			},
 			navigatorToRule() {
 				uni.navigateTo({
 					url: '/subHome/blindBox/yifanshangRule'
 				})
 			},
-			getProductBoxBySeriesId(callBack){
-				get('wx/series/getProductBoxBySeriesId?seriesId='+this.seriesId).then(json=>{
+			getProductBoxBySeriesId(callBack) {
+				get('wx/series/getProductBoxBySeriesId?seriesId=' + this.seriesId).then(json => {
 					const result = json.data.data;
 					const groupedByBoxNumber = result.groupedByBoxNumber || {};
 					const productQuantityMap = result.productQuantityMap || {};
@@ -479,23 +487,23 @@
 					const keys = Object.keys(groupedByBoxNumber);
 					const boxList = [];
 					const boxeInfos = []
-					keys.forEach(item=>{
-						const boxResult = productBoxResultVos.find(str=>str.boxNumber == item);
+					keys.forEach(item => {
+						const boxResult = productBoxResultVos.find(str => str.boxNumber == item);
 						const obj = {
-							id:item,
+							id: item,
 							image: groupedByBoxNumber[item]?.[0]?.productImage || '',
-							remain:remainingQuantityMap[item],
-							total:productQuantityMap[item],
-							pricePerDraw:boxResult?.seriesPrice || '0',
-							products:groupedByBoxNumber[item]
+							remain: remainingQuantityMap[item],
+							total: productQuantityMap[item],
+							pricePerDraw: boxResult?.seriesPrice || '0',
+							products: groupedByBoxNumber[item]
 						}
 						const box = {
-							id:item,
-							remaining:remainingQuantityMap[item],
-							items:groupedByBoxNumber[item].map(str=>{
+							id: item,
+							remaining: remainingQuantityMap[item],
+							items: groupedByBoxNumber[item].map(str => {
 								return {
-									type:str.levelName,
-									current:str.quantity - str.soldQuantity,
+									type: str.levelName,
+									current: str.quantity - str.soldQuantity,
 									total: str.quantity
 								}
 							})
@@ -508,43 +516,44 @@
 					callBack && callBack()
 				})
 			},
-			getProductProbaby(product,currentBox){
-				if(product.quantity === product.soldQuantity){
+			getProductProbaby(product, currentBox) {
+				if (product.quantity === product.soldQuantity) {
 					return '0%'
 				}
-				if(product.levelName=== '终赏'){
+				if (product.levelName === '终赏') {
 					return '只赠不售'
 				}
 				const penson = (product.quantity - product.soldQuantity) / currentBox.remain
 				return (penson * 100).toFixed(3) + '%'
 			},
-			prizeDraw(){
+			prizeDraw() {
 				const boxNumber = this.boxes[this.currentIndex].id;
-				this.drawBlindBox(this.list,boxNumber)
+				this.drawBlindBox(this.list, boxNumber)
 			},
-			drawBlindBox(list,boxNumber){
+			drawBlindBox(list, boxNumber) {
 				const postData = {
-					userId:this.userId,
-					numbers:list,
-					boxNumber:boxNumber,
-					seriesId:this.seriesId,
-					activityType:'一番赏',
-					orderAmount:this.getOrderAmount(),
+					userId: this.userId,
+					numbers: list,
+					boxNumber: boxNumber,
+					seriesId: this.seriesId,
+					activityType: '一番赏',
+					orderAmount: this.getOrderAmount(),
 					paymentAmount: this.getShowOrderAmount()
 				}
-				post('wx/blindbox/drawBlindBox',postData).then(res=>{
+				post('wx/blindbox/drawBlindBox', postData).then(res => {
 					const result = res.data;
-					if(result.errno === 0){
+					if (result.errno === 0) {
 						this.getProductBoxBySeriesId()
-						this.drawInfos =result.data
+						this.drawInfos = result.data;
+						this.couponPrice = 0;
 						this.$refs.shopingPopup.close();
 						this.openDrawDialog(list.length)
 					}
 				})
 			},
-			showRecods(){
+			showRecods() {
 				const boxNumber = this.boxes[this.currentIndex].id;
-				get(`wx/blindbox/openRecords?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res=>{
+				get(`wx/blindbox/openRecords?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res => {
 					const result = res.data.data
 					const tabs = ['全部'];
 					const groupedByLevel = result.groupedByLevel || {};
@@ -555,72 +564,73 @@
 					this.showPopup = true
 				})
 			},
-			async handleConfirm(){
-				const addressList =await this.initAddressList();
-				const pickupList = addressList.filter(item=>item.pickup);
-				if(pickupList.length === 0){
+			async handleConfirm() {
+				const addressList = await this.initAddressList();
+				const pickupList = addressList.filter(item => item.pickup);
+				if (pickupList.length === 0) {
 					uni.showModal({
-					  title: '提示',       // 标题
-					  content: '还未设置自动提货地址，是否前往设置？', // 内容
-					  confirmText: '确定',     // 确认按钮文字
-					  cancelText: '取消',      // 取消按钮文字
-					  success: (res) => {
-					    if (res.confirm) {
-					      uni.navigateTo({
-					      	url: "/subUser/address/index"
-					      })
-					    } else if (res.cancel) {
-					      console.log('用户点击取消')
-					    }
-					  }
+						title: '提示', // 标题
+						content: '还未设置自动提货地址，是否前往设置？', // 内容
+						confirmText: '确定', // 确认按钮文字
+						cancelText: '取消', // 取消按钮文字
+						success: (res) => {
+							if (res.confirm) {
+								uni.navigateTo({
+									url: "/subUser/address/index?userId="+this.userId
+								})
+							} else if (res.cancel) {
+								console.log('用户点击取消')
+							}
+						}
 					})
 					return
 				}
-				const  count = this.drawCount
+				const count = this.drawCount
 				const boxNumber = this.boxes[this.currentIndex].id;
-				get(`wx/blindbox/numbers?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res=>{
+				get(`wx/blindbox/numbers?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res => {
 					const result = res.data.data;
-					const listMap = result.map(item=>{
-						if(!item.soldOut){
+					const listMap = result.map(item => {
+						if (!item.soldOut) {
 							return item
 						}
-					}).filter(item=>item)
-					const arr = listMap.map(item=> {return item.number})
-					if(count !== 0){
-						this.list = getRandomElements(arr,count)
+					}).filter(item => item)
+					const arr = listMap.map(item => {
+						return item.number
+					})
+					if (count !== 0) {
+						this.list = getRandomElements(arr, count)
 					} else {
 						this.list = arr;
 					}
 					// this.drawBlindBox(list,boxNumber)
-					const amount = this.boxes[this.currentIndex].pricePerDraw * this.drawCount;
 					const postData = {
-											userId:this.userId,
-											numbers:this.list,
-											boxNumber:boxNumber,
-											seriesId:this.seriesId,
-											activityType:'一番赏',
-											orderAmount:this.getOrderAmount(),
-											paymentAmount: this.getShowOrderAmount(),
-											amount: amount,
-											description: this.productSeries.seriesName,
-											businessType: 1
-										}
+						userId: this.userId,
+						numbers: this.list,
+						boxNumber: boxNumber,
+						seriesId: this.seriesId,
+						activityType: '一番赏',
+						orderAmount: this.getOrderAmount(),
+						paymentAmount: this.getShowOrderAmount(),
+						amount: this.getShowOrderAmount(),
+						description: this.productSeries.seriesName,
+						businessType: 1
+					}
 					this.handleWechatPay(postData)
 				})
-				
-				
+
+
 			},
-			getUserCurrentPoints(){
-				get('wx/points/getUserCurrentPoints?userId='+this.userId).then(json => {
+			getUserCurrentPoints() {
+				get('wx/points/getUserCurrentPoints?userId=' + this.userId).then(json => {
 					const result = json.data.data;
 					this.currentPoints = result.currentPoints || 0;
-					
+
 				})
 			},
-			calcPointPrice(){
-				return this.currentPoints / 10
+			calcPointPrice() {
+				return this.isDeduction ? this.currentPoints / 10 : 0;
 			}
-			
+
 
 		}
 	}
@@ -665,7 +675,8 @@
 			flex: 1;
 		}
 	}
-	.box-swiper-item{
+
+	.box-swiper-item {
 		min-height: 600rpx;
 		height: auto;
 		overflow: auto;
@@ -850,7 +861,8 @@
 				box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
 				border: 5rpx solid #d9d9d9;
 				position: relative;
-				.remain-qty{
+
+				.remain-qty {
 					position: absolute;
 					top: 0rpx;
 					left: 0rpx;
@@ -910,33 +922,33 @@
 	/* 底部按钮 */
 	// 更新后的样式
 	.footer-section {
-	  position: fixed;
-	  bottom: 0;
-	  left: 0;
-	  right: 0;
-	  padding: 0rpx 20rpx;
-	  background: #ed80a0; // 粉色背景
-	  border-top-left-radius: 35rpx; // 左上圆角
-	  border-top-right-radius: 35rpx; // 右上圆角
-	  box-shadow: 0 -4rpx 12rpx rgba(0, 0, 0, 0.1);
-	  z-index: 99;
-	  height: 120rpx;
-	
-	  .button-container {
-	   
-	    .button-image {
-		  position: relative;
-		  top: -55rpx;
-	      width: 150rpx;
-		  height: 150rpx;
-	      margin: 0 15rpx;
-	      transition: transform 0.2s ease;
-	
-	      &:active {
-	        transform: scale(0.95);
-	      }
-	    }
-	  }
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		padding: 0rpx 20rpx;
+		background: #ed80a0; // 粉色背景
+		border-top-left-radius: 35rpx; // 左上圆角
+		border-top-right-radius: 35rpx; // 右上圆角
+		box-shadow: 0 -4rpx 12rpx rgba(0, 0, 0, 0.1);
+		z-index: 99;
+		height: 120rpx;
+
+		.button-container {
+
+			.button-image {
+				position: relative;
+				top: -55rpx;
+				width: 150rpx;
+				height: 150rpx;
+				margin: 0 15rpx;
+				transition: transform 0.2s ease;
+
+				&:active {
+					transform: scale(0.95);
+				}
+			}
+		}
 	}
 
 	// 弹窗样式
@@ -1001,28 +1013,31 @@
 
 	.record-list {
 		max-height: 50vh;
+
 		.record-item {
 			padding: 24rpx 15rpx;
 			border: 4rpx solid #424242;
 			margin-bottom: 10rpx;
-			.record-image{
+
+			.record-image {
 				width: 40rpx;
 				height: 40rpx;
 				margin-right: 10rpx;
 			}
-			
+
 
 			.item-header {
 				display: flex;
 				justify-content: space-between;
 				margin-bottom: 16rpx;
-				.record-image{
+
+				.record-image {
 					border-radius: 50%;
 				}
-				
-				.header-left{
+
+				.header-left {
 					display: inline-flex;
-					
+
 				}
 
 				.serial {
@@ -1041,9 +1056,11 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				.info-left{
+
+				.info-left {
 					display: inline-flex;
 				}
+
 				.prize-name {
 					font-size: 26rpx;
 					color: #666;
@@ -1138,98 +1155,111 @@
 			}
 		}
 	}
+
 	.mask {
-	  position: fixed;
-	  top: 0;
-	  left: 0;
-	  right: 0;
-	  bottom: 0;
-	  background: rgba(0,0,0,0.9);
-	  display: flex;
-	  justify-content: center;
-	  align-items: center;
-	  z-index: 999;
-	  .popup-content {
-	    width: 80%;
-	    background: white;
-	    border-radius: 20rpx;
-	    padding: 40rpx;
-	    position: relative;
-	  }
-	  
-	  .product-card {
-	    position: relative;
-	    .product-image {
-	      width: 100%;
-	      height: 400rpx;
-	      border-radius: 12rpx;
-	    }
-	    .product-info {
-	      margin-top: 20rpx;
-	      .product-title {
-	        font-size: 32rpx;
-	        display: block;
-	        font-weight: bold;
-	      }
-	      .product-price {
-	        color: #FF4500;
-	        font-size: 40rpx;
-	        margin-top: 10rpx;
-	        display: block;
-	      }
-	    }
-	  }
-	  
-	  .float-gif {
-	    position: absolute;
-	    width: 200rpx;
-	    top: -80rpx;
-	    left: 50%;
-	    transform: translateX(-50%);
-	    z-index: 1000;
-	  }
-	  
-	  .action-btns {
-	    margin-top: 40rpx;
-	    display: flex;
-	    gap: 20rpx;
-	    .btn {
-	      flex: 1;
-	      height: 80rpx;
-	      line-height: 80rpx;
-	      font-size: 28rpx;
-	      border-radius: 40rpx;
-	      &::after { border: none }
-	    }
-	    .cart-btn {
-	      background: #FFD700;
-	      color: #333;
-	    }
-	    .buy-btn {
-	      background: #FF4500;
-	      color: white;
-	    }
-	  }
-	  
-	  .close-icon {
-	    position: absolute;
-	    right: 20rpx;
-	    top: 20rpx;
-	    font-size: 50rpx;
-	    color: #666;
-	    width: 60rpx;
-	    height: 60rpx;
-	    text-align: center;
-	    line-height: 50rpx;
-	  }
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.9);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 999;
+
+		.popup-content {
+			width: 80%;
+			background: white;
+			border-radius: 20rpx;
+			padding: 40rpx;
+			position: relative;
+		}
+
+		.product-card {
+			position: relative;
+
+			.product-image {
+				width: 100%;
+				height: 400rpx;
+				border-radius: 12rpx;
+			}
+
+			.product-info {
+				margin-top: 20rpx;
+
+				.product-title {
+					font-size: 32rpx;
+					display: block;
+					font-weight: bold;
+				}
+
+				.product-price {
+					color: #FF4500;
+					font-size: 40rpx;
+					margin-top: 10rpx;
+					display: block;
+				}
+			}
+		}
+
+		.float-gif {
+			position: absolute;
+			width: 200rpx;
+			top: -80rpx;
+			left: 50%;
+			transform: translateX(-50%);
+			z-index: 1000;
+		}
+
+		.action-btns {
+			margin-top: 40rpx;
+			display: flex;
+			gap: 20rpx;
+
+			.btn {
+				flex: 1;
+				height: 80rpx;
+				line-height: 80rpx;
+				font-size: 28rpx;
+				border-radius: 40rpx;
+
+				&::after {
+					border: none
+				}
+			}
+
+			.cart-btn {
+				background: #FFD700;
+				color: #333;
+			}
+
+			.buy-btn {
+				background: #FF4500;
+				color: white;
+			}
+		}
+
+		.close-icon {
+			position: absolute;
+			right: 20rpx;
+			top: 20rpx;
+			font-size: 50rpx;
+			color: #666;
+			width: 60rpx;
+			height: 60rpx;
+			text-align: center;
+			line-height: 50rpx;
+		}
 	}
+
 	/* 弹窗容器 */
 	.modal-container {
 		background: #FFFFFF;
 		border-radius: 16rpx;
 		padding: 32rpx;
 	}
-	
+
 	/* 标题样式 */
 	.modal-title {
 		font-size: 36rpx;
@@ -1238,12 +1268,12 @@
 		text-align: center;
 		margin-bottom: 32rpx;
 	}
-	
+
 	/* 内容区域 */
 	.modal-content {
 		padding: 0 20rpx;
 	}
-	
+
 	/* 信息条目 */
 	.info-item {
 		font-size: 28rpx;
@@ -1254,16 +1284,18 @@
 		display: flex;
 		justify-content: space-between;
 		margin: 15rpx 0;
-		.uni-swaitch{
+
+		.uni-swaitch {
 			line-height: 40rpx;
 			margin-left: 10rpx;
 		}
-		.point-class{
+
+		.point-class {
 			color: red;
 			margin-left: 10rpx;
 		}
 	}
-	
+
 	/* 提货说明 */
 	.delivery-info {
 		margin-top: 32rpx;
@@ -1273,7 +1305,7 @@
 		color: red;
 		font-weight: bold;
 	}
-	
+
 	.total-parice-content {
 		width: 100%;
 		font-size: 28rpx;
@@ -1283,7 +1315,7 @@
 		margin-top: 8rpx;
 		font-weight: bold;
 	}
-	
+
 	/* 确认按钮 */
 	.confirm-btn {
 		height: 88rpx;
@@ -1296,17 +1328,18 @@
 		justify-content: center;
 		margin-top: 24rpx;
 	}
-	.disabled-confirm{
+
+	.disabled-confirm {
 		background: #999;
 		color: #000;
 	}
-	
+
 	.check-desc-item {
 		display: flex;
 		text-align: center;
 		font-size: 24rpx;
 		margin: 15rpx 0;
-	
+
 		.checkbox {
 			width: 30rpx;
 			height: 30rpx;
@@ -1316,11 +1349,11 @@
 			align-items: center;
 			justify-content: center;
 			margin-right: 10rpx;
-	
+
 			&.checked {
 				background: red;
 				border-color: red;
-	
+
 				.check-icon {
 					color: #fff;
 					font-size: 28rpx;
@@ -1329,16 +1362,17 @@
 			}
 		}
 	}
-	.coupon-popup-content{
+
+	.coupon-popup-content {
 		padding: 20rpx;
-		.coupon-header{
+
+		.coupon-header {
 			display: flex;
 			justify-content: space-between;
 			width: 100%;
 			line-height: 80rpx;
 			font-weight: bold;
-			
+
 		}
 	}
-
 </style>

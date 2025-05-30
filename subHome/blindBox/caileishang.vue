@@ -31,13 +31,15 @@
 			<view class="lock-header">
 				<!-- 左侧状态 -->
 				<view class="left-section">
-					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/unlock.png" class="status-icon" webp="true" lazy-load="true"/>
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/unlock.png"
+						class="status-icon" webp="true" lazy-load="true" />
 					<text class="status-text">目前还没有人锁箱</text>
 				</view>
 
 				<!-- 右侧记录 -->
 				<view class="right-section" @tap="showPopup = true">
-					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/recode-img.png" class="record-icon" webp="true" lazy-load="true"/>
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/recode-img.png"
+						class="record-icon" webp="true" lazy-load="true" />
 					<text class="record-text" @tap="showRecods()">选号记录</text>
 				</view>
 			</view>
@@ -47,7 +49,8 @@
 					<!-- 弹窗标题 -->
 					<view class="popup-header">
 						<text class="title">开赏记录({{filteredRecords.length}})</text>
-						<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
+						<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png"
+							class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true" />
 					</view>
 
 					<!-- 筛选标签 -->
@@ -64,7 +67,8 @@
 							<!-- 条目头部 -->
 							<view class="item-header">
 								<view class="header-left">
-									<image :src="item.avatar" mode="aspectFit" webp="true" lazy-load="true" class="record-image"></image>
+									<image :src="item.avatar" mode="aspectFit" webp="true" lazy-load="true"
+										class="record-image"></image>
 									<text class="serial">【第{{ item.number }}张】{{ item.userId }}</text>
 								</view>
 
@@ -74,7 +78,8 @@
 							<!-- 奖品信息 -->
 							<view class="prize-info">
 								<view class="info-left">
-									<image :src="item.productImage" mode="aspectFit" webp="true" lazy-load="true" class="record-image">
+									<image :src="item.productImage" mode="aspectFit" webp="true" lazy-load="true"
+										class="record-image">
 									</image>
 									<text class="prize-name">{{ item.productName }}</text>
 								</view>
@@ -89,8 +94,10 @@
 			</view>
 			<view class="product-grid">
 				<view v-for="(item, index) in productImages" :key="item.productId" class="grid-item">
-					<image v-if="index < 7" :src="item.productImage" mode="aspectFill" class="grid-img" webp="true" lazy-load="true"/>
-					<image v-else src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/more-btn.png" mode="aspectFill" class="grid-img" webp="true" lazy-load="true"/>
+					<image v-if="index < 7" :src="item.productImage" mode="aspectFill" class="grid-img" webp="true"
+						lazy-load="true" />
+					<image v-else src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/more-btn.png"
+						mode="aspectFill" class="grid-img" webp="true" lazy-load="true" />
 				</view>
 			</view>
 			<view class="box-controls">
@@ -106,7 +113,9 @@
 						<!-- 弹窗标题 -->
 						<view class="popup-header">
 							<text class="title">切换房间</text>
-							<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
+							<image
+								src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png"
+								class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true" />
 						</view>
 
 						<!-- 记录列表 -->
@@ -114,7 +123,9 @@
 							<view v-for="(item, index) in boxeInfos" :key="item.id" class="box-item"
 								@tap="changeBox(index)">
 								<view class="box-img">
-									<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/box.png" mode="aspectFill" class="box-image" webp="true" lazy-load="true"></image>
+									<image
+										src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/box.png"
+										mode="aspectFill" class="box-image" webp="true" lazy-load="true"></image>
 									<text>第{{index + 1}}箱</text>
 								</view>
 								<view class="box-type-list-content">
@@ -171,9 +182,10 @@
 						<text class="serial-number">{{ index + 1 }}</text>
 					</view>
 
-					<image :src="item.image" v-if="item.soldOut" mode="aspectFill" class="product-image" webp="true" lazy-load="true"/>
-					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/default-image.png" v-if="!item.soldOut" mode="aspectFill"  webp="true" lazy-load="true"
-						class="product-image" />
+					<image :src="item.image" v-if="item.soldOut" mode="aspectFill" class="product-image" webp="true"
+						lazy-load="true" />
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/default-image.png"
+						v-if="!item.soldOut" mode="aspectFill" webp="true" lazy-load="true" class="product-image" />
 
 					<!-- 选中标记 -->
 					<view v-if="item.checked && !item.soldOut" class="check-mark"></view>
@@ -190,7 +202,7 @@
 		<view class="detail-container">
 			<!-- 标题区域 -->
 			<view class="detail-header">
-				<image src="/static/icons/box.png" class="title-icon" />
+				<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/box.png" class="title-icon" />
 				<text class="title-text">百宝箱明细</text>
 			</view>
 
@@ -237,10 +249,7 @@
 			<view class="progress-section">
 				<!-- 分段进度条 -->
 				<view class="progress-container">
-					<price-progress 
-					    :segments="segments"
-					    :currentValue="currentValue"
-					  />
+					<price-progress :segments="segments" :currentValue="currentValue" />
 				</view>
 				<view class="stock-info">
 					<text>剩{{getBoxRemainQty}}张</text>
@@ -273,9 +282,11 @@
 						</view>
 						<view class="info-item">
 							<view>可用优惠券：</view>
-							<view :style="{display:'flex'}" v-if="couponList.length === 0">暂无可用优惠券<uni-icons type="right" size="20"></uni-icons></view>
-							<view :style="{display:'flex'}" v-else @tap="openCouponList">可用优惠券<uni-icons type="right" size="20"></uni-icons></view>
-							
+							<view :style="{display:'flex'}" v-if="couponList.length === 0">暂无可用优惠券<uni-icons
+									type="right" size="20"></uni-icons></view>
+							<view :style="{display:'flex'}" v-else @tap="openCouponList">{{getCounpontContent}}<uni-icons type="right"
+									size="20"></uni-icons></view>
+
 						</view>
 						<view class="info-item">
 							<view>可用红包：</view>
@@ -309,8 +320,7 @@
 				</view>
 			</view>
 		</uni-popup>
-		<uni-popup ref="couponPopup" background-color="#fff"  type="bottom"
-			border-radius="10px 10px 0 0">
+		<uni-popup ref="couponPopup" background-color="#fff" type="bottom" border-radius="10px 10px 0 0">
 			<view class="coupon-popup-content" :class="{ 'popup-height': type === 'left' || type === 'right' }">
 				<view class="coupon-header">
 					<view class="coupon-haeder-title">
@@ -323,8 +333,9 @@
 				<coupon-dialog :userId="userId" :couponList="couponList" @setCoupon="setCoupon"></coupon-dialog>
 			</view>
 		</uni-popup>
-		
-		<lucky-draw :dialogVisiable="dialogVisiable" :drawInfos="drawInfos" @openRecord="openRecord" :dialogMoreVisible="dialogMoreVisible" @closeDialog="closeDialog"></lucky-draw>
+
+		<lucky-draw :dialogVisiable="dialogVisiable" :drawInfos="drawInfos" @openRecord="openRecord"
+			:dialogMoreVisible="dialogMoreVisible" @closeDialog="closeDialog"></lucky-draw>
 	</view>
 </template>
 
@@ -339,9 +350,11 @@
 	import {
 		getRandomElements
 	} from "@/utils/common.js"
-	import { commonMixns } from "./index.js"
+	import {
+		commonMixns
+	} from "./index.js"
 	export default {
-		mixins:[commonMixns],
+		mixins: [commonMixns],
 		components: {
 			priceProgress,
 			luckyDraw,
@@ -354,7 +367,7 @@
 			} = param;
 			this.seriesId = seriesId;
 			this.userId = userId;
-			
+
 		},
 		onShow() {
 			this.getProductBoxBySeriesId(null)
@@ -362,8 +375,8 @@
 		data() {
 			return {
 				chkDesc: true,
-				dialogVisiable:false,
-				dialogMoreVisible:false,
+				dialogVisiable: false,
+				dialogMoreVisible: false,
 				segments: [],
 				seriesId: '',
 				userId: '',
@@ -390,10 +403,10 @@
 				filteredItems: [],
 				productSeries: {},
 				currentValue: 0,
-				isLockBox:true,
-				drawInfos:[],
+				isLockBox: true,
+				drawInfos: [],
 				couponPrice: 0,
-				couponList:[]
+				couponList: []
 			}
 		},
 		computed: {
@@ -426,37 +439,45 @@
 			slectedNum() {
 				return this.selectedCount.join(',')
 			},
-			showOrderAmount(){
-				const orderAmount= this.getOrderAmount();
-				const price  = orderAmount - this.couponPrice ;
+			showOrderAmount() {
+				const orderAmount = this.getOrderAmount();
+				const price = orderAmount - this.couponPrice;
 				return price <= 0 ? 0.01 : price;
+			},
+			getCounpontContent(){				
+				return this.couponPrice != 0 ? '-￥'+ this.couponPrice :'可用优惠券';
 			}
 		},
 		methods: {
-			setCoupon(item){
-				this.couponPrice = item.couponAmount;
+			closeCoupon(){
+				this.$refs.couponPopup.close();
 			},
-			openCouponList(){
+			setCoupon(item) {
+				this.couponPrice = item.couponAmount;
+				this.$refs.couponPopup.close();
+			},
+			openCouponList() {
 				this.$refs.couponPopup.open('bottom');
 			},
-			getOrderAmount(){
+			getOrderAmount() {
 				return this.getTotalPrice()
 			},
-			getShowOrderAmount(){
-				const orderAmount= this.getOrderAmount();
-				const price  = orderAmount - this.couponPrice ;
+			getShowOrderAmount() {
+				const orderAmount = this.getOrderAmount();
+				const price = orderAmount - this.couponPrice;
 				return price <= 0 ? 0.01 : price;
 			},
-			openRecord(){
+			openRecord() {
 				this.closeDialog()
 				this.showRecods()
 			},
-			closeDialog(data){
+			closeDialog(data) {
 				this.dialogVisiable = false;
 				this.dialogMoreVisible = false;
 			},
 			changePopup(e) {
 				console.log('当前模式：' + e.type + ',状态：' + e.show);
+				this.couponPrice = 0;
 			},
 			getProductProbaby(product, currentBox) {
 				if (product.quantity === product.soldQuantity) {
@@ -494,23 +515,23 @@
 				}).filter(item => item);
 			},
 			async handleConfirm() {
-				const addressList =await this.initAddressList();
-				const pickupList = addressList.filter(item=>item.pickup);
-				if(pickupList.length === 0){
+				const addressList = await this.initAddressList();
+				const pickupList = addressList.filter(item => item.pickup);
+				if (pickupList.length === 0) {
 					uni.showModal({
-					  title: '提示',       // 标题
-					  content: '还未设置自动提货地址，是否前往设置？', // 内容
-					  confirmText: '确定',     // 确认按钮文字
-					  cancelText: '取消',      // 取消按钮文字
-					  success: (res) => {
-					    if (res.confirm) {
-					      uni.navigateTo({
-					      	url: "/subUser/address/index"
-					      })
-					    } else if (res.cancel) {
-					      console.log('用户点击取消')
-					    }
-					  }
+						title: '提示', // 标题
+						content: '还未设置自动提货地址，是否前往设置？', // 内容
+						confirmText: '确定', // 确认按钮文字
+						cancelText: '取消', // 取消按钮文字
+						success: (res) => {
+							if (res.confirm) {
+								uni.navigateTo({
+									url: "/subUser/address/index?userId="+this.userId
+								})
+							} else if (res.cancel) {
+								console.log('用户点击取消')
+							}
+						}
 					})
 					return
 				}
@@ -521,23 +542,23 @@
 				const list = this.selectedCount;
 				const boxNumber = this.boxes[this.currentIndex - 1].id;
 				const postData = {
-									userId: this.userId,
-									numbers: list,
-									boxNumber: boxNumber,
-									seriesId: this.seriesId,
-									activityType: '踩雷赏',
-									totalPrice: totalPrice,
-									description: this.productSeries.seriesName,
-									businessType: 1,
-									orderAmount:this.getOrderAmount(),
-									paymentAmount: this.getShowOrderAmount()
-								}
+					userId: this.userId,
+					numbers: list,
+					boxNumber: boxNumber,
+					seriesId: this.seriesId,
+					activityType: '踩雷赏',
+					totalPrice: totalPrice,
+					description: this.productSeries.seriesName,
+					businessType: 1,
+					orderAmount: this.getOrderAmount(),
+					paymentAmount: this.getShowOrderAmount()
+				}
 				this.handleWechatPay(postData)
 			},
-			prizeDraw(){
+			prizeDraw() {
 				const list = this.selectedCount;
 				const boxNumber = this.boxes[this.currentIndex - 1].id;
-				this.drawBlindBox(list,boxNumber)
+				this.drawBlindBox(list, boxNumber)
 			},
 			// 切换箱子
 			async switchBox(direction) {
@@ -564,8 +585,7 @@
 				uni.showLoading({
 					title: '加载中...'
 				})
-				try {
-				} finally {
+				try {} finally {
 					uni.hideLoading()
 				}
 			},
@@ -585,11 +605,11 @@
 						icon: 'none'
 					})
 				}
-				
+
 				this.getProductBoxBySeriesId(callBack)
 			},
-			openDrawDialog(count){
-				if(count === 1){
+			openDrawDialog(count) {
+				if (count === 1) {
 					this.dialogVisiable = true
 				} else {
 					this.dialogMoreVisible = true;
@@ -602,7 +622,7 @@
 					});
 					return;
 				}
-				
+
 				this.prizeDraws(count)
 			},
 			navigatorToRule() {
@@ -613,9 +633,9 @@
 			toShopping() {
 				if (this.selectedCount.length == 0) {
 					uni.showToast({
-						title:'您没有选中号码！！！',
-						icon:'warning',
-						duration:2000,
+						title: '您没有选中号码！！！',
+						icon: 'warning',
+						duration: 2000,
 					})
 					return;
 				}
@@ -695,7 +715,7 @@
 						price: item.price
 					}
 				})
-				const maxValue = this.boxes[this.currentIndex].total
+				const maxValue = this.boxes[this.currentIndex]?.total || 0
 				segments.push({
 					end: maxValue,
 					price: 100
@@ -743,15 +763,16 @@
 					boxNumber: boxNumber,
 					seriesId: this.seriesId,
 					activityType: '踩雷赏',
-					orderAmount:this.getOrderAmount(),
+					orderAmount: this.getOrderAmount(),
 					paymentAmount: this.getShowOrderAmount()
-					
+
 				}
 				post('wx/blindbox/drawBlindBox', postData).then(res => {
 					const result = res.data;
-					if(result.errno === 0){
+					if (result.errno === 0) {
 						this.getProductBoxBySeriesId()
-						this.drawInfos =result.data
+						this.drawInfos = result.data;
+						this.couponPrice = 0;
 						this.$refs.shopingPopup.close();
 						this.openDrawDialog(list.length)
 					}
@@ -777,30 +798,30 @@
 				const totalValue = this.currentValue + buyNum;
 				const currentSegment = this.segments.find(s => this.currentValue <= s.end);
 				const toBeSegment = this.segments.find(s => totalValue <= s.end);
-				
+
 				if (currentSegment.end == toBeSegment.end) {
 					return buyNum * toBeSegment.price;
 				}
-				
+
 				this.segments.forEach(segment => {
 					if (currentSegment.end == segment.end) {
-						totalPrice =  totalPrice + (segment.end - tmpCurrentValue) * segment.price;
+						totalPrice = totalPrice + (segment.end - tmpCurrentValue) * segment.price;
 						tmpCurrentValue = segment.end;
 					}
-					
+
 					if (currentSegment.end < segment.end && segment.end < toBeSegment.end) {
-						totalPrice =  totalPrice + (segment.end - tmpCurrentValue) * segment.price;
+						totalPrice = totalPrice + (segment.end - tmpCurrentValue) * segment.price;
 						tmpCurrentValue = segment.end;
 					}
-					
+
 					if (segment.end == toBeSegment.end) {
-						totalPrice =  totalPrice + (totalValue - tmpCurrentValue) * segment.price;
+						totalPrice = totalPrice + (totalValue - tmpCurrentValue) * segment.price;
 					}
 				})
 				return totalPrice;
 			},
-			getUserPoint(){
-				
+			getUserPoint() {
+
 			}
 		}
 	}
@@ -1535,6 +1556,7 @@
 	.record-list {
 		max-height: 50vh;
 		min-height: 30vh;
+
 		.record-item {
 			padding: 24rpx 15rpx;
 			border: 4rpx solid #424242;
@@ -1741,7 +1763,8 @@
 		justify-content: center;
 		margin-top: 24rpx;
 	}
-	.disabled-confirm{
+
+	.disabled-confirm {
 		background: #999;
 		color: #000;
 	}
@@ -1772,6 +1795,18 @@
 					transform: translateY(-2rpx);
 				}
 			}
+		}
+	}
+	.coupon-popup-content {
+		padding: 20rpx;
+	
+		.coupon-header {
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+			line-height: 80rpx;
+			font-weight: bold;
+	
 		}
 	}
 </style>

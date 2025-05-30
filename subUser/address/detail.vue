@@ -78,11 +78,12 @@
 				userId,
 				addressId
 			} = param;
-			this.userId = userId;
+			this.userId = userId || uni.getStorageSync('userId');
 			this.addressId = addressId;
 			
 		},
 		onShow(){
+			this.userId = this.userId || uni.getStorageSync('userId');
 			if (this.addressId) {
 				this.initAddressList();
 			}

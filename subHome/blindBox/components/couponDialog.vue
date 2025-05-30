@@ -69,6 +69,7 @@
 				})
 			},
 			useCoupon(item) {
+				console.log(item)
 				this.currentCouponId = item.couponId
 				this.$emit('setCoupon',item)
 			}
