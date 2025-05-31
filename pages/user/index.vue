@@ -1,5 +1,5 @@
 <template>
-	<view class="container">
+	<view class="container" v-show="visablePage">
 		<!-- 用户信息区域 -->
 		<view class="user-section">
 			<view class="user-info" @click="navigateToUserInfo()">
@@ -73,17 +73,29 @@
 			
 		},
 		onShow(){
+			if(!this.userId){
+				// this.visablePage = false;
+				uni.showToast({
+					title:"请先登录",
+					icon:"none"
+				})
+				setTimeout(()=>{
+					uni.navigateTo({
+						url:"/pages/login/index"
+					})
+				},500)
+				
+				return 
+			}
 			this.getUserInfo()
 			this.getUserCurrentPoints(this.userId);
 			this.getInvitationRecords(this.userId);
-			// const userInfo = uni.getStorageSync("userInfo") || {};
-			// this.userInfo = userInfo
 		},
 		data() {
 			
 			return {
 				userId: uni.getStorageSync('userId'),
-				
+				visablePage:true,
 				activeOrderTab: 0,
 				orderStatus: [{
 						icon: 'shop',

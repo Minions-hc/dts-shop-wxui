@@ -1,5 +1,5 @@
 <template>
-	<view class="container">
+	<view class="container" v-show="visablePage">
 		<!-- 顶部菜单 -->
 		<view class="top-menu">
 			<view v-for="(item, index) in menus" :key="index"
@@ -96,11 +96,26 @@
 			
 		},
 		onShow(){
-			this.initPageData()
 			this.userId = uni.getStorageSync('userId');
+			if(!this.userId){
+				// this.visablePage = false;
+				uni.showToast({
+					title:"请先登录",
+					icon:"none"
+				})
+				setTimeout(()=>{
+					uni.navigateTo({
+						url:"/pages/login/index"
+					})
+				},500)
+				return 
+			}
+			this.initPageData()
+			
 		},
 		data() {
 			return {
+				visablePage:true,
 				menus: [{name:'待处理',status:'pending'},{name:'已提货',status:'shipped'},{name:'全部',status:'all'}],
 				filters: ['全部', 'A赏', 'B赏', '终赏', '其他'],
 				activeMenu: 0,

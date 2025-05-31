@@ -72,6 +72,7 @@ export default {
 		this.userId = uni.getStorageSync('userId');
 	},
 	onShow() {
+		this.activeCategory = 0;
 		this.loadAllData()
 		this.loadCateData();
 		this.queryPopularNew();

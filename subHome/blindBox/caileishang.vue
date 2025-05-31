@@ -629,6 +629,18 @@
 				})
 			},
 			toShopping() {
+				if(!this.userId){
+					uni.showToast({
+						title:"请先登录",
+						icon:"none"
+					})
+					setTimeout(()=>{
+						uni.navigateTo({
+							url:"/pages/login/index"
+						})
+					},500)
+					return
+				}
 				if (this.selectedCount.length == 0) {
 					uni.showToast({
 						title: '您没有选中号码！！！',

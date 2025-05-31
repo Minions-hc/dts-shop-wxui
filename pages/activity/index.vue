@@ -1,5 +1,5 @@
 <template>
-	<view class="activity-page">
+	<view class="activity-page" v-show="visablePage">
 		<!-- 顶部区域 -->
 		<view class="top-section">
 			<text class="title">活动中心</text>
@@ -65,11 +65,25 @@
 
 		onShow() {
 			this.userId = uni.getStorageSync('userId');
+			if(!this.userId){
+				// this.visablePage = false;
+				uni.showToast({
+					title:"请先登录",
+					icon:"none"
+				})
+				setTimeout(()=>{
+					uni.navigateTo({
+						url:"/pages/login/index"
+					})
+				},500)
+				return 
+			}
 			this.currentCheckInDay();
 			this.userConsumptionInFirday()
 		},
 		data() {
 			return {
+				visablePage: true,
 				// 活动数据示例
 				activities: [{
 						bg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/activity1.png',

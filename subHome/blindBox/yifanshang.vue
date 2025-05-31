@@ -451,6 +451,18 @@
 				}
 			},
 			handleDraw(count) {
+				if(!this.userId){
+					uni.showToast({
+						title:"请先登录",
+						icon:"none"
+					})
+					setTimeout(()=>{
+						uni.navigateTo({
+							url:"/pages/login/index"
+						})
+					},500)
+					return
+				}
 				if (count != 0 && count > this.boxes[this.currentIndex].remaining) {
 					uni.showToast({
 						title: '库存不足~'
@@ -627,6 +639,9 @@
 
 			},
 			getUserCurrentPoints() {
+				if(!this.userId){
+					return
+				}
 				get('wx/points/getUserCurrentPoints?userId=' + this.userId).then(json => {
 					const result = json.data.data;
 					this.currentPoints = result.currentPoints || 0;
