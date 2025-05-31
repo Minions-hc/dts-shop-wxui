@@ -330,7 +330,8 @@
 				list: [],
 				couponPrice: 0,
 				couponList: [],
-				deductionPoints: 0
+				deductionPoints: 0,
+				currentLoop: 0
 			}
 		},
 		computed: {
@@ -533,16 +534,27 @@
 				this.drawBlindBox(paymentParams)
 			},
 			drawBlindBox(paymentParams) {
-				get('wx/blindbox/getBoxProductsByWxOrderNo?wxOrderNo='+paymentParams.wxOrderNo).then(res => {
-					const result = res.data;
-					if (result.errno === 0) {
-						this.getProductBoxBySeriesId()
-						this.drawInfos = result.data;
-						this.couponPrice = 0;
-						this.$refs.shopingPopup.close();
-						this.openDrawDialog(list.length)
-					}
-				})
+				if(this.currentLoop < 3) {
+					get('wx/boxproduct/getBoxProductsByWxOrderNo?wxOrderNo='+paymentParams.wxOrderNo).then(res => {
+						const result = res.data;
+						if (result.errno === 0) {
+							this.currentLoop = 0;
+							this.getProductBoxBySeriesId();
+							this.drawInfos = result.data;
+							this.couponPrice = 0;
+							this.$refs.shopingPopup.close();
+							this.openDrawDialog(list.length)
+						}else {
+							this.currentLoop = this.currentLoop + 1;
+							this.drawBlindBox(paymentParams);
+						}
+					})
+				}else {
+					uni.showToast({
+						title: '抽赏失败，请联系客服！',
+						icon: "none"
+					})
+				}
 			},
 			showRecods() {
 				const boxNumber = this.boxes[this.currentIndex].id;
