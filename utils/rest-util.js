@@ -1,4 +1,4 @@
-const BaseUrl = 'http://huangcheng.chaoshangshiduo.com/';
+const BaseUrl = 'https://chaoshangshiduo.com/';
 const OssUrl =  '';
 const WebUrl = '';
 const Bucket = 'chaoshangshiduo-public-static';
@@ -34,6 +34,7 @@ function post(url, postData, config){
 	let header = {
 		'Content-Type': 'application/json',
 	};
+	
 	// 获取本地token
 	if (uni.getStorageSync("token")) {
 		header['Authorization'] =  uni.getStorageSync("token");

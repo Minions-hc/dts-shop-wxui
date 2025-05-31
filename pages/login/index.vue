@@ -68,6 +68,7 @@
 							encryptedData: e.detail.encryptedData,
 							iv: e.detail.iv
 						}
+						try {
 						// 2. 发送登录请求
 						post('wx/auth/wxLogin', postData).then(res => {							
 							// 
@@ -81,7 +82,12 @@
 									title: '登录成功'
 								})
 							}
-						})
+						}) 
+						} catch (error) {
+							uni.showModal({
+								content: JSON.stringify(error)
+							})
+						}
 					} catch (error) {
 						uni.showToast({
 							title: '登录失败',
