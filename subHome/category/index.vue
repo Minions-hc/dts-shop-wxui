@@ -81,10 +81,7 @@ export default {
     return {
       activeCategory: 0,
 	  userId:'',
-      categories: [
-		  {name: '人气新品', id: -1,isNew: true},
-		  {name: '爆款推荐', id: -2,isHot: true},
-      ],
+      categories: [],
 	  currentProducts: [],
 	  allItems: []
     }
@@ -131,10 +128,11 @@ export default {
 		})
 	},
 	loadCateData(){
+		// this.categories = []
 		get('wx/home/getWxCategoryNames').then(json => {
 			const result = json.data?.data;
 			const items = result.items;
-			const categories = this.categories
+			const categories = [];
 			items.forEach(item=>{
 				categories.push({
 					name: item.categoryName,
@@ -143,6 +141,8 @@ export default {
 					isNew: false
 				})
 			})
+			categories.unshift({name: '爆款推荐', id: -2,isHot: true})
+			categories.unshift({name: '人气新品', id: -1,isNew: true})
 			this.categories = categories;
 			
 		})
