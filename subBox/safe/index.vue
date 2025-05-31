@@ -40,7 +40,8 @@
 	export default {
 		data() {
 			return {
-				lockProducts: []
+				lockProducts: [],
+				userId: uni.getStorageSync('userId')
 			}
 		},
 		onLoad(param) {
@@ -51,7 +52,8 @@
 		},
 		methods: {
 			initData() {
-				get('wx/boxproduct/getProductsByUser?userId=U10001&status=locked').then(json => {
+				
+				get('wx/boxproduct/getProductsByUser?userId='+this.userId+'&status=locked').then(json => {
 					const result = json.data.data;
 					this.lockProducts = result.allProducts || [];
 				})

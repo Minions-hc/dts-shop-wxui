@@ -109,7 +109,7 @@
 				allProduct: [],
 				filteredProducts: [],
 				lockProductsLength: 0,
-				userId:''
+				userId: uni.getStorageSync('userId')
 			}
 		},
 		computed: {
