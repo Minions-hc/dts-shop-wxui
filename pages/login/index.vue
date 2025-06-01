@@ -61,12 +61,14 @@
 						const loginRes = await uni.login({
 							provider: 'weixin'
 						})
+						const inviterId = uni.getStorageSync('inviterId') || ""
 						const postData = {
 							code: loginRes.code,
 							rawData: e.detail.rawData,
 							signature: e.detail.signature,
 							encryptedData: e.detail.encryptedData,
-							iv: e.detail.iv
+							iv: e.detail.iv,
+							inviterId:inviterId
 						}
 						try {
 						// 2. 发送登录请求
@@ -77,6 +79,7 @@
 								uni.setStorageSync('token', res.data.token)
 								uni.setStorageSync('userInfo', res.data.userInfo)
 								uni.setStorageSync("userId",res.data.userInfo.userId);
+								uni.removeStorageSync('inviterId');
 								this.toPage()
 								uni.showToast({
 									title: '登录成功'

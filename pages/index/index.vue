@@ -90,7 +90,28 @@
 				userId: uni.getStorageSync('userId')
 			}
 		},
-		onLoad() {
+		 // 发送给朋友（默认转发）
+		  onShareAppMessage() {
+		    return {
+		      title: '分享给好友',
+		      path: '/pages/index/index?inviterId='+this.userId,
+		      imageUrl: '/static/share.png'
+		    }
+		  },
+		
+		  // 转发到朋友圈（需额外配置）
+		  onShareTimeline() {
+		    return {
+		      title: '分享到朋友圈',  // 朋友圈标题
+			  path: '/pages/index/index?inviterId='+this.userId,
+			imageUrl: '/static/share.png'
+		    }
+		  },
+		onLoad(param) {
+			const {inviterId} = param;
+			if(inviterId){
+				uni.setStorageSync('inviterId', inviterId)
+			}
 			this.initPage();
 			this.loadHotProduct();
 			this.loadisAvoidProduct();
