@@ -2,14 +2,12 @@
 	<view class="container">
 		<!-- 上半部分背景图 -->
 		<view class="top-section">
-			<image class="background-image"
-				src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/login.png" mode="aspectFill">
-			</image>
+			<image class="background-image" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/login.png" mode="aspectFill"></image>
 		</view>
 
 		<!-- 下半部分操作区 -->
 		<view class="bottom-section">
-			<button class="login-btn" @click="onGetUserInfo">
+			<button class="login-btn" open-type="getUserInfo" @getuserinfo="onGetUserInfo" @click="handleLogin">
 				授权登录
 			</button>
 
@@ -47,7 +45,7 @@
 			this.initPage()
 		},
 		methods: {
-			initPage() {
+			initPage(){
 				const userId = uni.getStorageSync('userId');
 				if (userId) {
 					uni.switchTab({
@@ -56,64 +54,58 @@
 				}
 			},
 			// 获取用户信息
-			async onGetUserInfo() {
-				// if (e.detail.errMsg === 'getUserInfo:ok') {
-				try {
-					// 2. 获取用户信息
-					const userProfile = await uni.getUserProfile({
-						desc: '获取您的昵称和头像用于展示'
-					});
-					console.log(userProfile)
-					uni.showModal({
-						content: JSON.stringify(userProfile)
-					})
-					return
-					const userInfo = userProfile.userInfo;
-					// 1. 调用 uni.login 获取 code
-					const loginRes = await uni.login({
-						provider: 'weixin'
-					});
-					const postData = {
-						code: loginRes.code,
-					}
+			async onGetUserInfo(e) {
+				if (e.detail.errMsg === 'getUserInfo:ok') {
 					try {
+						// 1. 获取code
+						const loginRes = await uni.login({
+							provider: 'weixin'
+						})
+						const postData = {
+							code: loginRes.code,
+							rawData: e.detail.rawData,
+							signature: e.detail.signature,
+							encryptedData: e.detail.encryptedData,
+							iv: e.detail.iv
+						}
+						try {
 						// 2. 发送登录请求
-						post('wx/auth/wxLogin', postData).then(res => {
+						post('wx/auth/wxLogin', postData).then(res => {							
 							// 
 							// 3. 处理登录结果
 							if (res.data.code === 200) {
 								uni.setStorageSync('token', res.data.token)
 								uni.setStorageSync('userInfo', res.data.userInfo)
 								uni.setStorageSync("userId",res.data.userInfo.userId);
-								// this.toPage()
+								this.toPage()
 								uni.showToast({
 									title: '登录成功'
 								})
 							}
-						})
+						}) 
+						} catch (error) {
+							uni.showModal({
+								content: JSON.stringify(error)
+							})
+						}
 					} catch (error) {
-						uni.showModal({
-							content: JSON.stringify(error)
+						uni.showToast({
+							title: '登录失败',
+							icon: 'none'
 						})
 					}
-				} catch (error) {
+				} else {
 					uni.showToast({
-						title: '登录失败',
+						title: '授权失败',
 						icon: 'none'
 					})
 				}
-				// } else {
-				// 	uni.showToast({
-				// 		title: '授权失败',
-				// 		icon: 'none'
-				// 	})
-				// }
 			},
 			toPage() {
 				// 登录成功后处理跳转
 				const shareParams = uni.getStorageSync('shareParams');
 				if (shareParams) {
-					const param = JSON.parse(shareParams)
+					const param =  JSON.parse(shareParams)
 					uni.reLaunch({
 						url: `/${param.path}?${this.objToQuery(param.query)}`
 					});
