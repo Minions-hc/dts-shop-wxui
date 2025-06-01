@@ -151,7 +151,6 @@
 
 		methods: {
 			toPage(item) {
-				console.log(item.path)
 				uni.navigateTo({
 					url: item.path + '?userId=' + this.userId
 				})
@@ -198,10 +197,10 @@
 			currentCheckInDay() {
 				get('wx/checkin/currentCheckInDay?userId=' + this.userId).then(res => {
 					const result = res.data.data;
-					this.currentDay = result.checkInDay
-					this.pointCount = result.currentPoints;
-					this.lastCheckInDay = result.lastCheckInDay;
-					this.resetSignDay(result.checkInDay);
+					this.currentDay = result?.checkInDay || 0;
+					this.pointCount = result?.currentPoints || 0;
+					this.lastCheckInDay = result?.lastCheckInDay || "";
+					this.resetSignDay(result?.checkInDay || 0);
 				})
 			},
 			checkDate() {
