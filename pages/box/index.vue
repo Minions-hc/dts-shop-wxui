@@ -68,7 +68,7 @@
 		</scroll-view>
 
 		<!-- 底部操作 -->
-		<view class="bottom-action" v-if="!showShipStatus && activeMenu === 0">
+		<view class="bottom-action" v-if="!showShipStatus && activeMenu === 0 && userId">
 			<view class="ship-btn defaut-btn" :class="{disabled: selectedCount === 0}" @click="handleShip"></view>
 			<view class="defaut-btn market-btn" @click="navigateToMarket()"></view>
 		</view>
@@ -97,21 +97,9 @@
 		},
 		onShow(){
 			this.userId = uni.getStorageSync('userId');
-			if(!this.userId){
-				// this.visablePage = false;
-				uni.showToast({
-					title:"请先登录",
-					icon:"none"
-				})
-				setTimeout(()=>{
-					uni.navigateTo({
-						url:"/pages/login/index"
-					})
-				},500)
-				return 
+			if(this.userId){
+				this.initPageData()
 			}
-			this.initPageData()
-			
 		},
 		data() {
 			return {
@@ -134,6 +122,17 @@
 			
 		},
 		methods: {
+			checkLogin() {
+				uni.showToast({
+					title: "请先登录",
+					icon: "none"
+				})
+				setTimeout(() => {
+					uni.navigateTo({
+						url: "/pages/login/index"
+					})
+				}, 500)
+			},
 			handleSubmit(){
 				
 				const ids = this.filteredProducts.filter(item => item.checked).map(item=>{return item.id})
@@ -218,11 +217,19 @@
 				this.fiterProduct(type)
 			},
 			navigateToSafeBox() {
+				if(!this.userId){
+					this.checkLogin()
+					return
+				}
 				uni.navigateTo({
 					url: '/subBox/safe/index'
 				})
 			},
 			navigateToMarket() {
+				if(!this.userId){
+					this.checkLogin()
+					return
+				}
 				uni.navigateTo({
 					url: '/subHome/market/index'
 				})

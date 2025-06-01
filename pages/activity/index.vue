@@ -6,7 +6,9 @@
 			<view class="points-box">
 				<view class="points-left">
 					<text class="points-num">{{pointCount}}</text>
-					<image class="coin-icon" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/coin.png" webp="true" lazy-load="true"></image>
+					<image class="coin-icon"
+						src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/coin.png" webp="true"
+						lazy-load="true"></image>
 				</view>
 				<text class="points-label">积分</text>
 			</view>
@@ -60,26 +62,15 @@
 	// import img from "../"
 	export default {
 		onLoad() {
-			
+
 		},
 
 		onShow() {
 			this.userId = uni.getStorageSync('userId');
-			if(!this.userId){
-				// this.visablePage = false;
-				uni.showToast({
-					title:"请先登录",
-					icon:"none"
-				})
-				setTimeout(()=>{
-					uni.navigateTo({
-						url:"/pages/login/index"
-					})
-				},500)
-				return 
+			if (this.userId) {
+				this.currentCheckInDay();
+				this.userConsumptionInFirday()
 			}
-			this.currentCheckInDay();
-			this.userConsumptionInFirday()
 		},
 		data() {
 			return {
@@ -87,7 +78,7 @@
 				// 活动数据示例
 				activities: [{
 						bg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/activity1.png',
-						path:'/subActivity/record/index'
+						path: '/subActivity/record/index'
 					},
 					{
 						bg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/activity2.png',
@@ -95,11 +86,11 @@
 					},
 					{
 						bg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/activity3.png',
-						path:'/subActivity/soulPower/index'
+						path: '/subActivity/soulPower/index'
 					},
 					{
 						bg: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/activity4.png',
-						path:'/subHome/market/index'
+						path: '/subHome/market/index'
 					}
 				],
 				firstDay: [{
@@ -150,12 +141,31 @@
 		},
 
 		methods: {
+			checkLogin() {
+				uni.showToast({
+					title: "请先登录",
+					icon: "none"
+				})
+				setTimeout(() => {
+					uni.navigateTo({
+						url: "/pages/login/index"
+					})
+				}, 500)
+			},
 			toPage(item) {
+				if (!this.userId) {
+					this.checkLogin()
+					return
+				}
 				uni.navigateTo({
 					url: item.path + '?userId=' + this.userId
 				})
 			},
 			async userCheckIn() {
+				if (!this.userId) {
+					this.checkLogin()
+					return
+				}
 				const flag = await this.checkDate();
 				if (flag) {
 					uni.showToast({

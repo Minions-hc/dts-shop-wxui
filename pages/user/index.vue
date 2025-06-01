@@ -2,9 +2,13 @@
 	<view class="container" v-show="visablePage">
 		<!-- 用户信息区域 -->
 		<view class="user-section">
-			<view class="user-info" @click="navigateToUserInfo()">
+			<view class="user-info" @click="navigateToUserInfo()" v-if="userId">
 				<image :src="userInfo.avatar" class="avatar" mode="aspectFit" lazy-load/>
 				<text class="username">{{userInfo.userName}}</text>
+			</view>
+			<view class="user-info" @click="Login()" v-else>
+				<image :src="userInfo.avatar" class="avatar" mode="aspectFit" lazy-load/>
+				<text class="username">暂未登录</text>
 			</view>
 			<!-- 新增资产信息区域 -->
 			<view class="assets-section">
@@ -73,23 +77,12 @@
 			
 		},
 		onShow(){
-			if(!this.userId){
-				// this.visablePage = false;
-				uni.showToast({
-					title:"请先登录",
-					icon:"none"
-				})
-				setTimeout(()=>{
-					uni.navigateTo({
-						url:"/pages/login/index"
-					})
-				},500)
-				
-				return 
+			if(this.userId){
+				this.getUserInfo()
+				this.getUserCurrentPoints(this.userId);
+				this.getInvitationRecords(this.userId);
 			}
-			this.getUserInfo()
-			this.getUserCurrentPoints(this.userId);
-			this.getInvitationRecords(this.userId);
+			
 		},
 		data() {
 			
@@ -179,13 +172,32 @@
 			}
 		},
 		methods: {
+			checkLogin() {
+				uni.showToast({
+					title: "请先登录",
+					icon: "none"
+				})
+				setTimeout(() => {
+					uni.navigateTo({
+						url: "/pages/login/index"
+					})
+				}, 500)
+			},
 			navigateTo(path) {
+				if(!this.userId && path !="/subBox/agreement/index"){
+					this.checkLogin()
+					return
+				}
 				const userId = this.userId;
 				uni.navigateTo({
 					url: path + '?userId=' + userId
 				})
 			},
 			switchOrderTab(index) {
+				if(!this.userId){
+					this.checkLogin()
+					return
+				}
 				if(index === 0){
 					uni.switchTab({
 						url: "/pages/box/index"
@@ -201,6 +213,10 @@
 				this.navigateTo(item.path)
 			},
 			handleAssetClick(type) {
+				if(!this.userId){
+					this.checkLogin()
+					return
+				}
 				const userId = this.userId
 				const routeMap = {
 					points: '/subUser/points/index?userId='+userId,
@@ -235,6 +251,11 @@
 					})
 					this.userAssets = userAssets;
 					
+				})
+			},
+			Login(){
+				uni.navigateTo({
+					url: "/pages/login/index"
 				})
 			},
 			navigateToUserInfo() {
