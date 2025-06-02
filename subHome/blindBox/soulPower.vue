@@ -808,7 +808,7 @@
 			.button-image {
 				position: relative;
 				top: -55rpx;
-				width: 150rpx;
+				width: 145rpx;
 				height: 150rpx;
 				margin: 0 15rpx;
 				transition: transform 0.2s ease;

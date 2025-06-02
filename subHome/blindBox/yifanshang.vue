@@ -628,7 +628,7 @@
 						activityType: '一番赏',
 						orderAmount: this.getOrderAmount(),
 						paymentAmount: this.getShowOrderAmount(),
-						amount: this.getShowOrderAmount(),
+						amount: this.getShowOrderAmount() * 100,
 						description: this.productSeries.seriesName,
 						businessType: 1,
 						deductionPoints: this.deductionPoints
@@ -982,7 +982,7 @@
 			.button-image {
 				position: relative;
 				top: -55rpx;
-				width: 150rpx;
+				width: 145rpx;
 				height: 150rpx;
 				margin: 0 15rpx;
 				transition: transform 0.2s ease;

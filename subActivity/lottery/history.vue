@@ -67,9 +67,9 @@
 		},
 		onShow(){
 			if (this.activeTab === 0) {
-				this.getParticipants()
-			} else {
 				this.geWinUser()
+			} else {
+				this.getParticipants()
 			}
 		},
 		data() {

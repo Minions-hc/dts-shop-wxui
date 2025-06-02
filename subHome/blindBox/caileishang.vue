@@ -551,7 +551,8 @@
 					description: this.productSeries.seriesName,
 					businessType: 1,
 					orderAmount: this.getOrderAmount(),
-					paymentAmount: this.getShowOrderAmount()
+					paymentAmount: this.getShowOrderAmount(),
+					amount: this.getShowOrderAmount() * 100,
 				}
 				this.handleWechatPay(postData)
 			},
