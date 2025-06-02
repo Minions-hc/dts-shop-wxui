@@ -30,7 +30,7 @@
 		<scroll-view class="product-list" scroll-y>
 			<view v-for="(item, index) in filteredProducts" :key="item.id" class="product-info">
 				<view class="product-item" @tap="toDetailPage(item)">
-					<image class="product-img" :src="item.productImage" lazy-load/>
+					<image class="product-img" :src="item.productImage" lazy-load="true"/>
 
 					<view class="product-info">
 						<view class="top-section">

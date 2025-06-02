@@ -5,7 +5,7 @@
       src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/category-back.png" 
       mode="widthFix"
       class="top-banner"
-      lazy-load
+      lazy-load="true"
     />
 
     <!-- 内容区 -->
@@ -48,7 +48,7 @@
               :src="product.seriesImage"
               mode="aspectFill"
               class="product-image"
-              lazy-load
+              lazy-load="true"
             />
             <view class="product-info">
               <text class="product-title">{{ product.seriesName }}</text>

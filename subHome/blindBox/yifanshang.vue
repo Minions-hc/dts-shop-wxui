@@ -65,7 +65,7 @@
 								<view v-for="(product, pIndex) in currentBox.products" :key="product.productId"
 									class="product-card">
 									<image :src="product.productImage" mode="aspectFill" class="product-image"
-										lazy-load="" />
+										lazy-load="true" />
 									<view class="remain-qty">
 										{{product.quantity - product.soldQuantity}}/{{product.quantity}}</view>
 									<view class="product-info">
@@ -110,7 +110,7 @@
 						<!-- 条目头部 -->
 						<view class="item-header">
 							<view class="header-left">
-								<image :src="item.avatar" mode="aspectFit" lazy-load class="record-image"></image>
+								<image :src="item.avatar" mode="aspectFit" lazy-load="true" class="record-image"></image>
 								<text class="serial">【第{{ item.number }}张】{{ item.userId }}</text>
 							</view>
 
@@ -120,7 +120,7 @@
 						<!-- 奖品信息 -->
 						<view class="prize-info">
 							<view class="info-left">
-								<image :src="item.productImage" mode="aspectFit" lazy-load class="record-image"></image>
+								<image :src="item.productImage" mode="aspectFit" lazy-load="true" class="record-image"></image>
 								<text class="prize-name">{{ item.productName }}</text>
 							</view>
 							<text class="award">{{ item.levelName }} x 1</text>
@@ -543,19 +543,20 @@
 				return (penson * 100).toFixed(3) + '%'
 			},
 			prizeDraw(paymentParams) {
-				this.drawBlindBox(paymentParams)
+				setTimeout(() => {this.drawBlindBox(paymentParams)}, 1000);
 			},
 			drawBlindBox(paymentParams) {
 				if(this.currentLoop < 3) {
-					get('wx/boxproduct/getBoxProductsByWxOrderNo?wxOrderNo='+paymentParams.wxOrderNo).then(res => {
+					get('wx/boxproduct/getBoxProductsByWxOrderNo?wxOrderNo='+paymentParams.nonceStr).then(res => {
 						const result = res.data;
+						console.log("返回结果长度:"+result.data.length)
 						if (result.errno === 0) {
 							this.currentLoop = 0;
 							this.getProductBoxBySeriesId();
 							this.drawInfos = result.data;
 							this.couponPrice = 0;
 							this.$refs.shopingPopup.close();
-							this.openDrawDialog(list.length)
+							this.openDrawDialog(result.data.length)
 						}else {
 							this.currentLoop = this.currentLoop + 1;
 							this.drawBlindBox(paymentParams);
@@ -628,7 +629,7 @@
 						activityType: '一番赏',
 						orderAmount: this.getOrderAmount(),
 						paymentAmount: this.getShowOrderAmount(),
-						amount: this.getShowOrderAmount() * 100,
+						amount: 1,
 						description: this.productSeries.seriesName,
 						businessType: 1,
 						deductionPoints: this.deductionPoints
@@ -865,10 +866,10 @@
 				}
 
 				.box-info {
-					font-size: 26rpx;
+					font-size: 24rpx;
 					color: #000;
 					line-height: 70rpx;
-					margin-left: 20rpx;
+					margin-left: 15rpx;
 				}
 			}
 

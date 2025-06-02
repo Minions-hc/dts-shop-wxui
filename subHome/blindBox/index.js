@@ -27,7 +27,7 @@ export const commonMixns = {
 		        const userInfo = uni.getStorageSync("userInfo") || {};
 		        // 2. 获取支付参数
 		        const paymentParams = await this.getPaymentParams(userInfo.wxOpenId,postData)
-
+				console.log("zhifucanshu"+JSON.stringify(paymentParams));
 		        // 3. 发起支付请求
 		        const res = await this.requestPayment(paymentParams)
 

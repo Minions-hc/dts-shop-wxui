@@ -17,7 +17,7 @@
 			 <view class="product-count">
 			 	x1
 			 </view>
-			 <view class="product-level">{{showDrawInfo.levelName}}</view>
+			 <view class="product-level">{{showDrawInfo.productLevel}}</view>
         </view>
 
         <!-- 操作按钮组 -->
@@ -47,7 +47,7 @@
 						+1魂力值
 					</view>
 					<view class="series-level">
-						{{item.levelName}}
+						{{item.productLevel}}
 					</view>
 					<view class="service-name">
 						{{item.productName}}
@@ -107,7 +107,7 @@ export default {
 				if(this.dialogMoreVisible){
 					this.showDrawInfo = this.drawInfos.slice(0,2)
 				} else {
-					this.showDrawInfo = this.drawInfos.slice(0,1)
+					this.showDrawInfo = this.drawInfos[0]
 				}
 				// this.showMorePopup = newVal;
 				

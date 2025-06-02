@@ -3,11 +3,11 @@
 		<!-- 用户信息区域 -->
 		<view class="user-section">
 			<view class="user-info" @click="navigateToUserInfo()" v-if="userId">
-				<image :src="userInfo.avatar" class="avatar" mode="aspectFit" lazy-load/>
+				<image :src="userInfo.avatar" class="avatar" mode="aspectFit" lazy-load="true"/>
 				<text class="username">{{userInfo.userName}}</text>
 			</view>
 			<view class="user-info" @click="Login()" v-else>
-				<image :src="userInfo.avatar" class="avatar" mode="aspectFit" lazy-load/>
+				<image :src="userInfo.avatar" class="avatar" mode="aspectFit" lazy-load="true"/>
 				<text class="username">暂未登录</text>
 			</view>
 			<!-- 新增资产信息区域 -->

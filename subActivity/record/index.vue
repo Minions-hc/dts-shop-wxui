@@ -65,7 +65,7 @@
 
 			<view class="user-info-container">
 				<!-- 左侧头像 -->
-				<image class="user-avatar" :src="userInfo.avatar" lazy-load/>
+				<image class="user-avatar" :src="userInfo.avatar" lazy-load="true"/>
 
 				<!-- 中间信息 -->
 				<view class="user-center">

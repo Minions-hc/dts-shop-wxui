@@ -27,7 +27,7 @@
 		  				class="user-avatar" 
 		  				:src="item.avatar" 
 		  				mode="aspectFill"
-						lazy-load
+						lazy-load="true"
 		  	/>
 		  	<view class="content-wrapper">
 		  	<view class="code-time">

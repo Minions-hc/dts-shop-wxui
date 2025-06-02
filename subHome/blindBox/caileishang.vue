@@ -202,7 +202,8 @@
 		<view class="detail-container">
 			<!-- 标题区域 -->
 			<view class="detail-header">
-				<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/box.png" class="title-icon" />
+				<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/box.png"
+					class="title-icon" />
 				<text class="title-text">百宝箱明细</text>
 			</view>
 
@@ -284,8 +285,9 @@
 							<view>可用优惠券：</view>
 							<view :style="{display:'flex'}" v-if="couponList.length === 0">暂无可用优惠券<uni-icons
 									type="right" size="20"></uni-icons></view>
-							<view :style="{display:'flex'}" v-else @tap="openCouponList">{{getCounpontContent}}<uni-icons type="right"
-									size="20"></uni-icons></view>
+							<view :style="{display:'flex'}" v-else @tap="openCouponList">
+								{{getCounpontContent}}<uni-icons type="right" size="20"></uni-icons>
+							</view>
 
 						</view>
 						<view class="info-item">
@@ -406,7 +408,8 @@
 				isLockBox: true,
 				drawInfos: [],
 				couponPrice: 0,
-				couponList: []
+				couponList: [],
+				currentLoop: 0
 			}
 		},
 		computed: {
@@ -444,12 +447,12 @@
 				const price = orderAmount - this.couponPrice;
 				return price <= 0 ? 0.01 : price;
 			},
-			getCounpontContent(){				
-				return this.couponPrice != 0 ? '-￥'+ this.couponPrice :'可用优惠券';
+			getCounpontContent() {
+				return this.couponPrice != 0 ? '-￥' + this.couponPrice : '可用优惠券';
 			}
 		},
 		methods: {
-			closeCoupon(){
+			closeCoupon() {
 				this.$refs.couponPopup.close();
 			},
 			setCoupon(item) {
@@ -526,7 +529,7 @@
 						success: (res) => {
 							if (res.confirm) {
 								uni.navigateTo({
-									url: "/subUser/address/index?userId="+this.userId
+									url: "/subUser/address/index?userId=" + this.userId
 								})
 							} else if (res.cancel) {
 								console.log('用户点击取消')
@@ -552,12 +555,14 @@
 					businessType: 1,
 					orderAmount: this.getOrderAmount(),
 					paymentAmount: this.getShowOrderAmount(),
-					amount: this.getShowOrderAmount() * 100,
+					amount: 1,
 				}
 				this.handleWechatPay(postData)
 			},
 			prizeDraw(paymentParams) {
-				this.drawBlindBox(paymentParams)
+				setTimeout(() => {
+					this.drawBlindBox(paymentParams)
+				}, 1000);
 			},
 			// 切换箱子
 			async switchBox(direction) {
@@ -615,7 +620,7 @@
 				}
 			},
 			handleDraw(count) {
-				if (count > this.boxes[this.currentIndex]?.remaining) {
+				if (count > this.boxes[this.currentIndex-1]?.remaining) {
 					uni.showToast({
 						title: '库存不足~'
 					});
@@ -630,16 +635,16 @@
 				})
 			},
 			toShopping() {
-				if(!this.userId){
+				if (!this.userId) {
 					uni.showToast({
-						title:"请先登录",
-						icon:"none"
+						title: "请先登录",
+						icon: "none"
 					})
-					setTimeout(()=>{
+					setTimeout(() => {
 						uni.navigateTo({
-							url:"/pages/login/index"
+							url: "/pages/login/index"
 						})
-					},500)
+					}, 500)
 					return
 				}
 				if (this.selectedCount.length == 0) {
@@ -712,13 +717,13 @@
 					const soldOutList = result.filter(item => item.soldOut).map(item => {
 						return item.number
 					});
-					const maxNum = Math.max(soldOutList)
+					const maxNum = soldOutList.length
 					this.setPressArray(maxNum)
 				})
 			},
 
 			setPressArray(maxNum) {
-				const priceRanges = this.boxes[this.currentIndex]?.products?.[0]?.priceRanges || '[]'
+				const priceRanges = this.boxes[this.currentIndex-1]?.products?.[0]?.priceRanges || '[]'
 				const priceRangesParan = JSON.parse(priceRanges)
 				const segments = priceRangesParan.map?.(item => {
 					return {
@@ -726,7 +731,7 @@
 						price: item.price
 					}
 				})
-				const maxValue = this.boxes[this.currentIndex]?.total || 0
+				const maxValue = this.boxes[this.currentIndex-1]?.total || 0
 				segments.push({
 					end: maxValue,
 					price: 100
@@ -736,7 +741,7 @@
 				this.segments = segments;
 			},
 			showRecods() {
-				const boxNumber = this.boxes[this.currentIndex].id;
+				const boxNumber = this.boxes[this.currentIndex-1].id;
 				get(`wx/blindbox/openRecords?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res => {
 					const result = res.data.data
 					const tabs = ['全部'];
@@ -749,7 +754,7 @@
 				})
 			},
 			prizeDraws(count) {
-				const boxNumber = this.boxes[this.currentIndex]?.id;
+				const boxNumber = this.boxes[this.currentIndex-1]?.id;
 				const filteredItems = this.filteredItems.filter(item => !item.soldOut).map(item => {
 					return item.number
 				})
@@ -768,16 +773,28 @@
 				}).filter(item => item);
 			},
 			drawBlindBox(paymentParams) {
-				get('wx/blindbox/getBoxProductsByWxOrderNo?wxOrderNo='+paymentParams.wxOrderNo).then(res => {
-					const result = res.data;
-					if (result.errno === 0) {
-						this.getProductBoxBySeriesId()
-						this.drawInfos = result.data;
-						this.couponPrice = 0;
-						this.$refs.shopingPopup.close();
-						this.openDrawDialog(list.length)
-					}
-				})
+				if (this.currentLoop < 3) {
+					get('wx/boxproduct/getBoxProductsByWxOrderNo?wxOrderNo=' + paymentParams.nonceStr).then(res => {
+						const result = res.data;
+						console.log("返回结果长度:"+result.data.length)
+						if (result.errno === 0) {
+							this.currentLoop = 0;
+							this.getProductBoxBySeriesId()
+							this.drawInfos = result.data;
+							this.couponPrice = 0;
+							this.$refs.shopingPopup.close();
+							this.openDrawDialog(result.data.length)
+						} else {
+							this.currentLoop = this.currentLoop + 1;
+							this.drawBlindBox(paymentParams);
+						}
+					})
+				} else {
+					uni.showToast({
+						title: '抽赏失败，请联系客服！',
+						icon: "none"
+					})
+				}
 			},
 			changeBox(index) {
 				this.currentIndex = index + 1;
@@ -795,9 +812,12 @@
 				if (buyNum == 0) {
 					return totalPrice;
 				}
+				console.log("dangqianzhishi:"+this.currentValue);
 				let tmpCurrentValue = this.currentValue;
 				const totalValue = this.currentValue + buyNum;
 				const currentSegment = this.segments.find(s => this.currentValue <= s.end);
+				console.log("dangqianqujianshi:"+JSON.stringify(currentSegment));
+				console.log("suoyoudejiagequjian:"+JSON.stringify(this.segments));
 				const toBeSegment = this.segments.find(s => totalValue <= s.end);
 
 				if (currentSegment.end == toBeSegment.end) {
@@ -1798,16 +1818,17 @@
 			}
 		}
 	}
+
 	.coupon-popup-content {
 		padding: 20rpx;
-	
+
 		.coupon-header {
 			display: flex;
 			justify-content: space-between;
 			width: 100%;
 			line-height: 80rpx;
 			font-weight: bold;
-	
+
 		}
 	}
 </style>

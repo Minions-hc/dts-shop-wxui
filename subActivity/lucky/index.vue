@@ -2,7 +2,7 @@
 	<view class="container">
 		<!-- 顶部图片区域 -->
 		<view class="top-section" :style="{height: imgHeight}">
-			<image :src="imageList[0]" mode="aspectFill" class="product-image" lazy-load />
+			<image :src="imageList[0]" mode="aspectFill" class="product-image" lazy-load="true" />
 			!-- 悬浮倒计时模块 -->
 			<view class="floating-countdown">
 				<view class="countdown-back">
@@ -67,7 +67,7 @@
 								:key="index">
 								<image
 									:src="participant.avatar || 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/default-avatar.png'"
-									mode="aspectFill" class="participant-avatar" lazy-load />
+									mode="aspectFill" class="participant-avatar" lazy-load="true" />
 								<view class="participation-badge" v-if="participant.codeCount > 0">
 									{{ participant.codeCount }}
 								</view>
@@ -95,7 +95,7 @@
 						mode="scaleToFill" class="detail-image" />
 					<!-- 活动详情 -->
 					<view class="activity-detail-image" v-for="item in imageList">
-						<image :src="item" mode="scaleToFill" class="iamge-class" lazy-load />
+						<image :src="item" mode="scaleToFill" class="iamge-class" lazy-load="true" />
 					</view>
 				</scroll-view>
 			</view>

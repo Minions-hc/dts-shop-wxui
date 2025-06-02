@@ -21,7 +21,7 @@
 
 				<!-- 中部：商品信息 -->
 				<view class="order-middle" @click="navigatorToDetail()">
-					<image class="product-img" :src="item.image" lazy-load/>
+					<image class="product-img" :src="item.image" lazy-load="true"/>
 					<view class="product-info">
 						<text class="product-name">ssss</text>
 						<view class="discount-info">

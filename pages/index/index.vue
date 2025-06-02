@@ -26,7 +26,7 @@
 			</view>
 			<swiper class="thunder-swiper" :indicator-dots="false" :autoplay="true" :interval="3000" :duration="500"
 				:previous-margin="10" :next-margin="10" :display-multiple-items="3" circular>
-				<swiper-item v-for="(item, index) in hotList" :key="index" class="swiper-item">
+				<swiper-item v-for="(item, index) in avoidList" :key="index" class="swiper-item">
 					<image class="swiper-img" :src="getImgUrl(item,2)" mode="aspectFit" @click="toSeriesPage(item)"/>
 				</swiper-item>
 			</swiper>

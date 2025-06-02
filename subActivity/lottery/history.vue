@@ -34,7 +34,7 @@
 					<view class="all-users-grid">
 						<view v-for="(user, index) in allUsers" :key="index" class="user-item">
 							<view class="avatar-wrapper">
-								<image class="user-avatar" :src="user.avatar" lazy-load=""/>
+								<image class="user-avatar" :src="user.avatar" lazy-load="true"/>
 								<view class="count-badge">{{ user.codeCount }}</view>
 							</view>
 							<text class="username">{{ user.userId }}</text>
