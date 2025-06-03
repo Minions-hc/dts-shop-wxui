@@ -4,7 +4,7 @@
 		<scroll-view class="product-list" scroll-y>
 			<view v-for="(item, index) in lockProducts" :key="index" class="product-info-card">
 				<view class="product-item" @tap="toDetailPage(item)">
-					<image class="product-img" :src="item.image" />
+					<image class="product-img" :src="item.productImage" />
 
 					<view class="product-info">
 						<view class="top-section">

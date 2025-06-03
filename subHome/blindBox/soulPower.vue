@@ -93,7 +93,7 @@
 				<!-- 弹窗标题 -->
 				<view class="popup-header">
 					<text class="title">开赏记录({{records.length}})</text>
-					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon-close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
 				</view>
 
 				<!-- 筛选标签 -->
@@ -138,7 +138,7 @@
 				<!-- 弹窗标题 -->
 				<view class="popup-header">
 					<text class="title">切换房间</text>
-					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon-close.png" class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true"/>
 				</view>
 
 				<!-- 记录列表 -->

@@ -92,7 +92,7 @@
 				<!-- 弹窗标题 -->
 				<view class="popup-header">
 					<text class="title">开赏记录({{records.length}})</text>
-					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png"
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon-close.png"
 						class="close-icon" @tap="showPopup = false" />
 				</view>
 
@@ -138,8 +138,8 @@
 				<!-- 弹窗标题 -->
 				<view class="popup-header">
 					<text class="title">切换房间</text>
-					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png"
-						class="close-icon" @tap="showPopup = false" />
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon-close.png"
+						class="close-icon" @tap="showBoxPopup = false" />
 				</view>
 
 				<!-- 记录列表 -->
@@ -331,7 +331,8 @@
 				couponPrice: 0,
 				couponList: [],
 				deductionPoints: 0,
-				currentLoop: 0
+				currentLoop: 0,
+				couponId: null
 			}
 		},
 		computed: {
@@ -362,6 +363,7 @@
 			},
 			setCoupon(item) {
 				this.couponPrice = item.couponAmount;
+				this.couponId = item.couponId;
 				this.$refs.couponPopup.close();
 			},
 			openCouponList() {
@@ -629,10 +631,11 @@
 						activityType: '一番赏',
 						orderAmount: this.getOrderAmount(),
 						paymentAmount: this.getShowOrderAmount(),
-						amount: 1,
+						amount: this.getShowOrderAmount() * 100,
 						description: this.productSeries.seriesName,
 						businessType: 1,
-						deductionPoints: this.deductionPoints
+						deductionPoints: this.deductionPoints,
+						couponId: this.couponId
 					}
 					this.handleWechatPay(postData)
 				})

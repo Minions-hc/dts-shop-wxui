@@ -49,7 +49,7 @@
 					<!-- 弹窗标题 -->
 					<view class="popup-header">
 						<text class="title">开赏记录({{filteredRecords.length}})</text>
-						<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png"
+						<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon-close.png"
 							class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true" />
 					</view>
 
@@ -114,8 +114,8 @@
 						<view class="popup-header">
 							<text class="title">切换房间</text>
 							<image
-								src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icons/close.png"
-								class="close-icon" @tap="showPopup = false" webp="true" lazy-load="true" />
+								src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon-close.png"
+								class="close-icon" @tap="showBoxPopup = false" webp="true" lazy-load="true" />
 						</view>
 
 						<!-- 记录列表 -->
@@ -409,7 +409,8 @@
 				drawInfos: [],
 				couponPrice: 0,
 				couponList: [],
-				currentLoop: 0
+				currentLoop: 0,
+				couponId: null
 			}
 		},
 		computed: {
@@ -457,6 +458,7 @@
 			},
 			setCoupon(item) {
 				this.couponPrice = item.couponAmount;
+				this.couponId = item.couponId;
 				this.$refs.couponPopup.close();
 			},
 			openCouponList() {
@@ -555,7 +557,8 @@
 					businessType: 1,
 					orderAmount: this.getOrderAmount(),
 					paymentAmount: this.getShowOrderAmount(),
-					amount: 1,
+					amount: this.getShowOrderAmount() * 100,
+					couponId: this.couponId
 				}
 				this.handleWechatPay(postData)
 			},
@@ -786,7 +789,6 @@
 							this.openDrawDialog(result.data.length)
 						} else {
 							this.currentLoop = this.currentLoop + 1;
-							this.drawBlindBox(paymentParams);
 						}
 					})
 				} else {
