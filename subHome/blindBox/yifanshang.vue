@@ -332,7 +332,8 @@
 				couponList: [],
 				deductionPoints: 0,
 				currentLoop: 0,
-				couponId: null
+				couponId: null,
+				point: null
 			}
 		},
 		computed: {
@@ -635,7 +636,8 @@
 						description: this.productSeries.seriesName,
 						businessType: 1,
 						deductionPoints: this.deductionPoints,
-						couponId: this.couponId
+						couponId: this.couponId,
+						point: this.calcPointPrice() * 10
 					}
 					this.handleWechatPay(postData)
 				})
