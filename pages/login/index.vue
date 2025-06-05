@@ -7,7 +7,7 @@
 
 		<!-- 下半部分操作区 -->
 		<view class="bottom-section">
-			<button class="login-btn" open-type="getUserInfo" @getuserinfo="onGetUserInfo" @click="handleLogin">
+			<button class="login-btn" open-type="getUserInfo" @getuserinfo="onGetUserInfo">
 				授权登录
 			</button>
 
@@ -23,7 +23,7 @@
 					</view>
 				</view>
 				<text>我已满18岁，已阅读并同意</text>
-				<text class="protocol" @click.stop="openProtocol">《用户使用协议》</text>
+				<text class="protocol" @click="openProtocol">《用户使用协议》</text>
 			</view>
 		</view>
 	</view>
@@ -42,19 +42,18 @@
 			}
 		},
 		onLoad() {
-			this.initPage()
 		},
 		methods: {
-			initPage(){
-				const userId = uni.getStorageSync('userId');
-				if (userId) {
-					uni.switchTab({
-						url: '/pages/index/index'
-					})
-				}
-			},
 			// 获取用户信息
 			async onGetUserInfo(e) {
+				if (!this.agreed) {
+					uni.showModal({
+						title: '提示',
+						content: '请先阅读并同意隐私协议',
+						showCancel: false
+					})
+					return
+				}
 				if (e.detail.errMsg === 'getUserInfo:ok') {
 					try {
 						// 1. 获取code
@@ -138,18 +137,10 @@
 				})
 			},
 			// 处理登录按钮点击
-			handleLogin() {
-				// 检查是否已同意隐私协议
-				if (!this.agreed) {
-					uni.showModal({
-						title: '提示',
-						content: '请先阅读并同意隐私协议',
-						showCancel: false
-					})
-				}
+			openProtocol() {
+				
 			},
 			toggleAgreement() {
-				console.log(this.agreed)
 				this.agreed = true
 			}
 		}
