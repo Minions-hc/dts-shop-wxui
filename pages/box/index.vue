@@ -98,6 +98,8 @@
 		onShow(){
 			this.userId = uni.getStorageSync('userId');
 			if(this.userId){
+				this.activeMenu = 0;
+				this.activeFilter = 0;
 				this.initPageData()
 			}
 		},
@@ -127,6 +129,10 @@
 					title: "请先登录",
 					icon: "none"
 				})
+				uni.removeStorageSync('token');
+				uni.removeStorageSync('userInfo');
+				uni.removeStorageSync('userId');
+				uni.removeStorageSync('shareParams');
 				setTimeout(() => {
 					uni.navigateTo({
 						url: "/pages/login/index"
@@ -208,6 +214,7 @@
 				item.checked = !item.checked;
 			},
 			changeMenu(index,status) {
+				this.activeFilter = 0;
 				this.activeMenu = index;
 				this.loadPageData(status)
 			},
