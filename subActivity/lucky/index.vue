@@ -864,6 +864,7 @@
 				width: 70%;
 				margin: 0 auto;
 				transition: all 0.3s;
+				line-height: 50rpx;
 
 				&:active {
 					background: #0062cc;
