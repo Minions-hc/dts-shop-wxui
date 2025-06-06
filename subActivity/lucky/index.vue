@@ -122,7 +122,8 @@
 
 			<!-- 右侧主按钮 -->
 			<view class="main-btn" @click="handleShare">
-				<text class="main-btn-text">转发助力增加抽奖码</text>
+				<text v-if="activityStatus" class="main-btn-text">转发助力增加抽奖码</text>
+				<text v-if="!activityStatus" class="main-btn-text">活动已结束</text>
 			</view>
 		</view>
 		<uni-popup ref="userCodespopup" background-color="#fff" @change="changePopup" type="bottom"
@@ -332,6 +333,14 @@
 				})
 			},
 			handleShare() {
+				if(!activityStatus) {
+					uni.showToast({
+						title: "活动已结束！",
+						icon: "none"
+					})
+					return;
+				}
+				
 				get(`wx/luckyDraw/userCodes?userId=${this.userId}&activityId=${this.activeInfo.activityId}&periodNumber=${this.activeInfo.periodNumber}`)
 					.then(json => {
 						const result = json.data?.data;

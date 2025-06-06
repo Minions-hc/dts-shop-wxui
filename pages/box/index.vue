@@ -114,7 +114,8 @@
 				allProduct: [],
 				filteredProducts: [],
 				lockProductsLength: 0,
-				userId: uni.getStorageSync('userId')
+				userId: uni.getStorageSync('userId'),
+				currentLoop: 0
 			}
 		},
 		computed: {
@@ -139,24 +140,53 @@
 					})
 				}, 500)
 			},
-			handleSubmit(){
-				
+			async handleSubmit(){
 				const ids = this.filteredProducts.filter(item => item.checked).map(item=>{return item.id})
-
-				const postData = {
-					ids,
-					userId: this.userId
-				}
-				post('wx/boxproduct/submitDelivery',postData).then(json=>{
-					const result = json.data;
-					if(result.errno === 0){
-						this.loadPageData('pending');
-						uni.showToast({
-							icon:"none",
-							title:"提货成功"
-						})
+				
+				if (ids.length < 3) {
+					try {
+					  const userInfo = uni.getStorageSync("userInfo") || {};
+					  // 2. 获取支付参数
+					  const paymentParams = await this.getPaymentParams(userInfo.wxOpenId,ids)
+					  // 3. 发起支付请求
+					  const res = await this.requestPayment(paymentParams)
+					
+					  // 4. 处理支付结果
+					  if (res[0]) {
+						this.getShipResult(paymentParams)
+					  } else {
+					    this.handlePaymentError(res[1])
+					  }
+					} catch (error) {
+					  uni.showToast({ title: error.message, icon: 'none' })
 					}
+					
+				}else {
+					this.handleSubmitNoShipFee(ids);
+				}	
+			},
+			// 获取支付参数
+			async getPaymentParams(wxOpenId, ids) {
+			  try {
+				const postData = {
+					openId: wxOpenId,
+					businessType: 2,
+					amuout: 1200,
+					orderAmount: 12,
+					paymentAmount: 12,
+					ids: ids
+				}
+				return post('wx/wxpay/create',postData).then(res=>{
+					if (res.statusCode === 200) {
+					  return res.data
+					}
+					throw new Error(res.data.message || '获取支付参数失败')
 				})
+			
+			
+			  } catch (error) {
+			    throw new Error('网络请求失败')
+			  }
 			},
 			initPageData(){
 				this.loadPageData('pending');
@@ -268,6 +298,68 @@
 					const result = json.data.data;
 					this.lockProductsLength = result.allProducts?.length || 0;
 				})
+			},
+			handleSubmitNoShipFee(ids) {
+				const postData = {
+					ids,
+					userId: this.userId
+				}
+				post('wx/boxproduct/submitDelivery',postData).then(json=>{
+					const result = json.data;
+					if(result.errno === 0){
+						this.loadPageData('pending');
+						uni.showToast({
+							icon:"none",
+							title:"提货成功"
+						})
+					}
+				})
+			},
+			getShipResult(paymentParams) {
+				setTimeout(() => {this.shipedResult(paymentParams)}, 1000);
+			},
+			shipedResult(paymentParams) {
+				if(this.currentLoop < 3) {
+					get('wx/boxproduct/getBoxProductsByWxOrderNo?wxOrderNo='+paymentParams.nonceStr).then(res => {
+						const result = res.data;
+						console.log("返回结果长度:"+result.data.length)
+						if (result.errno === 0) {
+							this.currentLoop = 0;
+							this.loadPageData('pending');
+							uni.showToast({
+								icon:"none",
+								title:"提货成功"
+							})
+						}else {
+							this.currentLoop = this.currentLoop + 1;
+							this.shipedResult(paymentParams);
+						}
+					})
+				}else {
+					uni.showToast({
+						title: '提货失败，请联系客服！',
+						icon: "none"
+					})
+				}
+			},
+			// 调用支付接口
+			requestPayment(params) {
+			  return new Promise((resolve) => {
+			    uni.requestPayment({
+			      provider: 'wxpay',
+			      ...params,
+			      success: (res) => resolve([true, res]),
+			      fail: (err) => resolve([false, err])
+			    })
+			  })
+			},
+			// 错误处理
+			handlePaymentError(err) {
+			  if (err.errMsg === 'requestPayment:fail cancel') {
+			    uni.showToast({ title: '支付已取消', icon: 'none' })
+			  } else {
+			    uni.showToast({ title: '支付失败，请重试', icon: 'none' })
+			  }
 			}
 		}
 	}

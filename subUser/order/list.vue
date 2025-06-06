@@ -2,10 +2,10 @@
 	<view class="container">
 		<!-- 订单状态选项卡 -->
 		<view class="order-tabs">
-			<view class="tab-item" :class="{ active: activeTab === 0 }" @click="activeTab = 0">全部</view>
-			<view class="tab-item" :class="{ active: activeTab === 1 }" @click="activeTab = 1">待发货</view>
-			<view class="tab-item" :class="{ active: activeTab === 2 }" @click="activeTab = 2">待收货</view>
-			<view class="tab-item" :class="{ active: activeTab === 3 }" @click="activeTab = 3">已完成</view>
+			<view class="tab-item" :class="{ active: activeTab === 'ALL' }" @click="changeTab('ALL')">全部</view>
+			<view class="tab-item" :class="{ active: activeTab === 'WAIT_SHIPPING' }" @click="changeTab('WAIT_SHIPPING')">待发货</view>
+			<view class="tab-item" :class="{ active: activeTab === 'SHIPPED' }" @click="changeTab('SHIPPED')">待收货</view>
+			<view class="tab-item" :class="{ active: activeTab === 'COMPLETED' }" @click="changeTab('COMPLETED')">已完成</view>
 		</view>
 
 		<!-- 订单列表 -->
@@ -54,21 +54,27 @@
 	export default {
 		onLoad(param){
 			const {type,userId} = param;
-			this.userId = uni.getStorageSync('userId');
-			this.activeTab = Number(type) || 0;
+			this.activeTab = type;
 			
 		},
-		onShow(){
-			this.initData(this.userId);
+		onShow(){ 
+			this.userId = uni.getStorageSync('userId');
+			this.initData(this.userId);	
 		},
 		data() {
 			return {
-				activeTab: 0, // 当前选中tab
-				orderList:[],
-				userId:""
+				activeTab: 'ALL', // 当前选中tab
+				userId:"",
+				allOrderList: []
 			}
 		},
 		computed:{
+			orderList() {
+				if (this.activeTab == 'ALL') {
+					return this.allOrderList;
+				}
+				return this.allOrderList.filter(item => item.orderStatus == this.activeTab);
+			}
 		},
 		methods: {
 			navigatorToDetail(item) {
@@ -79,7 +85,7 @@
 			initData(userId){
 				get('wx/order/queryOrderList?userId='+userId).then(json=>{
 					const result = json.data.data;
-					this.orderList = result.items || [];
+					this.allOrderList = result.items || [];
 				})
 			},
 			getOrderStatus(item){
@@ -91,7 +97,11 @@
 					str = '已发货'
 				}
 				return str;
+			},
+			changeTab(orderStatus) {
+				this.activeTab = orderStatus;
 			}
+			
 		}
 	}
 </script>

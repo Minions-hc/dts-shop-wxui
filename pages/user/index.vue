@@ -3,7 +3,7 @@
 		<!-- 用户信息区域 -->
 		<view class="user-section">
 			<view class="user-info" @click="navigateToUserInfo()" v-if="userId">
-				<image :src="userInfo.avatar" class="avatar" mode="aspectFit" lazy-load="true"/>
+				<image :src="userInfo.avatar" class="avatar" mode="aspectFill" lazy-load="true"/>
 				<text class="username">{{userInfo.userName}}</text>
 			</view>
 			<view class="user-info" @click="Login()" v-else>
@@ -32,7 +32,7 @@
 
 			<view class="order-status">
 				<view v-for="(item, index) in orderStatus" :key="index" class="status-item"
-					@click="switchOrderTab(index)">
+					@click="switchOrderTab(item.status)">
 					<!-- <<image :src="item.image"></image> -->
 					<image class="icon-image" :src="item.image" mode="aspectFit"></image>
 					<text class="label">{{ item.label }}</text>
@@ -93,22 +93,26 @@
 				orderStatus: [{
 						icon: 'shop',
 						label: '盒柜',
-						image: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon1.png'
+						image: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon1.png',
+						status: ''
 					},
 					{
 						icon: 'paperplane',
 						label: '待发货',
-						image: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon2.png'
+						image: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon2.png',
+						status: 'WAIT_SHIPPING'
 					},
 					{
 						icon: 'cart',
 						label: '待收货',
-						image: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon3.png'
+						image: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon3.png',
+						status: 'SHIPPED'
 					},
 					{
 						icon: 'checkmarkcircle',
 						label: '已完成',
-						image: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon4.png'
+						image: 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon4.png',
+						status: 'COMPLETED'
 					}
 				],
 				services: [{
