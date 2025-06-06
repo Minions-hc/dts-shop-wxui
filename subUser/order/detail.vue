@@ -2,18 +2,20 @@
   <view class="order-detail">
     <!-- 商品信息区块 -->
     <view class="section">
-       <view class="product-info-block">
+		
+		
+       <view class="product-info-block" v-for="subItem in orderInfo.items" :key="subItem.id">
             <!-- 左边：产品图片 -->
-            <image class="product-cover" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/product1.jpg" mode="aspectFill" />
+            <image class="product-cover" :src="subItem.productImg" mode="aspectFill" />
       
             <!-- 中间：商品信息 -->
             <view class="product-middle">
-              <text class="product-name">MOKOKO•甜心乐园(5)</text>
+              <text class="product-name">{{subItem.productName}}</text>
               <text class="discount-info">可抵扣0勋章</text>
             </view>
       
             <!-- 右边：数量显示 -->
-            <text class="product-quantity">×1</text>
+            <text class="product-quantity">×{{subItem.quantity}}</text>
           </view>
 
       <view class="divider-line"></view>
@@ -21,7 +23,7 @@
       <!-- 费用明细 -->
       <view class="cost-item">
         <text>优惠券</text>
-        <text>-¥{{orderInfo.discountAmount}}</text>
+        <text>-¥0.00</text>
       </view>
       <view class="cost-item">
         <text>红包</text>
@@ -30,8 +32,8 @@
       <view class="cost-item">
         <text>积分抵扣</text>
         <view class="integral">
-          <text>{{orderInfo.pointsDeduction}}积分</text>
-          <text class="red-text">-¥{{pointFee}}</text>
+          <text>积分</text>
+          <text class="red-text">-¥0.00</text>
         </view>
       </view>
       <view class="cost-item">

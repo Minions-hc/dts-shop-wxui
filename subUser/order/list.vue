@@ -19,18 +19,22 @@
 					<text class="order-time">{{item.createTime}}</text>
 				</view>
 
-				<!-- 中部：商品信息 -->
-				<view class="order-middle" @click="navigatorToDetail()">
-					<image class="product-img" :src="item.image" lazy-load="true"/>
-					<view class="product-info">
-						<text class="product-name">ssss</text>
-						<view class="discount-info">
-							<text>可抵扣0勋章</text>
+				<view class="order-item" v-for="subItem in item.items" :key="subItem.id">
+					<!-- 中部：商品信息 -->
+					<view class="order-middle" @click="navigatorToDetail()">
+						<image class="product-img" :src="subItem.productImg" lazy-load="true"/>
+						<view class="product-info">
+							<text class="product-name">{{subItem.productName}}</text>
+							<view class="discount-info">
+								<text>可抵扣0勋章</text>
+							</view>
 						</view>
+						<!-- 数量显示 -->
+						<text class="product-quantity">×{{subItem.quantity}}</text>
 					</view>
-					<!-- 数量显示 -->
-					<text class="product-quantity">×1</text>
+					
 				</view>
+				
 
 				<!-- 下部：支付和操作 -->
 				<view class="order-footer">
