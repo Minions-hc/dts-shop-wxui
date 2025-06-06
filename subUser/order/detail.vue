@@ -11,7 +11,7 @@
             <!-- 中间：商品信息 -->
             <view class="product-middle">
               <text class="product-name">{{subItem.productName}}</text>
-              <text class="discount-info">可抵扣0勋章</text>
+              <text class="discount-info">可抵扣{{subItem.productBadge}}勋章</text>
             </view>
       
             <!-- 右边：数量显示 -->
