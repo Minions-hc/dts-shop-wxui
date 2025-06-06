@@ -194,8 +194,10 @@
 					const result = res.data;
 					if (result.errmsg === '成功') {
 						uni.showToast({
-							title: '签到成功'
+							title: '签到成功',
+							duration: 2000
 						})
+						
 						this.currentCheckInDay()
 					}
 				})

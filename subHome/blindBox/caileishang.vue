@@ -623,7 +623,7 @@
 				}
 			},
 			handleDraw(count) {
-				if (count > this.boxes[this.currentIndex-1]?.remaining) {
+				if (count > this.boxes[this.currentIndex - 1]?.remaining) {
 					uni.showToast({
 						title: '库存不足~'
 					});
@@ -730,7 +730,7 @@
 			},
 
 			setPressArray(maxNum) {
-				const priceRanges = this.boxes[this.currentIndex-1]?.products?.[0]?.priceRanges || '[]'
+				const priceRanges = this.boxes[this.currentIndex - 1]?.products?.[0]?.priceRanges || '[]'
 				const priceRangesParan = JSON.parse(priceRanges)
 				const segments = priceRangesParan.map?.(item => {
 					return {
@@ -738,7 +738,7 @@
 						price: item.price
 					}
 				})
-				const maxValue = this.boxes[this.currentIndex-1]?.total || 0
+				const maxValue = this.boxes[this.currentIndex - 1]?.total || 0
 				segments.push({
 					end: maxValue,
 					price: 100
@@ -748,7 +748,7 @@
 				this.segments = segments;
 			},
 			showRecods() {
-				const boxNumber = this.boxes[this.currentIndex-1].id;
+				const boxNumber = this.boxes[this.currentIndex - 1].id;
 				get(`wx/blindbox/openRecords?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res => {
 					const result = res.data.data
 					const tabs = ['全部'];
@@ -761,7 +761,7 @@
 				})
 			},
 			prizeDraws(count) {
-				const boxNumber = this.boxes[this.currentIndex-1]?.id;
+				const boxNumber = this.boxes[this.currentIndex - 1]?.id;
 				const filteredItems = this.filteredItems.filter(item => !item.soldOut).map(item => {
 					return item.number
 				})
@@ -783,7 +783,7 @@
 				if (this.currentLoop < 3) {
 					get('wx/boxproduct/getBoxProductsByWxOrderNo?wxOrderNo=' + paymentParams.nonceStr).then(res => {
 						const result = res.data;
-						console.log("返回结果长度:"+result.data.length)
+						console.log("返回结果长度:" + result.data.length)
 						if (result.errno === 0) {
 							this.currentLoop = 0;
 							this.getProductBoxBySeriesId()
@@ -818,12 +818,12 @@
 				if (buyNum == 0) {
 					return totalPrice;
 				}
-				console.log("dangqianzhishi:"+this.currentValue);
+				console.log("dangqianzhishi:" + this.currentValue);
 				let tmpCurrentValue = this.currentValue;
 				const totalValue = this.currentValue + buyNum;
 				const currentSegment = this.segments.find(s => this.currentValue <= s.end);
-				console.log("dangqianqujianshi:"+JSON.stringify(currentSegment));
-				console.log("suoyoudejiagequjian:"+JSON.stringify(this.segments));
+				console.log("dangqianqujianshi:" + JSON.stringify(currentSegment));
+				console.log("suoyoudejiagequjian:" + JSON.stringify(this.segments));
 				const toBeSegment = this.segments.find(s => totalValue <= s.end);
 
 				if (currentSegment.end == toBeSegment.end) {
@@ -871,19 +871,32 @@
 		box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
 
 		.product-image {
-			width: 25%;
-			padding-right: 20rpx;
+			width: 220rpx;
+			/* 固定宽度 */
+			height: 220rpx;
+			/* 固定高度 - 确保正方形 */
+			flex-shrink: 0;
+			/* 防止缩小 */
+			margin-right: 20rpx;
+			border-radius: 12rpx;
+			overflow: hidden;
+			/* 隐藏溢出部分 */
 
 			.img {
 				width: 100%;
-				height: 220rpx;
-				border-radius: 12rpx;
-				background: #f5f5f5;
+				/* 宽度100%填满容器 */
+				height: 100%;
+				/* 高度100%填满容器 */
+				object-fit: cover;
+				/* 关键：裁剪填充确保比例 */
 			}
 		}
 
 		.product-info {
-			width: 75%;
+			flex: 1;
+			/* 占据剩余空间 */
+			min-width: 0;
+			/* 防止内容溢出 */
 
 			.product-name {
 				display: block;
@@ -906,22 +919,6 @@
 				display: flex;
 				align-content: space-between;
 
-				// .progress-bar {
-				// 	height: 16rpx;
-				// 	background: #eeeeee;
-				// 	border-radius: 8rpx;
-				// 	margin-bottom: 12rpx;
-				// 	width: 60%;
-				// 	flex-shrink: 0;
-				// 	margin-top: 10rpx;
-
-				// 	.progress-inner {
-				// 		height: 100%;
-				// 		background: #e17c8c;
-				// 		border-radius: 8rpx;
-				// 		transition: width 0.3s;
-				// 	}
-				// }
 
 				.progress-text {
 					font-size: 24rpx;

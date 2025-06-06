@@ -795,7 +795,7 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-		padding: 0rpx 20rpx;
+		padding: 0rpx 5rpx;
 		background: #ed80a0; // 粉色背景
 		border-top-left-radius: 35rpx; // 左上圆角
 		border-top-right-radius: 35rpx; // 右上圆角
@@ -808,9 +808,8 @@
 			.button-image {
 				position: relative;
 				top: -55rpx;
-				width: 145rpx;
+				width: 185rpx;
 				height: 150rpx;
-				margin: 0 15rpx;
 				transition: transform 0.2s ease;
 
 				&:active {

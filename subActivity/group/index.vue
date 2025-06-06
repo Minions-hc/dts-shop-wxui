@@ -18,7 +18,7 @@
       <image 
         class="background-image" 
         :src="backgroundImage" 
-        mode="heightFix"
+        mode="aspectFill"
 		show-menu-by-longpress
         @load="handleImageLoad"
         @error="handleImageError"
@@ -78,7 +78,7 @@ export default {
           this.backgroundImage = imageUrl
         } else {
           // 使用本地默认图片
-          this.backgroundImage = 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/default-group-bg-1.png'
+          this.backgroundImage = 'https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/default-group-bg.png'
         }
         
         // 确保图片URL不为空
