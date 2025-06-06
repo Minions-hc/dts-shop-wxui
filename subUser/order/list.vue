@@ -40,7 +40,7 @@
 				<view class="order-footer">
 					<view class="payment-section">
 						<text>实付金额：</text>
-						<text class="payment-amount">￥{{item.paymentAmount}}</text>
+						<text class="payment-amount">￥{{item.paymentAmount == undefined ? 0 : item.paymentAmount}}</text>
 						<button class="detail-btn" @click="navigatorToDetail(item)">查看详情</button>
 					</view>
 				</view>

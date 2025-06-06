@@ -44,7 +44,7 @@
 	  <!-- 实付金额 -->
 	  <view class="total-section">
 	    <text>实付：</text>
-	    <text class="total-amount">￥{{orderInfo.paymentAmount}}</text>
+	    <text class="total-amount">￥{{orderInfo.paymentAmount == undefined ? 0 : orderInfo.paymentAmount}}</text>
 	  </view>
     </view>
 
@@ -65,6 +65,14 @@
         <text>订单状态</text>
         <text class="status-tag">{{getOrderStatus}}</text>
       </view>
+	  <view class="info-item" v-if="orderInfo.orderStatus === 'SHIPPED'">
+	    <text>物流渠道</text>
+	    <text>{{orderInfo.shippingChannel}}</text>
+	  </view>
+	  <view class="info-item" v-if="orderInfo.orderStatus === 'SHIPPED'">
+	    <text>快递单号</text>
+	    <text>{{orderInfo.trackingNumber}}</text>
+	  </view>
     </view>
 
     <!-- 客服按钮 -->
