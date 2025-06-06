@@ -3,7 +3,7 @@
 		<!-- 标题区域 -->
 		<view class="header">
 			<view class="title-wrapper">
-				<text class="title" @click="navigatorToCodeDatail()">兑换记录</text>
+				<!-- <text class="title" @click="navigatorToCodeDatail()">兑换记录</text> -->
 			</view>
 		</view>
 
