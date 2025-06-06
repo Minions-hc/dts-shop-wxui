@@ -427,7 +427,7 @@
 				const boxNumber = this.boxes[this.currentIndex].id;
 				get(`wx/blindbox/numbers?seriesId=${this.seriesId}&boxNumber=${boxNumber}`).then(res => {
 					const result = res.data.data;
-					const arr = result.map(item => {
+					const arr = result.filter(item => !item.soldOut).map(item => {
 						return item.number
 					})
 					let list = []
