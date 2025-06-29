@@ -2,14 +2,17 @@
 	<view class="container">
 		<!-- 顶部背景图 -->
 		<view class="header-banner">
-			<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/market-bg.png" mode="widthFix" class="banner-img" />
+			<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/market-bg.png"
+				mode="widthFix" class="banner-img" />
 			<view class="medal-count">总勋章：{{totalMedal}}</view>
 		</view>
 
 		<!-- 消息滚动条 -->
 		<view class="notice-container">
 			<view class="notice-bar">
-				<image class="notice-icon" src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/record-notice.png" mode="widthFix" />
+				<image class="notice-icon"
+					src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/record-notice.png"
+					mode="widthFix" />
 				<view class="notice-content">
 					<view class="notice-text" :class="{ scrollable: true }">
 						<text v-for="(text, index) in noticeList" :key="index">{{ text }}</text>
@@ -32,7 +35,7 @@
 			<view v-for="(item, index) in productList" :key="index" class="product-item" @click="toProductPage(item)">
 				<image :src="getProductImage(item)" class="product-image" />
 				<view class="product-info">
-					<text class="product-name">{{item.name}}</text>
+					<text class="product-name">{{item.productName}}</text>
 					<text class="product-status" :style="{color: item.available ? '#ff4c4c' : '#999'}">
 						{{item.available ? `需${item.productBadge}勋章` : '找客服咨询改价'}}
 					</text>
@@ -50,14 +53,14 @@
 	export default {
 		data() {
 			return {
-				totalMedal: 2,
+				totalMedal: 0,
 				noticeList: ['【重要通知】如果在集市中没有找到想要的赏品或者赏品已售罄，请联系客服或加入社群咨询'],
 				currentSeries: 0,
 				marketSeriesGroup: [],
 				productList: []
 			}
 		},
-		onShow(){
+		onShow() {
 			this.initPage();
 		},
 		methods: {
@@ -67,13 +70,16 @@
 				// 这里请求对应系列的商品数据
 			},
 			toProductPage(item) {
-				const userId = uni.getStorageSync('userId');
-				let str = '/subHome/market/detail?productId=' + item.productId + '&userId=' + userId;
+				let str = '/subHome/market/detail?productId=' + item.productId;
 				uni.navigateTo({
 					url: str
 				})
 			},
 			initPage() {
+				this.getMarketSeries();
+				this.getTotalMedal();
+			},
+			getMarketSeries() {
 				get('wx/market/getWxMarketSeries').then(json => {
 					const result = json.data?.data;
 					if (result?.items) {
@@ -96,6 +102,18 @@
 						this.currentSeries = this.marketSeriesGroup[0].name;
 						this.productList = result?.marketProductGroup[this.currentSeries];
 					}
+				})
+			},
+			getTotalMedal() {
+				const userId = uni.getStorageSync('userId');
+				get('wx/market/getBoxProductList?userId=' + userId).then(res => {
+					const result = res?.data?.data || [];
+					let total = 0;
+					result.filter(item => !isNaN(Number(item.productBadge)) && item.productBadge > 0).forEach(
+						item => {
+							total = total + item.productBadge;
+						});
+					this.totalMedal = total;
 				})
 			},
 			getProductImage(item) {
@@ -256,23 +274,33 @@
 		padding: 30rpx;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 20rpx;
+		justify-content: space-between;
+		/* 关键修改：使用空间分布 */
 
 		.product-item {
-			width: calc(50% - 10rpx);
+			width: calc(50% - 15rpx);
+			/* 更精确的宽度计算 */
+			margin-bottom: 30rpx;
+			/* 增加底部间距 */
 			background: #fff;
 			border-radius: 16rpx;
 			overflow: hidden;
+			box-sizing: border-box;
+			/* 关键：包含内边距和边框 */
 
 			.product-image {
 				width: 100%;
 				height: 320rpx;
 				background: #eee;
+				display: block;
+				/* 消除图片底部间隙 */
 			}
 
 			.product-info {
 				padding: 20rpx;
+				box-sizing: border-box;
 
+				/* 包含内边距 */
 				.product-name {
 					font-size: 28rpx;
 					color: #333;
@@ -281,6 +309,8 @@
 					-webkit-line-clamp: 2;
 					overflow: hidden;
 					margin-bottom: 12rpx;
+					line-height: 1.4;
+					/* 更好的行高 */
 				}
 
 				.product-status {

@@ -27,9 +27,12 @@
 				<text class="product-name">{{product.productName}}</text>
 				<!-- 修改分享按钮布局 -->
 				<view class="share-wrapper">
-					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon-share.png" class="share-btn" @click="handleShare" />
+					<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon-share.png"
+						class="share-btn" />
 					<text class="share-text">分享</text>
 				</view>
+				<!-- 透明分享按钮 -->
+				<button class="transparent-share-button" open-type="share"></button>
 			</view>
 		</view>
 
@@ -47,8 +50,11 @@
 		<view class="footer-bar">
 			<!-- 修改客服按钮布局 -->
 			<view class="service-btn">
-				<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon8.png" class="icon" />
+				<image src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/icon8.png"
+					class="icon" />
 				<text>客服</text>
+				<!-- 透明按钮覆盖整个客服区域 -->
+				<button class="transparent-button" open-type="contact"></button>
 			</view>
 			<view class="exchange-btn" @tap="openGood">
 				{{product.available ? '置换商品' : '已售罄'}}
@@ -158,16 +164,35 @@
 		},
 		onLoad(param) {
 			const {
-				userId,
 				productId
 			} = param;
 			this.productId = productId;
-			this.userId = userId;
+			this.userId = uni.getStorageSync('userId');
 
 		},
 		onShow() {
 			this.getProductByProductId();
 			this.getBoxProductList();
+		},
+		onShareAppMessage() {
+			return {
+				title: `${this.product.productName} | 超值推荐`,
+				path: `/pages/product/detail?id=${this.product.productId}`,
+				imageUrl: this.productImageList[0] || '',
+				success: () => {
+					uni.showToast({
+						title: '分享成功',
+						icon: 'success'
+					});
+				},
+				fail: (err) => {
+					console.error('分享失败:', err);
+					uni.showToast({
+						title: '分享失败',
+						icon: 'none'
+					});
+				}
+			};
 		},
 		computed: {
 			selectItems() {
@@ -179,12 +204,14 @@
 				chkItems.forEach(item => {
 					count = count + item.productBadge
 				})
-				
+
 				if (!!this.product && count > this.product.productBadge + 3) {
-					uni.showToast({ title: '您选中的勋章远大于当前产品所需勋章！！！' })
+					uni.showToast({
+						title: '您选中的勋章远大于当前产品所需勋章！！！'
+					})
 					return 0
 				}
-				
+
 				if (!!this.product && count > this.product.productBadge) {
 					return 0
 				}
@@ -296,6 +323,18 @@
 			},
 			exchangeBox() {
 				const chkItems = this.filteredProducts.filter(item => item.checked);
+				let count = 0;
+				chkItems.forEach(item => {
+					count = count + item.productBadge
+				})
+
+				if (!!this.product && count > this.product.productBadge + 3) {
+					uni.showToast({
+						title: '您选中的勋章远大于当前产品所需勋章！！！'
+					})
+					return;
+				}
+
 				let totalProductBadge = 0;
 				const ids = chkItems.map(item => {
 					totalProductBadge = totalProductBadge + item.productBadge;
@@ -405,6 +444,27 @@
 					border-left: 2rpx dashed #ddd;
 				}
 			}
+
+			.transparent-share-button {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				opacity: 0;
+				/* 完全透明 */
+				z-index: 2;
+				/* 确保在分享图标上方 */
+				padding: 0;
+				margin: 0;
+				background: transparent;
+				border: none;
+
+				/* 移除按钮默认样式 */
+				&::after {
+					display: none;
+				}
+			}
 		}
 	}
 
@@ -445,6 +505,8 @@
 			align-items: center;
 			width: auto;
 			color: #fff;
+			position: relative;
+			/* 设置相对定位，使透明按钮相对于此定位 */
 
 			.icon {
 				width: 40rpx;
@@ -455,6 +517,27 @@
 			text {
 				color: #000;
 				font-size: 24rpx;
+			}
+
+			.transparent-button {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				opacity: 0;
+				/* 完全透明 */
+				z-index: 2;
+				/* 确保在客服图标和文字上方 */
+				padding: 0;
+				margin: 0;
+				background: transparent;
+				border: none;
+
+				/* 移除按钮默认样式 */
+				&::after {
+					display: none;
+				}
 			}
 		}
 

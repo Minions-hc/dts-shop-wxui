@@ -26,7 +26,7 @@
 						<view class="product-info">
 							<text class="product-name">{{subItem.productName}}</text>
 							<view class="discount-info">
-								<text>可抵扣{{subItem.productBadge}}勋章</text>
+								<text>可抵扣{{subItem.productBadge || 0}}勋章</text>
 							</view>
 						</view>
 						<!-- 数量显示 -->
@@ -54,8 +54,7 @@
 	export default {
 		onLoad(param){
 			const {type,userId} = param;
-			this.activeTab = type;
-			
+			this.activeTab = type || 'ALL';
 		},
 		onShow(){ 
 			this.userId = uni.getStorageSync('userId');

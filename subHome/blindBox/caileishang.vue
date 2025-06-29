@@ -94,10 +94,10 @@
 			</view>
 			<view class="product-grid">
 				<view v-for="(item, index) in productImages" :key="item.productId" class="grid-item">
-					<image v-if="index < 7" :src="item.productImage" mode="aspectFill" class="grid-img" webp="true"
+					<image :src="item.productImage" mode="aspectFill" class="grid-img" webp="true"
 						lazy-load="true" />
-					<image v-else src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/more-btn.png"
-						mode="aspectFill" class="grid-img" webp="true" lazy-load="true" />
+					<!-- <image v-else src="https://chaoshangshiduo-public-static.oss-cn-shenzhen.aliyuncs.com/more-btn.png"
+						mode="aspectFill" class="grid-img" webp="true" lazy-load="true" /> -->
 				</view>
 			</view>
 			<view class="box-controls">
@@ -301,23 +301,32 @@
 
 						<!-- 提货说明 -->
 						<view class="delivery-info">
-							<view>盒柜选择提货后7天内发货</view>
+							<view>盒柜选择提货后7天内发货，商品抽抽奖存在概率性，付费请谨慎，支付余额不支持提现</view>
 							<view>盒柜提货运费12元满三件包邮，不支持7天无理由退换货</view>
+							<view>售后需提供一镜到底的开箱视频，包含物流面单及瑕疵处，未拆袋商品微瑕不售后</view>
 						</view>
 						<view class="total-parice-content">
 							小计：{{showOrderAmount}}
 						</view>
 						<view class="check-desc-item">
-							<view :class="['checkbox', chkDesc && 'checked']" @tap="changChk">
-								<view v-if="chkDesc" class="check-icon">✓</view>
+							<view class="check-row">
+								<view :class="['checkbox', chkProbability && 'checked']" @tap="changChkProbability">
+									<view v-if="chkProbability" class="check-icon">✓</view>
+								</view>
+								<text :style="{color:'red'}">勾选查看概率并代表已知晓商品抽奖存在概率性</text>
 							</view>
-							<text>我已满18岁，已阅读并同意《用户使用协议》</text>
+							<view class="check-row">
+								<view :class="['checkbox', chkDesc && 'checked']" @tap="changChk">
+									<view v-if="chkDesc" class="check-icon">✓</view>
+								</view>
+								<text>我已满18岁，已阅读并同意《用户使用协议》</text>
+							</view>
 						</view>
 					</view>
 
 
 					<!-- 操作按钮 -->
-					<view class="confirm-btn" @click="handleConfirm" :class="[!chkDesc && 'disabled-confirm']">确认购买
+					<view class="confirm-btn" @click="handleConfirm" :class="[(!chkDesc || !chkProbability) && 'disabled-confirm']">确认购买
 					</view>
 				</view>
 			</view>
@@ -377,6 +386,7 @@
 		data() {
 			return {
 				chkDesc: true,
+				chkProbability: false,
 				dialogVisiable: false,
 				dialogMoreVisible: false,
 				segments: [],
@@ -710,6 +720,9 @@
 			},
 			changChk() {
 				this.chkDesc = !this.chkDesc;
+			},
+			changChkProbability() {
+				this.chkProbability = !this.chkProbability;
 			},
 			queryProductList() {
 				const boxNumber = this.boxes[this.currentIndex - 1].id;
@@ -1795,10 +1808,22 @@
 
 	.check-desc-item {
 		display: flex;
-		text-align: center;
+		flex-direction: column;
+		text-align: left;
+		/* 左对齐 */
 		font-size: 24rpx;
 		margin: 15rpx 0;
-
+		
+		.check-row {
+			display: flex;
+			align-items: center;
+			margin-bottom: 20rpx;
+		
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+		
 		.checkbox {
 			width: 30rpx;
 			height: 30rpx;
@@ -1808,11 +1833,11 @@
 			align-items: center;
 			justify-content: center;
 			margin-right: 10rpx;
-
+		
 			&.checked {
 				background: red;
 				border-color: red;
-
+		
 				.check-icon {
 					color: #fff;
 					font-size: 28rpx;

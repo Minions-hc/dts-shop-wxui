@@ -246,6 +246,14 @@
 							isActive: day >= num
 						}
 					})
+					
+					this.seconedDay = this.seconedDay.map((item, i) => {
+						const num = i + 5;
+						return {
+							...item,
+							isActive: false
+						}
+					})
 				}
 			}
 		},

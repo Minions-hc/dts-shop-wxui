@@ -58,7 +58,7 @@
 					</view>
 					<view class="right-bottom-wrapper" v-if="!showShipStatus ||  activeMenu !== 0">
 						<view class="lock-icon" v-if="item.status === 'pending'" @tap="lockProduct(item)"></view>
-						<view class="donate-btn" v-if="item.status === 'shipped'">查看订单</view>
+						<view class="donate-btn" v-if="item.status === 'shipped'" @tap="toOrderPage(item)">查看订单</view>
 						<view class="donate-btn pink-btn" v-if="item.status === 'pedding'">赠送</view>
 						<view class="donate-btn pink-btn" v-if="item.status === 'locked'" @tap="unLockProduct(item)">解锁</view>
 					</view>
@@ -143,6 +143,14 @@
 			async handleSubmit(){
 				const ids = this.filteredProducts.filter(item => item.checked).map(item=>{return item.id})
 				
+				if (ids.length < 1) {
+					uni.showToast({
+						icon:"none",
+						title:"请选择要提货的商品！"
+					})
+					return;
+				}
+				
 				if (ids.length < 3) {
 					try {
 					  const userInfo = uni.getStorageSync("userInfo") || {};
@@ -171,10 +179,12 @@
 				const postData = {
 					openId: wxOpenId,
 					businessType: 2,
-					amuout: 1200,
+					amount: 1200,
 					orderAmount: 12,
 					paymentAmount: 12,
-					ids: ids
+					description: "运费",
+					ids: ids,
+					userId: this.userId
 				}
 				return post('wx/wxpay/create',postData).then(res=>{
 					if (res.statusCode === 200) {
@@ -281,6 +291,11 @@
 					url: '/subBox/box/detail?userId='+this.userId + '&id=' + item.id
 				})
 			},
+			toOrderPage(item){
+				uni.navigateTo({
+					url: `/subUser/order/detail?userId=${this.userId}&orderId=${item.orderId}`
+				})
+			},
 			loadPageData(status){
 				get('wx/boxproduct/getProductsByUser?userId='+this.userId+'&status='+status).then(json => {
 					const result = json.data.data;
@@ -320,7 +335,7 @@
 			},
 			shipedResult(paymentParams) {
 				if(this.currentLoop < 3) {
-					get('wx/boxproduct/getBoxProductsByWxOrderNo?wxOrderNo='+paymentParams.nonceStr).then(res => {
+					get('wx/order/queryOrderByWxOrderNo?wxOrderNo='+paymentParams.nonceStr).then(res => {
 						const result = res.data;
 						console.log("返回结果长度:"+result.data.length)
 						if (result.errno === 0) {

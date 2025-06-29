@@ -67,7 +67,8 @@
 									<image :src="product.productImage" mode="aspectFill" class="product-image"
 										lazy-load="true" />
 									<view class="remain-qty">
-										{{product.quantity - product.soldQuantity}}/{{product.quantity}}</view>
+										{{product.quantity - product.soldQuantity}}/{{product.quantity}}
+									</view>
 									<view class="product-info">
 										<view class="title-row">
 											<!-- 产品类型标签 -->
@@ -110,7 +111,8 @@
 						<!-- 条目头部 -->
 						<view class="item-header">
 							<view class="header-left">
-								<image :src="item.avatar" mode="aspectFit" lazy-load="true" class="record-image"></image>
+								<image :src="item.avatar" mode="aspectFit" lazy-load="true" class="record-image">
+								</image>
 								<text class="serial">【第{{ item.number }}张】{{ item.userId }}</text>
 							</view>
 
@@ -120,7 +122,8 @@
 						<!-- 奖品信息 -->
 						<view class="prize-info">
 							<view class="info-left">
-								<image :src="item.productImage" mode="aspectFit" lazy-load="true" class="record-image"></image>
+								<image :src="item.productImage" mode="aspectFit" lazy-load="true" class="record-image">
+								</image>
 								<text class="prize-name">{{ item.productName }}</text>
 							</view>
 							<text class="award">{{ item.levelName }} x 1</text>
@@ -199,8 +202,9 @@
 							<view>可用优惠券：</view>
 							<view :style="{display:'flex'}" v-if="couponList.length === 0">暂无可用优惠券<uni-icons
 									type="right" size="20"></uni-icons></view>
-							<view :style="{display:'flex'}" v-else @tap="openCouponList">{{getCounpontContent}}<uni-icons type="right"
-									size="20"></uni-icons></view>
+							<view :style="{display:'flex'}" v-else @tap="openCouponList">
+								{{getCounpontContent}}<uni-icons type="right" size="20"></uni-icons>
+							</view>
 
 						</view>
 						<view class="info-item">
@@ -227,23 +231,33 @@
 
 						<!-- 提货说明 -->
 						<view class="delivery-info">
-							<view>盒柜选择提货后7天内发货</view>
+							<view>盒柜选择提货后7天内发货，商品抽抽奖存在概率性，付费请谨慎，支付余额不支持提现</view>
 							<view>盒柜提货运费12元满三件包邮，不支持7天无理由退换货</view>
+							<view>售后需提供一镜到底的开箱视频，包含物流面单及瑕疵处，未拆袋商品微瑕不售后</view>
 						</view>
 						<view class="total-parice-content">
 							小计：￥{{showOrderAmount}}
 						</view>
 						<view class="check-desc-item">
-							<view :class="['checkbox', chkDesc && 'checked']" @tap="changChk">
-								<view v-if="chkDesc" class="check-icon">✓</view>
+							<view class="check-row">
+								<view :class="['checkbox', chkProbability && 'checked']" @tap="changChkProbability">
+									<view v-if="chkProbability" class="check-icon">✓</view>
+								</view>
+								<text :style="{color:'red'}">勾选查看概率并代表已知晓商品抽奖存在概率性</text>
 							</view>
-							<text>我已满18岁，已阅读并同意《用户使用协议》</text>
+							<view class="check-row">
+								<view :class="['checkbox', chkDesc && 'checked']" @tap="changChk">
+									<view v-if="chkDesc" class="check-icon">✓</view>
+								</view>
+								<text>我已满18岁，已阅读并同意《用户使用协议》</text>
+							</view>
 						</view>
 					</view>
 
 
 					<!-- 操作按钮 -->
-					<view class="confirm-btn" @click="handleConfirm" :class="[!chkDesc && 'disabled-confirm']">确认购买
+					<view class="confirm-btn" @click="handleConfirm"
+						:class="[(!chkDesc || !chkProbability) && 'disabled-confirm']">确认购买
 					</view>
 				</view>
 			</view>
@@ -306,6 +320,7 @@
 				isLockBox: true,
 				isOpenAnimate: false,
 				chkDesc: true,
+				chkProbability: false,
 				currentIndex: 0,
 				showMarkPopup: false,
 				userId: '',
@@ -349,12 +364,12 @@
 				const price = orderAmount - this.couponPrice - this.calcPointPrice();
 				return price <= 0 ? 0.01 : price;
 			},
-			getCounpontContent(){
-				return this.couponPrice != 0 ? '-￥'+ this.couponPrice :'可用优惠券';
+			getCounpontContent() {
+				return this.couponPrice != 0 ? '-￥' + this.couponPrice : '可用优惠券';
 			}
 		},
 		methods: {
-			closeCoupon(){
+			closeCoupon() {
 				this.$refs.couponPopup.close();
 			},
 			getShowOrderAmount() {
@@ -385,6 +400,9 @@
 			changChk() {
 				this.chkDesc = !this.chkDesc;
 			},
+			changChkProbability() {
+				this.chkProbability = !this.chkProbability;
+			},
 			closeMask() {
 				this.showMarkPopup = false;
 			},
@@ -396,7 +414,7 @@
 			},
 			changeBox(index) {
 				this.currentIndex = index;
-				this.showBoxPopup = false;				
+				this.showBoxPopup = false;
 			},
 			switch1Change(e) {
 				this.isDeduction = e.detail.value
@@ -454,20 +472,20 @@
 				}
 			},
 			handleDraw(count) {
-				if(!this.userId){
+				if (!this.userId) {
 					uni.showToast({
-						title:"请先登录",
-						icon:"none"
+						title: "请先登录",
+						icon: "none"
 					})
 					uni.removeStorageSync('token');
 					uni.removeStorageSync('userInfo');
 					uni.removeStorageSync('userId');
 					uni.removeStorageSync('shareParams');
-					setTimeout(()=>{
+					setTimeout(() => {
 						uni.navigateTo({
-							url:"/pages/login/index"
+							url: "/pages/login/index"
 						})
-					},500)
+					}, 500)
 					return
 				}
 				if (count != 0 && count > this.boxes[this.currentIndex].remaining) {
@@ -550,13 +568,15 @@
 				return (penson * 100).toFixed(3) + '%'
 			},
 			prizeDraw(paymentParams) {
-				setTimeout(() => {this.drawBlindBox(paymentParams)}, 1000);
+				setTimeout(() => {
+					this.drawBlindBox(paymentParams)
+				}, 1000);
 			},
 			drawBlindBox(paymentParams) {
-				if(this.currentLoop < 3) {
-					get('wx/boxproduct/getBoxProductsByWxOrderNo?wxOrderNo='+paymentParams.nonceStr).then(res => {
+				if (this.currentLoop < 3) {
+					get('wx/boxproduct/getBoxProductsByWxOrderNo?wxOrderNo=' + paymentParams.nonceStr).then(res => {
 						const result = res.data;
-						console.log("返回结果长度:"+result.data.length)
+						console.log("返回结果长度:" + result.data.length)
 						if (result.errno === 0) {
 							this.currentLoop = 0;
 							this.getProductBoxBySeriesId();
@@ -564,12 +584,12 @@
 							this.couponPrice = 0;
 							this.$refs.shopingPopup.close();
 							this.openDrawDialog(result.data.length)
-						}else {
+						} else {
 							this.currentLoop = this.currentLoop + 1;
 							this.drawBlindBox(paymentParams);
 						}
 					})
-				}else {
+				} else {
 					uni.showToast({
 						title: '抽赏失败，请联系客服！',
 						icon: "none"
@@ -601,7 +621,7 @@
 						success: (res) => {
 							if (res.confirm) {
 								uni.navigateTo({
-									url: "/subUser/address/index?userId="+this.userId
+									url: "/subUser/address/index?userId=" + this.userId
 								})
 							} else if (res.cancel) {
 								console.log('用户点击取消')
@@ -649,7 +669,7 @@
 
 			},
 			getUserCurrentPoints() {
-				if(!this.userId){
+				if (!this.userId) {
 					return
 				}
 				get('wx/points/getUserCurrentPoints?userId=' + this.userId).then(json => {
@@ -660,11 +680,11 @@
 			},
 			calcPointPrice() {
 				// 如果不扣减积分，直接返回为0
-				if(!this.isDeduction) {
+				if (!this.isDeduction) {
 					this.deductionPoints = 0;
 					return 0;
 				}
-				
+
 				const orderAmount = this.getOrderAmount();
 				const currentPrice = orderAmount - this.couponPrice;
 				// 当当前已经使用优惠券后的价格小于1块钱，就不使用积分扣减
@@ -672,12 +692,12 @@
 					this.deductionPoints = 0;
 					return 0;
 				}
-				
+
 				// 如果积分大于等于当前订单价格，就只扣减当前的价格
 				if (this.currentPoints / 10 >= currentPrice) {
 					this.deductionPoints = currentPrice;
 					return currentPrice;
-				}else {
+				} else {
 					this.deductionPoints = this.currentPoints / 10
 					// 否则就全扣
 					return this.currentPoints / 10
@@ -702,10 +722,11 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+
 		.box-image {
 			min-width: 100%;
 			min-height: 100%;
-			object-fit: cover; 
+			object-fit: cover;
 		}
 	}
 
@@ -1346,7 +1367,6 @@
 	.delivery-info {
 		margin-top: 32rpx;
 		font-size: 26rpx;
-		color: #999999;
 		line-height: 40rpx;
 		color: red;
 		font-weight: bold;
@@ -1382,9 +1402,21 @@
 
 	.check-desc-item {
 		display: flex;
-		text-align: center;
+		flex-direction: column;
+		text-align: left;
+		/* 左对齐 */
 		font-size: 24rpx;
 		margin: 15rpx 0;
+
+		.check-row {
+			display: flex;
+			align-items: center;
+			margin-bottom: 20rpx;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
 
 		.checkbox {
 			width: 30rpx;

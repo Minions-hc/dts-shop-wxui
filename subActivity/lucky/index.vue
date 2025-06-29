@@ -271,7 +271,7 @@
 		},
 		onShareAppMessage() {
 			return {
-				title: '', // 分享标题
+				title: '幸运大抽奖', // 分享标题
 				path: '/subActivity/lucky/index?shareId=' + this.userId, // 分享路径（默认当前页面路径）
 				imageUrl: this.imageList[0], // 分享图片
 				forwardChatType: 0,
@@ -333,7 +333,7 @@
 				})
 			},
 			handleShare() {
-				if(!activityStatus) {
+				if(!this.activityStatus) {
 					uni.showToast({
 						title: "活动已结束！",
 						icon: "none"

@@ -89,7 +89,7 @@ import {
 		.power-info {
 			position: absolute;
 			right: 90rpx;
-			bottom: 16rpx;
+			bottom: 18rpx;
 			display: flex;
 			align-items: baseline;
 			padding: 6rpx 16rpx;

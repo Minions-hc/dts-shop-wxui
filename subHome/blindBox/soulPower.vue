@@ -2,7 +2,7 @@
 	<view class="container">
 		<!-- 图片部分 -->
 		<view class="image-section">
-			<image :src="currentBox.image" mode="scaleToFill" class="box-image" webp="true" lazy-load="true"/>
+			<image :src="currentBox.image" mode="aspectFill" class="box-image" webp="true" lazy-load="true"/>
 		</view>
 
 		<!-- 轮播部分 -->
@@ -518,17 +518,11 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-	}
-
-	.image-section {
-		height: 300rpx;
-
 		.box-image {
-			max-width: 100%;
-			max-height: 100%;
+			min-width: 100%;
+			min-height: 100%;
+			object-fit: cover; 
 		}
-
-
 	}
 
 	.carousel-section {
@@ -821,7 +815,7 @@
 		.soulPower {
 			position: relative;
 			margin-bottom: 10rpx;
-			top: -45px;
+			top: -40px;
 			left: 10px;
 
 			text {
@@ -833,7 +827,7 @@
 
 		.soulPowerDescribe {
 			position: relative;
-			top: -45px;
+			top: -40px;
 			left: 10px;
 
 			text {

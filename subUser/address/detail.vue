@@ -55,6 +55,10 @@
 				<text>设为自动提货地址</text>
 				<switch color="#07C160" :checked="formData.isPickup" @change="toggleAutoPickup" />
 			</view>
+			
+			<view>
+				<text class="label" :style="{color:'red'}">港澳臺的小夥伴們請填寫你們的集運地址，以便我們更好的爲你們服務</text>
+			</view>
 		</scroll-view>
 
 		<!-- 保存按钮 -->
@@ -193,7 +197,11 @@
 				// 提交保存逻辑
 				post(`wx/address/save?userId=` + this.userId, postData).then(res => {
 					if(res.data.errmsg === '成功'){
+						 this.addressId = res.data.data ? res.data.data : '';
 						uni.showToast({ title: '保存成功' })
+						setTimeout(() => {
+							this.initAddressList();
+						}, 500)
 					}
 				})
 			},

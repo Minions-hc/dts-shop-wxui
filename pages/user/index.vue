@@ -3,11 +3,11 @@
 		<!-- 用户信息区域 -->
 		<view class="user-section">
 			<view class="user-info" @click="navigateToUserInfo()" v-if="userId">
-				<image :src="userInfo.avatar" class="avatar" mode="aspectFill" lazy-load="true"/>
+				<image :src="userInfo.avatar" class="avatar" mode="aspectFill" lazy-load="true" />
 				<text class="username">{{userInfo.userName}}</text>
 			</view>
 			<view class="user-info" @click="Login()" v-else>
-				<image :src="userInfo.avatar" class="avatar" mode="aspectFit" lazy-load="true"/>
+				<image :src="userInfo.avatar" class="avatar" mode="aspectFit" lazy-load="true" />
 				<text class="username">暂未登录</text>
 			</view>
 			<!-- 新增资产信息区域 -->
@@ -45,10 +45,18 @@
 			<view class="service-group">
 				<view class="group-title">服务与工具</view>
 				<view class="service-grid">
-					<view v-for="(item, index) in services" :key="index" class="service-item"
-						@click="handleService(item)">
-						<image class="icon-image" :src="item.image" mode="aspectFit"></image>
-						<text class="name">{{ item.name }}</text>
+					<view v-for="(item, index) in services" :key="index" class="service-item">
+						<!-- 所有服务项统一使用透明按钮包裹 -->
+						<button v-if="item.name === '客服'" class="transparent-button" open-type="contact">
+							<image class="icon-image" :src="item.image" mode="aspectFit"></image>
+							<text class="name">{{ item.name }}</text>
+						</button>
+
+						<!-- 其他服务项使用透明视图 -->
+						<view v-else class="transparent-view" @click="handleService(item)">
+							<image class="icon-image" :src="item.image" mode="aspectFit"></image>
+							<text class="name">{{ item.name }}</text>
+						</view>
 					</view>
 				</view>
 			</view>
@@ -64,6 +72,10 @@
 					<uni-icons type="arrowright" size="16" color="#999"></uni-icons>
 				</view>
 			</view>
+
+			<view>
+				<button open-type="contact"></button>
+			</view>
 		</view>
 	</view>
 </template>
@@ -74,21 +86,21 @@
 	} from "@/utils/rest-util.js"
 	export default {
 		onLoad(param) {
-			
+
 		},
-		onShow(){
-			if(this.userId){
+		onShow() {
+			if (this.userId) {
 				this.getUserInfo()
 				this.getUserCurrentPoints(this.userId);
 				this.getInvitationRecords(this.userId);
 			}
-			
+
 		},
 		data() {
-			
+
 			return {
 				userId: uni.getStorageSync('userId'),
-				visablePage:true,
+				visablePage: true,
 				activeOrderTab: 0,
 				orderStatus: [{
 						icon: 'shop',
@@ -172,7 +184,7 @@
 						label: '邀请记录'
 					}
 				],
-				userInfo:{}
+				userInfo: {}
 			}
 		},
 		methods: {
@@ -192,7 +204,7 @@
 				}, 500)
 			},
 			navigateTo(path) {
-				if(!this.userId && path !="/subBox/agreement/index"){
+				if (!this.userId && path != "/subBox/agreement/index") {
 					this.checkLogin()
 					return
 				}
@@ -202,11 +214,11 @@
 				})
 			},
 			switchOrderTab(index) {
-				if(!this.userId){
+				if (!this.userId) {
 					this.checkLogin()
 					return
 				}
-				if(index === 0){
+				if (index === 0) {
 					uni.switchTab({
 						url: "/pages/box/index"
 					})
@@ -218,62 +230,66 @@
 				this.navigateTo(`/subUser/order/list?type=${index}&userId=${userId}`)
 			},
 			handleService(item) {
-				this.navigateTo(item.path)
+				if (item.name == '客服') {
+					return;
+				} else {
+					this.navigateTo(item.path);
+				}
 			},
 			handleAssetClick(type) {
-				if(!this.userId){
+				if (!this.userId) {
 					this.checkLogin()
 					return
 				}
 				const userId = this.userId
 				const routeMap = {
-					points: '/subUser/points/index?userId='+userId,
-					invites: '/subUser/invite/index?userId='+userId
+					points: '/subUser/points/index?userId=' + userId,
+					invites: '/subUser/invite/index?userId=' + userId
 				}
 				uni.navigateTo({
 					url: routeMap[type]
 				})
 			},
-			getUserCurrentPoints(userId){
-				get('wx/points/getUserCurrentPoints?userId='+userId).then(json => {
+			getUserCurrentPoints(userId) {
+				get('wx/points/getUserCurrentPoints?userId=' + userId).then(json => {
 					const result = json.data.data;
 					const currentPoints = result.currentPoints || 0;
 					const userAssets = this.userAssets
-					userAssets.forEach(item=>{
-						if(item.type === 'point'){
+					userAssets.forEach(item => {
+						if (item.type === 'points') {
 							item.value = currentPoints
 						}
 					})
 					this.userAssets = userAssets;
 				})
 			},
-			getInvitationRecords(userId){
-				get('wx/invitation/getInvitationRecords?userId='+userId).then(json => {
+			getInvitationRecords(userId) {
+				get('wx/invitation/getInvitationRecords?userId=' + userId).then(json => {
 					const result = json.data.data;
 					const invites = result.items.length || 0
 					const userAssets = this.userAssets
-					userAssets.forEach(item=>{
-						if(item.type === 'invites'){
+					userAssets.forEach(item => {
+						if (item.type === 'invites') {
 							item.value = invites
 						}
 					})
 					this.userAssets = userAssets;
-					
+
 				})
 			},
-			Login(){
+			Login() {
 				uni.navigateTo({
 					url: "/pages/login/index"
 				})
 			},
 			navigateToUserInfo() {
 				uni.navigateTo({
-					url: '/subUser/profile/index?userId='+this.userId
+					url: '/subUser/profile/index?userId=' + this.userId
 				})
 			},
-			getUserInfo(){
-				get('wx/auth/userInfo/'+ this.userId).then(res=>{
-					if(res.statusCode === 200){
+			getUserInfo() {
+				get('wx/auth/userInfo/' + this.userId).then(res => {
+					if (res.statusCode === 200) {
 						const result = res.data.data;
 						this.userInfo = result
 						uni.setStorageSync('userInfo', result)
@@ -441,6 +457,8 @@
 				display: flex;
 				flex-direction: column;
 				align-items: center;
+				/* 添加以下样式确保布局一致 */
+				position: relative;
 
 				.name {
 					margin-top: 15rpx;
@@ -458,6 +476,33 @@
 				.address-icon {
 					height: 40rpx;
 					max-height: 40rpx;
+				}
+
+				/* 透明按钮样式 */
+				.transparent-button {
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					background: transparent !important;
+					border: none !important;
+					padding: 0 !important;
+					margin: 0 !important;
+					line-height: normal !important;
+					width: 100%;
+					height: 100%;
+				}
+
+				/* 透明视图样式（与按钮样式保持一致） */
+				.transparent-view {
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					width: 100%;
+					height: 100%;
+				}
+
+				.transparent-button::after {
+					border: none !important;
 				}
 			}
 		}
